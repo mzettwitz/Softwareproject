@@ -4,3 +4,4 @@
 *.ptx
 *.cubin
 *.fatbin
+/CMakeLists.txt.user.3.2-pre1
