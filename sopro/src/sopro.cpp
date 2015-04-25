@@ -1,3 +1,13 @@
+/*!
+ * \brief Mainpart of the Raytracing system
+ *
+ * Assumpts the scene and all inputs values.
+ * Defines the starting point of the Raytracing system as it calls the trace function
+ * to start the Raytracing engine. All input values are given to the specific functions
+ * and by this to the GPU.
+ *
+ * \note Edit this file to change the scene, e.g. objects, lights, textures,...
+ */
 
 #include <optix.h>
 #include <stdlib.h>
