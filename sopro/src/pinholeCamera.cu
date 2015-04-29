@@ -1,5 +1,5 @@
 #include <optix_world.h>
-#include "../include/helpingHands.h"
+#include "helpers.h"
 
 using namespace optix;
 
