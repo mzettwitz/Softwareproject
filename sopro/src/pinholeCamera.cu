@@ -1,4 +1,5 @@
 #include <optix_world.h>
+#include "../include/helpingHands.h"
 
 using namespace optix;
 
@@ -6,7 +7,7 @@ using namespace optix;
 struct PerRayData_radiance
 {
     //color
-    float4 result;
+    float3 result;
     //not used now
     float importance;
     //recursion depth
@@ -20,26 +21,31 @@ rtDeclareVariable(float3,U,,);
 rtDeclareVariable(float3,V,,);
 rtDeclareVariable(float3,W,,);
 
-
+//color for exceptions
 rtDeclareVariable(float3,exceptionColor,,);
+//min distance
 rtDeclareVariable(float,sceneEpsilon,,);
+//output buffer
 rtBuffer<float3,2> output_buffer;
+// 'head' of Scenetree
 rtDeclareVariable(rtObject, topObject,,);
+//which kind of ray
 rtDeclareVariable(unsigned int, radiance_ray_type,,);
-
+//output image size
 rtDeclareVariable(uint2, launchIndex, rtLauchindex,);
 rtDeclareVariable(uint2, launchDim, rtLaunchDim,);
 
 
-
+//perspective view
 RT_PROGRAM void pinholeCamera()
 {
+    //setup camera, shift over every pixel
     float2 d = make_float2(launchIndex) / make_float2(launchDim) * 2.f - 1.f;
     float3 rayOrigin = eye;
     float3 rayDirection = normalize(d.x * U, d.y * V + W);
-
+    //create ray
     optix::Ray ray = optix::make_Ray(rayOrigin,rayDirection,radiance_ray_type,sceneEpsilon,RT_DEFAULT_MAX);
-
+    //
     PerRayData_radiance prd;
 
     prd.importance = 1.f;

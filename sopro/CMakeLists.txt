@@ -7,10 +7,12 @@ OPTIX_add_sample_executable(sopro
     src/shadow.cu
     src/program1.cpp
     src/program2.cpp
-    
 
     include/program1.h
     include/program2.h
     include/sopro.h
     include/shadow.h
+    include/helpingHands.h
+    include/material.h
+    
 )
