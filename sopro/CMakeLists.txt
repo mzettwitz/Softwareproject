@@ -14,5 +14,6 @@ OPTIX_add_sample_executable(sopro
     include/shadow.h
     include/helpingHands.h
     include/material.h
+    include/light.h
     
 )
