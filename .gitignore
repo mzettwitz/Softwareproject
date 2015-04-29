@@ -5,3 +5,5 @@
 *.cubin
 *.fatbin
 /CMakeLists.txt.user.*
+/CMakeLists.txt.user
+
