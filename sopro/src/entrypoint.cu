@@ -1,4 +1,8 @@
+/*!
+ *\brief Entrypoint used for Program1
+ * just returns Color given to GPU back to every Pixel
 
+ */
 
 #include <optix.h>
 #include <optixu/optixu_math_namespace.h>
