@@ -20,7 +20,9 @@
 #pragma once
 
 #include <optix.h>
-#include <commonStructs.h>
+#include <../cuda/commonStructs.h>
+
+using namespace optix;
 
 class Light{
 private:

@@ -1,5 +1,6 @@
+
 #include <optix_world.h>
-#include "helpers.h"
+#include "../cuda/helpers.h"
 
 using namespace optix;
 
@@ -26,7 +27,7 @@ rtDeclareVariable(float3,exceptionColor,,);
 //min distance
 rtDeclareVariable(float,sceneEpsilon,,);
 //output buffer
-rtBuffer<float3,2> output_buffer;
+rtBuffer<uchar4,2> output_buffer;
 // 'head' of Scenetree
 rtDeclareVariable(rtObject, topObject,,);
 //which kind of ray
@@ -42,7 +43,7 @@ RT_PROGRAM void pinholeCamera()
     //setup camera, shift over every pixel
     float2 d = make_float2(launchIndex) / make_float2(launchDim) * 2.f - 1.f;
     float3 rayOrigin = eye;
-    float3 rayDirection = normalize(d.x * U, d.y * V + W);
+    float3 rayDirection = normalize(d.x * U + d.y * V + W);
     //create ray
     optix::Ray ray = optix::make_Ray(rayOrigin,rayDirection,radiance_ray_type,sceneEpsilon,RT_DEFAULT_MAX);
     //

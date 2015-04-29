@@ -29,7 +29,9 @@
 
 #pragma once
 
-#include <commonStructs.h>
+#include <../cuda/commonStructs.h>
+
+using namespace optix;
 
 class Material {
 private:

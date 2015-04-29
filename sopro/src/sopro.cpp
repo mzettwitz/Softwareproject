@@ -6,7 +6,7 @@
  * \note just add programs here
  */
 
-#include "sopro/include/sopro.h"
+#include "../include/sopro.h"
 
 int main(int argc, char* argv[])
 {

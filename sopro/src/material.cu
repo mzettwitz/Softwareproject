@@ -4,10 +4,14 @@
  *
  */
 
-#include "sopro/include/material.h"
+
+
+#include "../include/material.h"
+
+using namespace optix;
 
 Material::Material(){
-    this->color = float4(0,0,0,1);
+    this->color = make_float4(0,0,0,1);
 }
 
 Material::Material(float4 color){

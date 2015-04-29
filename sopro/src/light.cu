@@ -1,8 +1,9 @@
-#include "sopro/include/light.h"
+#include "../include/light.h"
 
+using namespace optix;
 Light::Light(){
-    this->color = float4(1,1,1,1);
-    this->origin = float4(0,0,0,0);
+    this->color = make_float4(1,1,1,1);
+    this->origin = make_float4(0,0,0,0);
 }
 
 Light::Light(float4 ori, float4 col){

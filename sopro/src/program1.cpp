@@ -11,7 +11,7 @@
  * \param argc from main
  * \param argv[] from main
  */
-#include "sopro/include/program1.h"
+#include "../include/program1.h"
 
 
 

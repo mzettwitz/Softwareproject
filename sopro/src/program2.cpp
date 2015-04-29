@@ -6,7 +6,7 @@
  */
 
 
-#include "sopro/include/program2.h"
+#include "../include/program2.h"
 
 
 int program2(int argc,char* argv[])
@@ -14,8 +14,8 @@ int program2(int argc,char* argv[])
 
     RTcontext context;
     RTbuffer outputBuffer;
-    RTGeometry sphere;
-    RTMaterial material;
+    RTgeometry sphere;
+    RTmaterial material;
 
     char outfile[512];
 
@@ -24,7 +24,7 @@ int program2(int argc,char* argv[])
 
     //setup state
     createContext(&context, &outputBuffer);
-    createGeometry(context, &box);
+    createGeometry(context, &sphere);
     createMaterial(context, &material);
     createInstances(context, sphere, material);
 
@@ -49,7 +49,7 @@ void createContext(RTcontext *context, RTbuffer *buffer)
 }
 
 
-void createGeometry(RTContext context, RTGeometry *geom)
+void createGeometry(RTcontext context, RTgeometry *geom)
 {
     //needed : inersection,boundingbox, min , max
 
@@ -69,7 +69,7 @@ void createMaterial(RTcontext context, RTmaterial *material)
 
 }
 
-createInstances(RTcontext context, RTgeometry geom, RTmaterial material)
+void createInstances(RTcontext context, RTgeometry geom, RTmaterial material)
 {
     //setup identitymatrix, push that to specific .h
 

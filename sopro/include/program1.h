@@ -1,7 +1,6 @@
 #ifndef PROGRAM1_H
 #define PROGRAM1_H
 
-#include "helpingHands.h"
 
 #include <optix.h>
 #include <stdlib.h>
