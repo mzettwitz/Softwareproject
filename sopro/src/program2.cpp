@@ -34,6 +34,13 @@ int program2(int argc,char* argv[])
 void createContext(RTcontext *context, RTbuffer *buffer)
 {
     //declare variables
+	RT_CHECK_ERROR( rtContextCreate(&context));
+	RT_CHECK_ERROR( rtContextSetRayTypeCount(context, 1));
+	RT_CHECK_ERROR( rtContextSetEntryPointCount(context, 1));
+	
+	RT_CHECK_ERROR( rtBufferCreate(context, RT_OUTPUT_BUFFER, &buffer));
+	RT_CHECK_ERROR( rtBufferSetFormat( buffer, RT_FORMAT_FLOAT4));
+	
 
     //setup context
 
