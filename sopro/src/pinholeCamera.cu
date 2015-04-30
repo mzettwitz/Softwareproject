@@ -4,7 +4,7 @@
 
 using namespace optix;
 
-//ray from camera to objects
+//ray from camera to objects, returned payload to buffer
 struct PerRayData_radiance
 {
     //color
@@ -46,18 +46,18 @@ RT_PROGRAM void pinholeCamera()
     float3 rayDirection = normalize(d.x * U + d.y * V + W);
     //create ray
     optix::Ray ray = optix::make_Ray(rayOrigin,rayDirection,radiance_ray_type,sceneEpsilon,RT_DEFAULT_MAX);
-    //
+    //trace radiance 'normal' rays from camera into scene
     PerRayData_radiance prd;
 
     prd.importance = 1.f;
     prd.depth = 0;
-
+	
     rtTrace(topObject, ray, prd);
-
+	//return color to output_buffer for each pixel
     output_buffer[launchIndex] = make_color(prd.result);
 }
 
-
+//if exception return excpetionColor as payload
 RT_PROGRAM void exception()
 {
     const unsigned int code = rtGetExceptionCode();
