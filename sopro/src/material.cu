@@ -42,7 +42,7 @@ float4 Material::getColor(){
     return this->color;
 }
 
-
+rtDeclareVariable(float3,color,,);
 rtDeclareVariable(PerRayData_radiance,prd_radiance,rtPayload,);
 rtDeclareVariable(PerRayData_shadow,prd_shadow,rtPayload,);
 rtDeclareVariable(optix::Ray ray,rtCurrentRay,);
