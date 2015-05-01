@@ -13,6 +13,17 @@ using namespace optix;
  *
  * generate a new shadow ray if a the ray hits an object
  */
+
+RT_PROGRAM void anyhit_shadow()
+{
+    shadowed();
+}
+
+RT_PROGRAM void closesthit_radiance()
+{
+    shade();
+}
+
 static __device__ void shadowed()
 {
     //create ray from hit to light
@@ -35,7 +46,7 @@ static __device__ void shade()
     PerRayData_shadow shadowPrd;
     shadowPrd.attenuation = make_float3(1);
 
-    float3 hitPoint = ray.origin + intersectionDistance * rayDirection;
+    float3 hitPoint = ray.origin + intersectionDistance * ray.direction;
     float3 shadowDirection = lights[0].pos - hitPoint;
     shadowDirection = normalize(shadowDirection);
 

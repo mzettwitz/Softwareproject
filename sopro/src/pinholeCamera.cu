@@ -1,20 +1,11 @@
 
 #include <optix_world.h>
 #include "../cuda/helpers.h"
+#include "../include/structs.h"
 
 using namespace optix;
 
 //ray from camera to objects, returned payload to buffer
-struct PerRayData_radiance
-{
-    //color
-    float3 result;
-    //not used now
-    float importance;
-    //recursion depth
-    int depth;
-};
-
 
 //camera parameters
 rtDeclareVariable(float3, eye,,);
@@ -23,11 +14,11 @@ rtDeclareVariable(float3,V,,);
 rtDeclareVariable(float3,W,,);
 
 //color for exceptions
-rtDeclareVariable(float3,exceptionColor,,);
+rtDeclareVariable(float4,exceptionColor,,);
 //min distance
 rtDeclareVariable(float,sceneEpsilon,,);
 //output buffer
-rtBuffer<uchar4,2> output_buffer;
+rtBuffer<float4,2> output_buffer;
 // 'head' of Scenetree
 rtDeclareVariable(rtObject, topObject,,);
 //which kind of ray
@@ -54,7 +45,7 @@ RT_PROGRAM void pinholeCamera()
 	
     rtTrace(topObject, ray, prd);
 	//return color to output_buffer for each pixel
-    output_buffer[launchIndex] = make_color(prd.result);
+    output_buffer[launchIndex] = prd.result;
 }
 
 //if exception return excpetionColor as payload
@@ -62,5 +53,5 @@ RT_PROGRAM void exception()
 {
     const unsigned int code = rtGetExceptionCode();
     rtPrintf("Caugt Exception 0x%X at launch index(%d,%d)\n", code, launchIndex.x,launchIndex.y);
-    output_buffer[launchIndex] = make_color(exceptionColor);
+    output_buffer[launchIndex] = exceptionColor;
 }

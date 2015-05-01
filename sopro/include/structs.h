@@ -25,13 +25,14 @@
 
 struct PerRayData_shadow
 {
-    float3 attenuation;
-    int padding;
+    float3 attenuation;     //12
+    int padding;            //16 :)
 };
 
 struct PerRayData_radiance
 {
-    float3 result;
-    float importance;
-    int depth;
+    float4 result;          //16
+    float importance;       //20
+    int depth;              //24
+    float2 padding;         //32
 };

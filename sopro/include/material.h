@@ -20,8 +20,15 @@ rtDeclareVariable(float3,color,,);
 rtDeclareVariable(PerRayData_radiance,prd_radiance,rtPayload,);
 rtDeclareVariable(PerRayData_shadow,prd_shadow,rtPayload,);
 rtDeclareVariable(optix::Ray, ray, rtCurrentRay,);
-rtDeclareVariable(unsigned int, shadowType,,);
+rtDeclareVariable(unsigned int, shadowRayType,,);
+rtDeclareVariable(unsigned int, radianceRayType,,);
 rtDeclareVariable(float, sceneEpsilon,,);
 rtDeclareVariable(rtObject, topShadower,,);
 rtBuffer<BasicLight> lights;
 rtDeclareVariable(float, intersectionDistance, rtIntersectionDistance,);
+
+
+RT_PROGRAM void anyhit_shadow();
+RT_PROGRAM void closesthit_radiance();
+static __device__ void shadowed();
+static __device__ void shade();

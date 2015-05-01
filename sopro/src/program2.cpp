@@ -1,142 +1,121 @@
 /*!
- * \brief Sample2 used in this Scene
+ * \brief program2
+ *
  * Implementation of a Pinhole Camera,
  * Insteaf of using a box and a ground , setup of a cornell box
  * is used
+ *
+ * \fn program2(int argc,char* argv[])
+ *
+ *
+ * \TODO use cppwrapper, refactor
  */
 
 
 #include "../include/program2.h"
 
-char path_to_ptx[512];
+unsigned int width = 800;
+unsigned int height = 600;
 
+using namespace optix;
+/*!
+ * \brief program2
+ *          setup state for Optix
+ *          includes Context, Geometry, Material, Instances
+ *
+ * \param argc
+ * \param argv
+ * \return
+ */
 int program2(int argc,char* argv[])
 {
-
-    RTcontext context;
-    RTbuffer outputBuffer;
-    RTgeometry sphere;
-    RTmaterial material;
-
-    char outfile[512];
-
-    //init glut
     sutilInitGlut(&argc,argv);
 
     //setup state
-    createContext(&context, &outputBuffer);
-    createGeometry(context, &sphere);
-    createMaterial(context, &material);
-    createInstances(context, sphere, material);
+    Context context = createContext();
+    Geometry sphere = createGeometry(context);
+    Material material = createMaterial(context);
+    createInstances(context,sphere,material);
+    //run
+    context->validate();
+    context->compile();
+    context->launch(0,width,height);
+    //displayImage
+    context->checkError(sutilDisplayBufferInGlutWindow(argv[0],context["output_buffer"]->getBuffer()->get()));
+
+    //clean
+    context->destroy();
+
+    return 0;
+
+}
+/*!
+ * \brief ptxPath
+ * \param file name of .cu file
+ * \return path to generated .ptx from .cu file
+ */
+std::string ptxPath(const std::string &file)
+{
+    return std::string(sutilSamplesPtxDir() + "/sopro_generated_" + file + ".ptx");
+}
+
+Context createContext()
+{
+    Context context = Context::create();
+    context->setRayTypeCount(2);
+    context->setEntryPointCount(1);
+
+    context["radianceRayType"]->setUint(0u);
+    context["shadowRayType"]->setUint(1u);
+    context["maxDepth"]->setUint(10u);
+    context["sceneEpsilon"]->setFloat(1.e-5f);
+
+    //Outputbuffer
+    Variable outputBuffer = context["outputBuffer"];
+    Buffer buffer = context->createBuffer(RT_BUFFER_OUTPUT,RT_FORMAT_FLOAT4,width,height);
+    outputBuffer->setBuffer(buffer);
+    //RayGenerationProgram
+    std::string usedPTXPath(ptxPath("pinholeCamera.cu"));
+    Program rayGenerationProgram = context->createProgramFromPTXFile(usedPTXPath,"pinholeCamera");
+    context->setRayGenerationProgram(0,rayGenerationProgram);
+
+    //set Camera
+    float3  eye     = {0.0f,0.0f,5.0f};
+    float3  lookat  = {0.0f,0.0f,0.0f};
+    float3  up      = {0.0f,1.0f,0.0f};
+    float   fov     = 45.0f;
+    float   aspectratio = float(width) /float(height);
+    float3  u,v,w;
+    sutilCalculateCameraVariables(&eye.x,&lookat.x,&up.x,fov,aspectratio,&u.x,&v.x,&w.x);
+
+    context["eye"]->setFloat(eye);
+    context["U"]->setFloat(u);
+    context["V"]->setFloat(v);
+    context["W"]->setFloat(w);
+
+    //ExceptionProgram
+    Program exceptionProgram = context->createProgramFromPTXFile(usedPTXPath,"exception");
+    context->setExceptionProgram(0,exceptionProgram);
+    context["excpetionColor"]->setFloat(1.0f,0.0f,0.0f,1.0f);
+    //MissProgram
+    usedPTXPath(ptxPath("miss.cu"));
+    Program missProgram = context->createProgramFromPTXFile(usedPTXPath,"miss");
+    context->setMissProgram(0,miss);
+    context["missColor"]->setFloat(0.3f,0.5f,0.8f,1.0f);
 
 }
 
-
-void createContext(RTcontext *context, RTbuffer *buffer,uint width, uint height)
+Geometry createGeometry(Context context)
 {
-    //declare variables
-	RTprogram rayGenProgram;
-	RTprogram missProgram;
-	RTbuffer lightBufferObject;
-	RTvariable outputBuffer;
-	RTvariable sceneEpsilon;
-	RTvariable radiance_ray_type;
-	RTvariable shadow_ray_type;
-	RTvariable maxDepth;
-	
-
-	//camera variables
-	RTvariable eye;
-	RTvariable U;
-	RTvariable V;
-	RTvariable W;
-
-	//miss programm
-	RTvariable bgColor; //background color
-
-	//setup
-	RT_CHECK_ERROR( rtContextCreate(context));
-	RT_CHECK_ERROR( rtContextSetRayTypeCount(*context, 1));
-	RT_CHECK_ERROR( rtContextSetEntryPointCount(*context, 1));
-	
-	//declare variables for context
-	RT_CHECK_ERROR( rtContextDeclareVariable(*context, "outputBuffer", &outputBuffer));
-	RT_CHECK_ERROR( rtContextDeclareVariable(*context, "maxDepth", &maxDepth));
-	RT_CHECK_ERROR( rtContextDeclareVariable(*context, "radiance_ray_type",&radiance_ray_type));
-	RT_CHECK_ERROR( rtContextDeclareVariable(*context, "shadow_ray_type", &shadow_ray_type));
-	RT_CHECK_ERROR( rtContextDeclareVariable(*context, "sceneEpsilon", &sceneEpsilon));
-	
-	RT_CHECK_ERROR( rtBufferCreate(*context, RT_OUTPUT_BUFFER, &buffer));
-	RT_CHECK_ERROR( rtBufferSetFormat( *buffer, RT_FORMAT_UNSIGNED_BYTE4));
-	RT_CHECK_ERROR( rtBufferSize2D ( *buffer,width,height));
-	RT_CHECK_ERROR( rtBufferSetObject ( outputBuffe, buffer);
-	
-
-    //setup context
-
-    //setup buffer
-
-    //setup light
-
-    // 'light' buffer
-
-    //set ray generation program
-	sprintf(path_to_ptx, "%s/%s",sutilSamplesPtxDir(),"sopro_generated_pinholeCamera.cu.ptx");
-	RT_CHECK_ERROR(rtProgramCreateFromPTXFile(*context,path_to_ptx,"pinholeCamera",&rayGenProgram));
-	RT_CHECK_ERROR(rtProgramDeclareVariable(rayGenProgram,"eye",&eye));
-	RT_CHECK_ERROR(rtProgramDeclareVariable(rayGenProgram,"U",&U));
-    RT_CHECK_ERROR2(rtProgramDeclareVariable(rayGenProgram,"V",&V));
-    RT_CHECK_ERROR2(rtProgramDeclareVariable(rayGenProgram,"W",&W));
-    RT_CHECK_ERROR2(rtProgramSetVariable(eye,0.0f,5.0f,5.0f));
-    RT_CHECK_ERROR2(rtProgramSetVariable(U,1.0f,0.0f,0.0f));
-    RT_CHECK_ERROR2(rtProgramSetVariable(V,0.0f,1.0f,0.0f));
-    RT_CHECK_ERROR2(rtProgramSetVariable(W,0.0f,0.0f,-1.0f));
-    RT_CHECK_ERROR(rtProgramSetRayGenerationProgram(*context, 0, rayGenProgram));
-    //set miss program
-	sprintf(path_to_ptx, "%s/%s",sutilSamplesPtxDir(),"sopro_generated_miss.cu.ptx");
-    RT_CHECK_ERROR2(rtProgramCreateFromPTXFile(*context,path_to_ptx,"miss",&missProgram));
-    RT_CHECK_ERROR2(rtProgramDeclareVariable(missProgram,"missColor",&bgColor));
-    RT_CHECK_ERROR2(rtVariableSet3f(bgColor,0.3f,0.3f,0.9f));
-    RT_CHECK_ERROR2(rtProgramMissProgram(*context,0,missProgram));
 
 }
 
-
-void createGeometry(RTcontext context, RTgeometry *geom)
+Material createMaterial(Context context)
 {
-    //needed : inersection,boundingbox, min , max
-
-    //create Geometry
-
-    //setup geometry
-
 
 }
 
-
-void createMaterial(RTcontext context, RTmaterial *material)
+void createInstances(Context context, Geometry geometry, Material material)
 {
-    //needed: closesthit, anyhit
-    //set programs for any *material,
-    //in this case , just 1, but for further implementations
-
-}
-
-void createInstances(RTcontext context, RTgeometry geom, RTmaterial material)
-{
-    //setup identitymatrix, push that to specific .h
-
-
-    //create geometry instance from geom and material
-    //set material properties
-
-    //create group to hold instances
-
-    //create acceleration node for group
-
-    //add transformation node
-
-    //place geomInstances under top level object
-
 
 }

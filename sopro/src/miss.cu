@@ -1,16 +1,9 @@
 #include <optix_world.h>
-
+#include "../include/structs.h"
 //color returned if no object hit
-rtDeclareVariable(float3,missColor,,);
+rtDeclareVariable(float4,missColor,,);
 //raypayload for normal rays, see pinholeCamera.cu
-struct PerRayData_radiance
-{	//returning color
-	float3 result;
-	//not used now
-	float importance;
-	//recursionDepth
-	int depth;
-};
+
 /*!
  * declare payload
  */

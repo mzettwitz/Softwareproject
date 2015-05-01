@@ -6,13 +6,15 @@
 #include <stdio.h>
 #include <string.h>
 #include <sutil.h>
+#include <optixu/optixpp_namespace.h>
 
 int program2(int argc, char* argv[]);
+std::string ptxPath(const std::string &file);
 
-void createContext(RTcontext* context, RTbuffer* buffer);
-void createMaterial(RTcontext context, RTmaterial* material);
-void createGeometry(RTcontext context, RTgeometry* geom);
-void createInstances(RTcontext context, RTgeometry geom, RTmaterial material);
+Context createContext();
+Material createMaterial(Context context);
+Geometry createGeometry(Context context);
+void createInstances(Context context, Geometry geometry, Material material);
 
 
 #endif //PROGRAM2_H
