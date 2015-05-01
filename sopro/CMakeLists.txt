@@ -10,7 +10,6 @@ OPTIX_add_sample_executable(sopro
     include/program1.h
     include/program2.h
     include/sopro.h
-    include/shadow.h
     include/material.h
     include/light.h
     
