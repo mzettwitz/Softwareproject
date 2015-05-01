@@ -19,7 +19,7 @@ rtDeclareVariable(PerRayData_radiance,prd_radiance,rtPayload,);
 /*!
  *\brief return missColor, if no object was hit
  */
-RT_PROGRAM miss void()
+RT_PROGRAM void miss ()
 {
 	prd_radiance.result = missColor;
 }

@@ -4,57 +4,48 @@
  *
  */
 
-
-
 #include "../include/material.h"
-
-
 
 using namespace optix;
 
-struct PerRayData_shadow()
-{
-	float3 attenuation;
-};
-
-struct PerRayData_radiance()
-{
-	float3 result;
-	float importance;
-	int depth;
-};
-
-Material::Material(){
-    this->color = make_float4(0,0,0,1);
-}
-
-Material::Material(float4 color){
-    this->color = color;
-}
-
-Material::~Material(){}
-
-void Material::setColor(float4 newColor){
-    this->color = newColor;
-}
-
-float4 Material::getColor(){
-    return this->color;
-}
-
-rtDeclareVariable(float3,color,,);
-rtDeclareVariable(PerRayData_radiance,prd_radiance,rtPayload,);
-rtDeclareVariable(PerRayData_shadow,prd_shadow,rtPayload,);
-rtDeclareVariable(optix::Ray ray,rtCurrentRay,);
-
-
+/*! \fn shadowed
+ * \brief method to generate a shadow
+ *
+ * generate a new shadow ray if a the ray hits an object
+ */
 static __device__ void shadowed()
 {
-	//create ray from hit to light
-	prd_shadow.attenuation = make_float3(0,0,0);
-	rtTerminateRay();
+    //create ray from hit to light
+    prd_shadow.attenuation = make_float3(0,0,0);
+    rtTerminateRay();
 }
 
+
+/*! * \fn shade
+ * \brief shade method ray color
+ * \var shadowPrd shadow ray data
+ * \var hitPoint intersection coords with object
+ * \var shadowDriection 3d vector of the shadow direction
+ * \var shadowRay is a new ray to trace the shadow
+ *
+ * generate color, trace new shadow ray
+ */
 static __device__ void shade()
 {
+    PerRayData_shadow shadowPrd;
+    shadowPrd.attenuation = make_float3(1);
+
+    float3 hitPoint = ray.origin + intersectionDistance * rayDirection;
+    float3 shadowDirection = lights[0].pos - hitPoint;
+    shadowDirection = normalize(shadowDirection);
+
+    Ray shadowRay(hitPoint, shadowDirection,
+                  shadowType, sceneEpsilon);
+
+    //trace new shadow ray
+    rtTrace(topShadower, shadowRay, shadowPrd);
+
+    prd_radiance.result = color*shadowPrd.attenuation;
+
 }
+

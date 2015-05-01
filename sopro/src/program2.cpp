@@ -85,19 +85,19 @@ void createContext(RTcontext *context, RTbuffer *buffer,uint width, uint height)
 	RT_CHECK_ERROR(rtProgramCreateFromPTXFile(*context,path_to_ptx,"pinholeCamera",&rayGenProgram));
 	RT_CHECK_ERROR(rtProgramDeclareVariable(rayGenProgram,"eye",&eye));
 	RT_CHECK_ERROR(rtProgramDeclareVariable(rayGenProgram,"U",&U));
-	RT_CHECK_ERROR(rtProgramDeclareVariable(rayGenProgram,"V",&V));
-	RT_CHECK_ERROR(rtProgramDeclareVariable(rayGenProgram,"W",&W));
-	RT_CHECK_ERROR(rtProgramSetVariable(eye,0.0f,5.0f,5.0f));
-	RT_CHECK_ERROR(rtProgramSetVariable(U,1.0f,0.0f,0.0f));
-	RT_CHECK_ERROR(rtProgramSetVariable(V,0.0f,1.0f,0.0f));
-	RT_CHECK_ERROR(rtProgramSetVariable(W,0.0f,0.0f,-1.0f));
-	RT_CHEKK_ERROR(rtProgramSetRayGenerationProgram(*context, 0, rayGenProgram));
+    RT_CHECK_ERROR2(rtProgramDeclareVariable(rayGenProgram,"V",&V));
+    RT_CHECK_ERROR2(rtProgramDeclareVariable(rayGenProgram,"W",&W));
+    RT_CHECK_ERROR2(rtProgramSetVariable(eye,0.0f,5.0f,5.0f));
+    RT_CHECK_ERROR2(rtProgramSetVariable(U,1.0f,0.0f,0.0f));
+    RT_CHECK_ERROR2(rtProgramSetVariable(V,0.0f,1.0f,0.0f));
+    RT_CHECK_ERROR2(rtProgramSetVariable(W,0.0f,0.0f,-1.0f));
+    RT_CHECK_ERROR(rtProgramSetRayGenerationProgram(*context, 0, rayGenProgram));
     //set miss program
 	sprintf(path_to_ptx, "%s/%s",sutilSamplesPtxDir(),"sopro_generated_miss.cu.ptx");
-	RT_CHECK_ERROR(rtProgramCreateFromPTXFile(*context,path_to_ptx,"miss",&missProgram));
-	RT_CHECK_ERROR(rtProgramDeclareVariable(missProgram,"missColor",&bgColor));
-	RT_CHECK_ERROR(rtVariableSet3f(bgColor,0.3f,0.3f,0.9f));
-	RT_CHECK_ERROR(rtProgramMissProgram(*context,0,missProgram));
+    RT_CHECK_ERROR2(rtProgramCreateFromPTXFile(*context,path_to_ptx,"miss",&missProgram));
+    RT_CHECK_ERROR2(rtProgramDeclareVariable(missProgram,"missColor",&bgColor));
+    RT_CHECK_ERROR2(rtVariableSet3f(bgColor,0.3f,0.3f,0.9f));
+    RT_CHECK_ERROR2(rtProgramMissProgram(*context,0,missProgram));
 
 }
 

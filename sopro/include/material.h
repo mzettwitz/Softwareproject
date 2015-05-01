@@ -1,46 +1,27 @@
 /*! \file material.h
  * \brief A material header file.
- * \author Martin Zettwitz, 2015
+ * \author Martin Zettwitz, Michael Größler, 2015
  *
- * Contains simple basic attritutes.
+ * Contains basic attributes as color for materials and shadowing.
  */
 
 
-/*! \var float4 color
- * \brief Contains RGB-color information in a 4d float vector.
- *
- * RGB + alpha value
- */
-
-/*! \fn Material()
- * \brief Advanced CTor with \param color as argument.
- * \return Instance of \class Material.
- */
-
-/*! \fn void setColor(float4 newColor)
- * \brief  Simple setter for \var color to set new color Information.
- * \param newColor The new color to be set.
- */
-
-/*! \fn float4 setColor()
- * \brief Simple getter for \var color.
- * \return float4 color information about the material.
- */
 
 #pragma once
 
 #include <../cuda/commonStructs.h>
+#include "../include/structs.h"
+#include "optix.h"
+#include "optixu/optixu_math_namespace.h"
 
 using namespace optix;
 
-class Material {
-private:
-    float4 color;
-
-public:
-    Material();
-    Material(float4 color);
-    ~Material();
-    void setColor(float4 newColor);
-    float4 getColor();
-};
+rtDeclareVariable(float3,color,,);
+rtDeclareVariable(PerRayData_radiance,prd_radiance,rtPayload,);
+rtDeclareVariable(PerRayData_shadow,prd_shadow,rtPayload,);
+rtDeclareVariable(optix::Ray, ray, rtCurrentRay,);
+rtDeclareVariable(unsigned int, shadowType,,);
+rtDeclareVariable(float, sceneEpsilon,,);
+rtDeclareVariable(rtObject, topShadower,,);
+rtBuffer<BasicLight> lights;
+rtDeclareVariable(float, intersectionDistance, rtIntersectionDistance,);
