@@ -4,7 +4,6 @@ OPTIX_add_sample_executable(sopro
     src/pinholeCamera.cu
     src/light.cu
     src/material.cu
-    src/shadow.cu
     src/program1.cpp
     src/program2.cpp
     src/miss.cu
