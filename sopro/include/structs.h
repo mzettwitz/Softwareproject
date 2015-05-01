@@ -34,5 +34,5 @@ struct PerRayData_radiance
     float4 result;          //16
     float importance;       //20
     int depth;              //24
-    float2 padding;         //32
+    float2 padding;         //32 :)
 };

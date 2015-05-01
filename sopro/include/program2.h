@@ -6,7 +6,11 @@
 #include <stdio.h>
 #include <string.h>
 #include <sutil.h>
+#include <cstdlib>
+#include <iostream>
 #include <optixu/optixpp_namespace.h>
+
+using namespace optix;
 
 int program2(int argc, char* argv[]);
 std::string ptxPath(const std::string &file);

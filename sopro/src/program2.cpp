@@ -56,7 +56,7 @@ int program2(int argc,char* argv[])
  */
 std::string ptxPath(const std::string &file)
 {
-    return std::string(sutilSamplesPtxDir() + "/sopro_generated_" + file + ".ptx");
+    return std::string(sutilSamplesPtxDir()) + "/sopro_generated_" + file + ".ptx";
 }
 
 Context createContext()
@@ -98,9 +98,9 @@ Context createContext()
     context->setExceptionProgram(0,exceptionProgram);
     context["excpetionColor"]->setFloat(1.0f,0.0f,0.0f,1.0f);
     //MissProgram
-    usedPTXPath(ptxPath("miss.cu"));
+    usedPTXPath = ptxPath("miss.cu");
     Program missProgram = context->createProgramFromPTXFile(usedPTXPath,"miss");
-    context->setMissProgram(0,miss);
+    context->setMissProgram(0,missProgram);
     context["missColor"]->setFloat(0.3f,0.5f,0.8f,1.0f);
 
 }

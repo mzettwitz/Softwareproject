@@ -27,7 +27,7 @@ RT_PROGRAM void closesthit_radiance()
 static __device__ void shadowed()
 {
     //create ray from hit to light
-    prd_shadow.attenuation = make_float3(0,0,0);
+    prd_shadow.attenuation = make_float3(0.0f);
     rtTerminateRay();
 }
 
@@ -44,19 +44,25 @@ static __device__ void shadowed()
 static __device__ void shade()
 {
     PerRayData_shadow shadowPrd;
-    shadowPrd.attenuation = make_float3(1);
+    shadowPrd.attenuation = make_float3(1.0f);
 
     float3 hitPoint = ray.origin + intersectionDistance * ray.direction;
     float3 shadowDirection = lights[0].pos - hitPoint;
     shadowDirection = normalize(shadowDirection);
 
     Ray shadowRay(hitPoint, shadowDirection,
-                  shadowType, sceneEpsilon);
+                  shadowRayType, sceneEpsilon);
 
     //trace new shadow ray
     rtTrace(topShadower, shadowRay, shadowPrd);
-
-    prd_radiance.result = color*shadowPrd.attenuation;
+    if(fmaxf(shadowPrd.attenuation) > 0.0f)
+    {
+        prd_radiance.result = make_float4(color,1.f);
+    }
+    else
+    {
+        prd_radiance.result = make_float4(0.0f,0.0f,0.0f,1.0f);
+    }
 
 }
 
