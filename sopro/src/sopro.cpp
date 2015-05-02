@@ -1,6 +1,6 @@
 /*!
- * \brief Mainentrypoint of the Raytracing system
- *  Choose between different Scenes, further description
+ * \brief Main entrypoint of the Raytracing system
+ *  Choose between different scenes, further description
  *  found in their specific programs
  *
  * \note just add programs here

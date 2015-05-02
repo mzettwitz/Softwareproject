@@ -1,12 +1,9 @@
 /*!
- * \brief program2
+ * \brief program2 setup
  *
  * Implementation of a Pinhole Camera,
- * Insteaf of using a box and a ground , setup of a cornell box
+ * Instead of using a box and a ground , setup of a cornell box
  * is used
- *
- * \fn program2(int argc,char* argv[])
- *
  *
  * \TODO use cppwrapper, refactor
  */
@@ -18,7 +15,7 @@ unsigned int width = 800;
 unsigned int height = 600;
 
 using namespace optix;
-/*!
+/*! \fn program2(int argc,char* argv[])
  * \brief program2
  *          setup state for Optix
  *          includes Context, Geometry, Material, Instances
