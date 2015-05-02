@@ -103,11 +103,19 @@ Context createContext()
     context->setMissProgram(0,missProgram);
     context["missColor"]->setFloat(0.3f,0.5f,0.8f,1.0f);
 
+    return context;
+
 }
 
 Geometry createGeometry(Context context)
 {
-
+    std::string usedPTXpath(ptxPath(sphere.cu));
+    Geometry sphere = context->createGeometry();
+    sphere->setPrimitiveCount(1);
+    sphere->setBoundingBoxProgram(context->createProgramFromPTXFile(usedPTXpath,"sphereBounds"));
+    sphere->setIntersectionProgram(context->createProgramFromPTXFile(usedPTXpath,"sphereIntersect"));
+    //coordinates(x,y,z,r)
+    sphere["coordinates"]->setFloat(0.0f,0.0f,0.0f,1.0f);
 }
 
 Material createMaterial(Context context)

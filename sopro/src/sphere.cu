@@ -5,18 +5,47 @@
 
 using namespace optix;
 
-rtDeclareVariable(float3, sphereMin,,);
-rtDeclareVariable(float3, sphereMax,,);
+rtDeclareVariable(float4, coordinates,,);
 rtDeclareVariable(optix::Ray, ray,currentRay,);
-rtDeclareVariable(float3,geometricNormal, attribute geometric_normal,);
-rtDeclareVariable(float3,shadingNormal, attribute shading_normal,);
 
-RT_PROGRAM void sphereIntersect(int)
+RT_PROGRAM void sphereIntersect(int primIdx)
 {
-	//solve quadratic equation
+    float3 c = make_float3(coordinates);
+    float3 o = ray.origin - center;
+    float3 d = ray.direction;
+    float radius = sphere.w;
+
+    float b = dot(o,d);
+    float c = dot(o,o) - radius * radius;
+    float discriminant = b*b - c;
+
+    if(discriminant > 0.0f)
+    {
+
+        discrimant = sqrtf(discriminant);
+        float lambda1 = -b-discriminant;
+        float lambda2 = -b-discriminant;
+
+
+    }
 }
 
-RT_PROGRAM void sphereBounds(int, float center, float radius)
+RT_PROGRAM void sphereBounds(float result[6])
 {
 	//use aabb
+
+    float3 c = make_float3(coordinates);
+    float3 r = sphere.w;
+
+    Aabb aabb = (Aabb*)result;
+
+    if(r > 0.0f && !isinf(r))
+    {
+        aabb->m_min = c - r;
+        aabb->m_max = c + r;
+    }
+    else
+    {
+        aabb->invalidate();
+    }
 }
