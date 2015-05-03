@@ -51,11 +51,11 @@ static __device__ void shade()
 
     float3 hitPoint = ray.origin + intersectionDistance * ray.direction;
     float3 shadowDirection = normalize(lights[0].pos - hitPoint);
-    shadowDirection = normalize(shadowDirection);
+    hitPoint = hitPoint + sceneEpsilon * shadowDirection;
     float maxLambda = length(lights[0].pos - hitPoint);
 
     Ray shadowRay = make_Ray(hitPoint, shadowDirection,
-                  shadowRayType, sceneEpsilon,maxLambda);
+                  shadowRayType, sceneEpsilon,2 * maxLambda);
 
     //trace new shadow ray
     rtTrace(topShadower, shadowRay, shadowPrd);

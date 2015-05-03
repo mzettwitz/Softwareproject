@@ -30,7 +30,7 @@ RT_PROGRAM void sphereIntersect(int primIdx)
         float lambda1 = -b-discriminant;
         float lambda2 = -b+discriminant;
 
-        if(lambda1 < lambda2)
+        if(lambda1 < lambda2 && lambda1 > 0.0f)
         {
             if(rtPotentialIntersection(lambda1))
             {
@@ -39,9 +39,12 @@ RT_PROGRAM void sphereIntersect(int primIdx)
         }
         else
         {
-            if(rtPotentialIntersection(lambda2))
+            if(lambda2 > 0.0f)
             {
+               if(rtPotentialIntersection(lambda2))
+               {
                     rtReportIntersection(0);
+               }
             }
         }
     }

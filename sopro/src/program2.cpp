@@ -73,7 +73,7 @@ Context createContext()
     context["radianceRayType"]->setUint(0u);
     context["shadowRayType"]->setUint(1u);
     context["maxDepth"]->setUint(10u);
-    context["sceneEpsilon"]->setFloat(1.e-5f);
+    context["sceneEpsilon"]->setFloat(1.e-3f);
 
     //set Light(s)
     BasicLight light;
