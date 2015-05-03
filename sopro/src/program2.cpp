@@ -15,6 +15,7 @@ unsigned int width = 800;
 unsigned int height = 600;
 
 using namespace optix;
+
 /*! \fn program2(int argc,char* argv[])
  * \brief program2
  *          setup state for Optix
@@ -26,8 +27,10 @@ using namespace optix;
  */
 int program2(int argc,char* argv[])
 {
-    sutilInitGlut(&argc,argv);
+    RT_CHECK_ERROR_NO_CONTEXT(sutilInitGlut(&argc,argv));
 
+  //  try
+  //  {
     //setup state
     Context context = createContext();
     Geometry sphere = createGeometry(context);
@@ -38,10 +41,15 @@ int program2(int argc,char* argv[])
     context->compile();
     context->launch(0,width,height);
     //displayImage
-    context->checkError(sutilDisplayBufferInGlutWindow(argv[0],context["output_buffer"]->getBuffer()->get()));
+    context->checkError(sutilDisplayBufferInGlutWindow(argv[0],context["outputBuffer"]->getBuffer()->get()));
 
     //clean
     context->destroy();
+   /* } catch( Exception &e)
+    {
+        sutilReportError(e.getErrorString().c_str());
+        exit(1);
+    }*/
 
     return 0;
 
@@ -67,6 +75,8 @@ Context createContext()
     context["maxDepth"]->setUint(10u);
     context["sceneEpsilon"]->setFloat(1.e-5f);
 
+    //set Light(s)
+
     //Outputbuffer
     Variable outputBuffer = context["outputBuffer"];
     Buffer buffer = context->createBuffer(RT_BUFFER_OUTPUT,RT_FORMAT_FLOAT4,width,height);
@@ -77,7 +87,7 @@ Context createContext()
     context->setRayGenerationProgram(0,rayGenerationProgram);
 
     //set Camera
-    float3  eye     = {0.0f,0.0f,5.0f};
+    float3  eye     = {5.0f,0.0f,5.0f};
     float3  lookat  = {0.0f,0.0f,0.0f};
     float3  up      = {0.0f,1.0f,0.0f};
     float   fov     = 45.0f;
@@ -106,21 +116,38 @@ Context createContext()
 
 Geometry createGeometry(Context context)
 {
-    std::string usedPTXpath(ptxPath(sphere.cu));
+    std::string usedPTXpath(ptxPath("sphere.cu"));
     Geometry sphere = context->createGeometry();
     sphere->setPrimitiveCount(1);
     sphere->setBoundingBoxProgram(context->createProgramFromPTXFile(usedPTXpath,"sphereBounds"));
     sphere->setIntersectionProgram(context->createProgramFromPTXFile(usedPTXpath,"sphereIntersect"));
     //coordinates(x,y,z,r)
     sphere["coordinates"]->setFloat(0.0f,0.0f,0.0f,1.0f);
+    return sphere;
 }
 
 Material createMaterial(Context context)
 {
-
+    std::string usedPTXpath(ptxPath("material.cu"));
+    Material material = context->createMaterial();
+    material->setAnyHitProgram(1,context->createProgramFromPTXFile(usedPTXpath,"anyhit_shadow"));
+    material->setClosestHitProgram(0,context->createProgramFromPTXFile(usedPTXpath,"closesthit_radiance"));
+    material["color"]->setFloat(0.8f,0.4f,0.1f);
+    return material;
 }
 
 void createInstances(Context context, Geometry geometry, Material material)
 {
+    GeometryInstance gi = context->createGeometryInstance();
+    gi->setMaterialCount(1);
+    gi->setGeometry(geometry);
+    gi->setMaterial(0,material);
 
+    GeometryGroup gg = context->createGeometryGroup();
+    gg->setChildCount(1);
+    gg->setChild(0,gi);
+    gg->setAcceleration(context->createAcceleration("NoAccel","NoAccel"));
+
+    context["topObject"]->set(gg);
+    context["topShadower"]->set(gg);
 }

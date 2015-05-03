@@ -10,7 +10,7 @@
 
 int main(int argc, char* argv[])
 {
-  size_t program = 1;
+  size_t program = 2;
   int res = 0;
 
 

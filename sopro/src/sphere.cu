@@ -11,22 +11,35 @@ rtDeclareVariable(optix::Ray, ray,currentRay,);
 RT_PROGRAM void sphereIntersect(int primIdx)
 {
     float3 c = make_float3(coordinates);
-    float3 o = ray.origin - center;
+    float3 o = ray.origin - c;
     float3 d = ray.direction;
-    float radius = sphere.w;
+    float radius = coordinates.w;
 
     float b = dot(o,d);
-    float c = dot(o,o) - radius * radius;
-    float discriminant = b*b - c;
+    float e = dot(o,o) - radius * radius;
+    float discriminant = b*b - e;
 
     if(discriminant > 0.0f)
     {
 
-        discrimant = sqrtf(discriminant);
+        discriminant = sqrtf(discriminant);
         float lambda1 = -b-discriminant;
         float lambda2 = -b-discriminant;
 
-
+        if(lambda1 < lambda2)
+        {
+            if(rtPotentialIntersection(lambda1))
+            {
+                rtReportIntersection(0);
+            }
+        }
+        else
+        {
+            if(rtPotentialIntersection(lambda2))
+            {
+                    rtReportIntersection(0);
+            }
+        }
     }
 }
 
@@ -35,11 +48,11 @@ RT_PROGRAM void sphereBounds(float result[6])
 	//use aabb
 
     float3 c = make_float3(coordinates);
-    float3 r = sphere.w;
+    float3 r = make_float3(coordinates.w);
 
-    Aabb aabb = (Aabb*)result;
+    Aabb* aabb = (Aabb*)result;
 
-    if(r > 0.0f && !isinf(r))
+    if(r.x > 0.0f && !isinf(r.x))
     {
         aabb->m_min = c - r;
         aabb->m_max = c + r;
