@@ -29,8 +29,8 @@ int program2(int argc,char* argv[])
 {
     RT_CHECK_ERROR_NO_CONTEXT(sutilInitGlut(&argc,argv));
 
-  //  try
-  //  {
+//    try
+//    {
     //setup state
     Context context = createContext();
     Geometry sphere = createGeometry(context);
@@ -45,7 +45,7 @@ int program2(int argc,char* argv[])
 
     //clean
     context->destroy();
-   /* } catch( Exception &e)
+/*    } catch( Exception &e)
     {
         sutilReportError(e.getErrorString().c_str());
         exit(1);
@@ -76,6 +76,18 @@ Context createContext()
     context["sceneEpsilon"]->setFloat(1.e-5f);
 
     //set Light(s)
+    BasicLight light;
+    light.color = make_float3(0.8f,0.8f,0.8f);
+    light.pos = make_float3(10.f,10.f,-10.f);
+
+
+    Buffer lightBuffer = context->createBuffer(RT_BUFFER_INPUT,RT_FORMAT_USER,width,height);
+    lightBuffer->setElementSize(sizeof(BasicLight));
+    lightBuffer->setSize(1);
+    memcpy(lightBuffer->map(),&light,sizeof(light));
+    lightBuffer->unmap();
+
+    context["lights"]->set(lightBuffer);
 
     //Outputbuffer
     Variable outputBuffer = context["outputBuffer"];

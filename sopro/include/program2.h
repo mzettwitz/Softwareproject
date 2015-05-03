@@ -9,6 +9,8 @@
 #include <cstdlib>
 #include <iostream>
 #include <optixu/optixpp_namespace.h>
+#include <../cuda/commonStructs.h>
+#include <optixu/optixu_math_namespace.h>
 
 using namespace optix;
 

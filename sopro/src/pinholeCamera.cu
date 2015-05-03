@@ -18,13 +18,13 @@ rtDeclareVariable(float4,exceptionColor,,);
 //min distance
 rtDeclareVariable(float,sceneEpsilon,,);
 //output buffer
-rtBuffer<float4,2> output_buffer;
+rtBuffer<float4,2> outputBuffer;
 // 'head' of Scenetree
 rtDeclareVariable(rtObject, topObject,,);
 //which kind of ray
 rtDeclareVariable(unsigned int, radiance_ray_type,,);
 //output image size
-rtDeclareVariable(uint2, launchIndex, rtLauchindex,);
+rtDeclareVariable(uint2, launchIndex, rtLaunchIndex,);
 rtDeclareVariable(uint2, launchDim, rtLaunchDim,);
 
 
@@ -44,8 +44,8 @@ RT_PROGRAM void pinholeCamera()
     prd.depth = 0;
 	
     rtTrace(topObject, ray, prd);
-	//return color to output_buffer for each pixel
-    output_buffer[launchIndex] = prd.result;
+    //return color to outputBuffer for each pixel
+    outputBuffer[launchIndex] = prd.result;
 }
 
 //if exception return excpetionColor as payload
@@ -53,5 +53,5 @@ RT_PROGRAM void exception()
 {
     const unsigned int code = rtGetExceptionCode();
     rtPrintf("Caugt Exception 0x%X at launch index(%d,%d)\n", code, launchIndex.x,launchIndex.y);
-    output_buffer[launchIndex] = exceptionColor;
+    outputBuffer[launchIndex] = exceptionColor;
 }

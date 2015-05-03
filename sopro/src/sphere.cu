@@ -6,7 +6,7 @@
 using namespace optix;
 
 rtDeclareVariable(float4, coordinates,,);
-rtDeclareVariable(optix::Ray, ray,currentRay,);
+rtDeclareVariable(optix::Ray, ray,rtCurrentRay,);
 
 RT_PROGRAM void sphereIntersect(int primIdx)
 {
@@ -43,7 +43,7 @@ RT_PROGRAM void sphereIntersect(int primIdx)
     }
 }
 
-RT_PROGRAM void sphereBounds(float result[6])
+RT_PROGRAM void sphereBounds(int,float result[6])
 {
 	//use aabb
 
