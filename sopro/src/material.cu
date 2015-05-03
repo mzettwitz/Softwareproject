@@ -50,17 +50,18 @@ static __device__ void shade()
     shadowPrd.attenuation = make_float3(1.0f);
 
     float3 hitPoint = ray.origin + intersectionDistance * ray.direction;
-    float3 shadowDirection = lights[0].pos - hitPoint;
+    float3 shadowDirection = normalize(lights[0].pos - hitPoint);
     shadowDirection = normalize(shadowDirection);
+    float maxLambda = length(lights[0].pos - hitPoint);
 
-    Ray shadowRay(hitPoint, shadowDirection,
-                  shadowRayType, sceneEpsilon);
+    Ray shadowRay = make_Ray(hitPoint, shadowDirection,
+                  shadowRayType, sceneEpsilon,maxLambda);
 
     //trace new shadow ray
     rtTrace(topShadower, shadowRay, shadowPrd);
     if(fmaxf(shadowPrd.attenuation) > 0.0f)
     {
-        prd_radiance.result = make_float4(color,1.f);
+        prd_radiance.result = make_float4(color,1.f) * make_float4(lights[0].color,1.f);
     }
     else
     {

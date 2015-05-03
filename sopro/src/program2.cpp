@@ -77,8 +77,10 @@ Context createContext()
 
     //set Light(s)
     BasicLight light;
-    light.color = make_float3(0.8f,0.8f,0.8f);
-    light.pos = make_float3(10.f,10.f,-10.f);
+    light.color = make_float3(1.0f,1.0f,1.0f);
+    light.pos = make_float3(100.f,100.f,-40.f);
+    light.casts_shadow = 1;
+    light.padding = 0;
 
 
     Buffer lightBuffer = context->createBuffer(RT_BUFFER_INPUT,RT_FORMAT_USER,width,height);
