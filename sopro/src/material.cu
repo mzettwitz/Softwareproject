@@ -8,11 +8,6 @@
 
 using namespace optix;
 
-/*! \fn shadowed
- * \brief method to generate a shadow
- *
- * generate a new shadow ray if a the ray hits an object
- */
 
 RT_PROGRAM void anyhit_shadow()
 {
@@ -24,6 +19,13 @@ RT_PROGRAM void closesthit_radiance()
     shade();
 }
 
+
+/*! \fn shadowed
+ * \brief method to generate a shadow
+ *
+ * Generate a new shadow ray if a the incoming ray hits an object
+ */
+
 static __device__ void shadowed()
 {
     //create ray from hit to light
@@ -33,14 +35,15 @@ static __device__ void shadowed()
 
 
 /*! * \fn shade
- * \brief shade method ray color
- * \var shadowPrd shadow ray data
- * \var hitPoint intersection coords with object
+ * \brief shade method for ray color
+ * \var shadowPrd Shadow ray data (attenuation)
+ * \var hitPoint Intersection coords with object
  * \var shadowDriection 3d vector of the shadow direction
- * \var shadowRay is a new ray to trace the shadow
+ * \var shadowRay New ray to trace the shadow
  *
  * generate color, trace new shadow ray
  */
+
 static __device__ void shade()
 {
     PerRayData_shadow shadowPrd;

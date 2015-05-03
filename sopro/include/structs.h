@@ -5,6 +5,12 @@
  * Contains simple structs that are used in the whole project
  */
 
+
+#pragma once
+
+#include <../cuda/commonStructs.h>
+
+
 /*! * \struct PerRayData_shadow
  *
  * \brief ShadowRays
@@ -12,22 +18,18 @@
  * Contains Optix information about attenuation/occlusion of a shadow ray.
  */
 
+struct PerRayData_shadow
+{
+    float3 attenuation;     //12
+    int padding;            //16 :)
+};
+
 /*! * \struct PerRayData_radiance
  *
  * \brief Color of basic ray
  *
  * Contains information about the returned color of a basic ray.
  */
-
-#pragma once
-
-#include <../cuda/commonStructs.h>
-
-struct PerRayData_shadow
-{
-    float3 attenuation;     //12
-    int padding;            //16 :)
-};
 
 struct PerRayData_radiance
 {

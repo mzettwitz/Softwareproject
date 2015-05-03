@@ -1,7 +1,7 @@
 /*!
  *\brief Entrypoint used for Program1
- * just returns Color given to GPU back to every Pixel
-
+ *
+ * Just returns color given to GPU back to every pixel
  */
 
 #include <optix.h>
@@ -10,9 +10,9 @@
 using namespace optix;
 
 rtDeclareVariable(uint2, launch_index, rtLaunchIndex, );
-rtBuffer<float4, 2>   result_buffer;
+rtBuffer<float4, 2> result_buffer;
 
-rtDeclareVariable(float4,                color, , );
+rtDeclareVariable(float4, color, , );
 
 RT_PROGRAM void drawColor()
 {
