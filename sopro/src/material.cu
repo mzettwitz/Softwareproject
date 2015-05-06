@@ -48,25 +48,30 @@ static __device__ void shade()
 {
     PerRayData_shadow shadowPrd;
     shadowPrd.attenuation = make_float3(1.0f);
-
-    float3 hitPoint = ray.origin + intersectionDistance * ray.direction;
-    float3 shadowDirection = normalize(lights[0].pos - hitPoint);
-    hitPoint = hitPoint + sceneEpsilon * shadowDirection;
-    float maxLambda = length(lights[0].pos - hitPoint);
-
-    Ray shadowRay = make_Ray(hitPoint, shadowDirection,
-                  shadowRayType, sceneEpsilon,maxLambda);
-
-    //trace new shadow ray
-    rtTrace(topShadower, shadowRay, shadowPrd);
-    if(fmaxf(shadowPrd.attenuation) > 0.0f)
+    float4 result = make_float4(0.0f,0.0f,0.0f,1.0f);
+    for(unsigned int i = 0;i < lights.size();++i)
     {
-        prd_radiance.result = make_float4(color,1.f) * make_float4(lights[0].color,1.f);
-    }
-    else
-    {
-        prd_radiance.result = make_float4(0.0f,0.0f,0.0f,1.0f);
-    }
 
+        float3 hitPoint = ray.origin + intersectionDistance * ray.direction;
+        float3 shadowDirection = normalize(lights[i].pos - hitPoint);
+        hitPoint = hitPoint + sceneEpsilon * shadowDirection;
+        float maxLambda = length(lights[i].pos - hitPoint);
+
+        Ray shadowRay = make_Ray(hitPoint, shadowDirection,
+                                 shadowRayType, sceneEpsilon,maxLambda);
+
+        //trace new shadow ray
+        rtTrace(topShadower, shadowRay, shadowPrd);
+        if(fmaxf(shadowPrd.attenuation) > 0.0f)
+        {
+            result += make_float4(color,1.f) * make_float4(lights[i].color,1.f);
+        }
+        else
+        {
+            result += make_float4(0.0f,0.0f,0.0f,1.0f);
+        }
+    }
+    result.w = 1.0f;
+    prd_radiance.result = result;
 }
 

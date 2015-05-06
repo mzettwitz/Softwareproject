@@ -10,6 +10,7 @@
 
 
 #include "../include/program2.h"
+#include <limits>
 
 unsigned int width = 800;
 unsigned int height = 600;
@@ -29,13 +30,28 @@ int program2(int argc,char* argv[])
 {
     RT_CHECK_ERROR_NO_CONTEXT(sutilInitGlut(&argc,argv));
 
-//    try
-//    {
+    try
+    {
     //setup state
     Context context = createContext();
-    Geometry sphere = createGeometry(context);
-    Material material = createMaterial(context);
-    createInstances(context,sphere,material);
+
+    //create sphere
+    Geometry sphere = createSphereGeometry(context);
+    Material material = createSphereMaterial(context);
+
+
+    //create groundplane
+    Geometry plane = createPlaneGeometry(context);
+    Material material2 = createPlaneMaterial(context);
+
+    std::vector<Geometry> geom;
+    geom.push_back(sphere);
+    geom.push_back(plane);
+
+    std::vector<Material> mat;
+    mat.push_back(material);
+    mat.push_back(material2);
+    createInstances(context,geom,mat);
     //run
     context->validate();
     context->compile();
@@ -45,11 +61,11 @@ int program2(int argc,char* argv[])
 
     //clean
     context->destroy();
-/*    } catch( Exception &e)
+    } catch( Exception &e)
     {
         sutilReportError(e.getErrorString().c_str());
         exit(1);
-    }*/
+    }
 
     return 0;
 
@@ -73,14 +89,17 @@ Context createContext()
     context["radianceRayType"]->setUint(0u);
     context["shadowRayType"]->setUint(1u);
     context["maxDepth"]->setUint(10u);
-    context["sceneEpsilon"]->setFloat(1.e-4f);
+    context["sceneEpsilon"]->setFloat(1.e-3f);
 
     //set Light(s)
     BasicLight light;
+
     light.color = make_float3(1.0f,1.0f,1.0f);
     light.pos = make_float3(100.f,100.f,-40.f);
     light.casts_shadow = 1;
     light.padding = 0;
+
+
 
 
     Buffer lightBuffer = context->createBuffer(RT_BUFFER_INPUT,RT_FORMAT_USER,width,height);
@@ -101,7 +120,7 @@ Context createContext()
     context->setRayGenerationProgram(0,rayGenerationProgram);
 
     //set Camera
-    float3  eye     = {5.0f,0.0f,5.0f};
+    float3  eye     = {7.0f,1.0f,7.0f};
     float3  lookat  = {0.0f,0.0f,0.0f};
     float3  up      = {0.0f,1.0f,0.0f};
     float   fov     = 45.0f;
@@ -128,7 +147,7 @@ Context createContext()
 
 }
 
-Geometry createGeometry(Context context)
+Geometry createSphereGeometry(Context context)
 {
     std::string usedPTXpath(ptxPath("sphere.cu"));
     Geometry sphere = context->createGeometry();
@@ -136,11 +155,23 @@ Geometry createGeometry(Context context)
     sphere->setBoundingBoxProgram(context->createProgramFromPTXFile(usedPTXpath,"sphereBounds"));
     sphere->setIntersectionProgram(context->createProgramFromPTXFile(usedPTXpath,"sphereIntersect"));
     //coordinates(x,y,z,r)
-    sphere["coordinates"]->setFloat(0.0f,0.0f,0.0f,1.0f);
+    sphere["coordinates"]->setFloat(0.0f,1.0f,0.0f,1.0f);
     return sphere;
 }
 
-Material createMaterial(Context context)
+Geometry createPlaneGeometry(Context context)
+{
+    std::string usedPTXpath(ptxPath("groundplane.cu"));
+    Geometry plane = context->createGeometry();
+    plane->setPrimitiveCount(1);
+    plane->setBoundingBoxProgram(context->createProgramFromPTXFile(usedPTXpath,"groundPlaneBB"));
+    plane->setIntersectionProgram(context->createProgramFromPTXFile(usedPTXpath,"groundPlaneIntersect"));
+    //height
+    plane["height"]->setFloat(std::numeric_limits<float>::min(),0.0f,std::numeric_limits<float>::max());
+    return plane;
+}
+
+Material createSphereMaterial(Context context)
 {
     std::string usedPTXpath(ptxPath("material.cu"));
     Material material = context->createMaterial();
@@ -150,18 +181,30 @@ Material createMaterial(Context context)
     return material;
 }
 
-void createInstances(Context context, Geometry geometry, Material material)
+Material createPlaneMaterial(Context context)
 {
-    GeometryInstance gi = context->createGeometryInstance();
-    gi->setMaterialCount(1);
-    gi->setGeometry(geometry);
-    gi->setMaterial(0,material);
+    std::string usedPTXpath(ptxPath("material.cu"));
+    Material material = context->createMaterial();
+    material->setAnyHitProgram(1,context->createProgramFromPTXFile(usedPTXpath,"anyhit_shadow"));
+    material->setClosestHitProgram(0,context->createProgramFromPTXFile(usedPTXpath,"closesthit_radiance"));
+    material["color"]->setFloat(0.1f,0.4f,0.3f);
+    return material;
+}
 
+void createInstances(Context context, std::vector<Geometry> geometry, std::vector<Material> material)
+{
     GeometryGroup gg = context->createGeometryGroup();
-    gg->setChildCount(1);
-    gg->setChild(0,gi);
-    gg->setAcceleration(context->createAcceleration("NoAccel","NoAccel"));
+    gg->setChildCount(geometry.size());
 
+    for(unsigned int i = 0;i < geometry.size();++i)
+    {
+        GeometryInstance gi = context->createGeometryInstance();
+        gi->setMaterialCount(1);
+        gi->setGeometry(geometry.at(i));
+        gi->setMaterial(0,material.at(i));
+        gg->setChild(i,gi);
+    }
+    gg->setAcceleration(context->createAcceleration("NoAccel","NoAccel"));
     context["topObject"]->set(gg);
     context["topShadower"]->set(gg);
 }

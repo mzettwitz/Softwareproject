@@ -8,6 +8,7 @@ OPTIX_add_sample_executable(sopro
     src/program2.cpp
     src/miss.cu
     src/sphere.cu
+    src/groundplane.cu   
 
     include/program1.h
     include/program2.h

@@ -6,7 +6,7 @@
 using namespace optix;
 
 rtDeclareVariable(float4, coordinates,,);
-rtDeclareVariable(optix::Ray, ray,rtCurrentRay,);
+rtDeclareVariable(Ray, ray,rtCurrentRay,);
 
 RT_PROGRAM void sphereIntersect(int primIdx)
 {
