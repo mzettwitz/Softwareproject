@@ -55,7 +55,7 @@ static __device__ void shade()
     float maxLambda = length(lights[0].pos - hitPoint);
 
     Ray shadowRay = make_Ray(hitPoint, shadowDirection,
-                  shadowRayType, sceneEpsilon,2 * maxLambda);
+                  shadowRayType, sceneEpsilon,maxLambda);
 
     //trace new shadow ray
     rtTrace(topShadower, shadowRay, shadowPrd);
