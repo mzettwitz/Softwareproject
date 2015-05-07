@@ -1,20 +1,39 @@
 OPTIX_add_sample_executable(sopro 
-    src/sopro.cpp
-    src/entrypoint.cu
-    src/pinholeCamera.cu
-    src/light.cu
-    src/material.cu
-    src/program1.cpp
-    src/program2.cpp
-    src/miss.cu
-    src/sphere.cu
-    src/groundplane.cu   
-
-    include/program1.h
-    include/program2.h
-    include/sopro.h
-    include/material.h
-    include/light.h
-    include/structs.h
     
+	src/sopro.cpp
+	src/program1.cpp
+	src/program2.cpp
+	src/baseMaterial.cpp
+	src/plainColorMaterial.cpp
+
+	src/pinholeCamera.cu
+	src/miss.cu
+	src/entrypoint.cu
+	src/plainColorMaterial.cu
+	
+	src/geometry/baseGeometry.cpp
+	src/geometry/basePlane.cpp
+	src/geometry/areaPlane.cpp
+	src/geometry/infinitePlane.cpp
+	src/geometry/mesh.cpp
+	src/geometry/sphere.cpp
+
+	src/geometry/infinitePlane.cu
+	src/geometry/areaPlane.cu
+	src/geometry/sphere.cu
+
+	include/sopro.h
+	include/program1.h
+	include/program2.h
+	include/structs.h
+	include/baseMaterial.h
+	include/light.h
+	include/plainColorMaterial.h
+	
+	include/geometry/baseGeometry.h
+	include/geometry/basePlane.h
+	include/geometry/areaPlane.h
+	include/geometry/infinitePlane.h
+	include/geometry/mesh.h
+	include/geometry/sphere.h 
 )

@@ -12,6 +12,12 @@
 #include <../cuda/commonStructs.h>
 #include <optixu/optixu_math_namespace.h>
 #include <vector>
+
+#include "../include/plainColorMaterial.h"
+#include "../include/geometry/infinitePlane.h"
+#include "../include/geometry/sphere.h"
+
+
 using namespace optix;
 
 int program2(int argc, char* argv[]);

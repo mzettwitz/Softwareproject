@@ -35,24 +35,29 @@ int program2(int argc,char* argv[])
     //setup state
     Context context = createContext();
 
+        std::vector<Material> mat;
+        std::vector<Geometry> geom;
     //create sphere
-    Geometry sphere = createSphereGeometry(context);
-    Material material = createSphereMaterial(context);
+    sphere s(make_float3(0.0f,1.0f,0.0f),1.0f,"sphereIntersectionProgram","sphereBoundingBoxProgram","sphere.cu");
+    geom.push_back(s.createGeometry(context));
+    plainColorMaterial sphereMaterial(make_float3(0.8f,0.4f,0.1f),"plainColorMaterial.cu");
+    mat.push_back(sphereMaterial.createMaterial(context));
 
+    //create sphere
+    sphere s2(make_float3(2.0f,1.2f,0.0f),1.2f,"sphereIntersectionProgram","sphereBoundingBoxProgram","sphere.cu");
+    geom.push_back(s2.createGeometry(context));
+    plainColorMaterial sphereMaterial2(make_float3(1.0f,0.2f,0.6f),"plainColorMaterial.cu");
+    mat.push_back(sphereMaterial2.createMaterial(context));
 
     //create groundplane
-    Geometry plane = createPlaneGeometry(context);
-    Material material2 = createPlaneMaterial(context);
+    infinitePlane plane(0.0f,"infinitePlaneIntersectionProgram","infinitePlaneBoundingBoxProgram","infinitePlane.cu");
+    geom.push_back(plane.createGeometry(context));
+    plainColorMaterial planeMaterial(make_float3(0.2f,0.3f,0.4f),"plainColorMaterial.cu");
+    mat.push_back(planeMaterial.createMaterial(context));
 
-    std::vector<Geometry> geom;
-    geom.push_back(sphere);
-    geom.push_back(plane);
 
-    std::vector<Material> mat;
-    mat.push_back(material);
-    mat.push_back(material2);
+
     createInstances(context,geom,mat);
-    //run
     context->validate();
     context->compile();
     context->launch(0,width,height);
@@ -70,14 +75,9 @@ int program2(int argc,char* argv[])
     return 0;
 
 }
-/*!
- * \brief ptxPath
- * \param file name of .cu file
- * \return path to generated .ptx from .cu file
- */
-std::string ptxPath(const std::string &file)
+std::string ptxPath(const std::string &path)
 {
-    return std::string(sutilSamplesPtxDir()) + "/sopro_generated_" + file + ".ptx";
+    return std::string(sutilSamplesPtxDir()) + "/sopro_generated_" + path + ".ptx";
 }
 
 Context createContext()
@@ -120,7 +120,7 @@ Context createContext()
     context->setRayGenerationProgram(0,rayGenerationProgram);
 
     //set Camera
-    float3  eye     = {7.0f,1.0f,7.0f};
+    float3  eye     = {7.0f,3.0f,7.0f};
     float3  lookat  = {0.0f,0.0f,0.0f};
     float3  up      = {0.0f,1.0f,0.0f};
     float   fov     = 45.0f;
@@ -147,49 +147,8 @@ Context createContext()
 
 }
 
-Geometry createSphereGeometry(Context context)
-{
-    std::string usedPTXpath(ptxPath("sphere.cu"));
-    Geometry sphere = context->createGeometry();
-    sphere->setPrimitiveCount(1);
-    sphere->setBoundingBoxProgram(context->createProgramFromPTXFile(usedPTXpath,"sphereBounds"));
-    sphere->setIntersectionProgram(context->createProgramFromPTXFile(usedPTXpath,"sphereIntersect"));
-    //coordinates(x,y,z,r)
-    sphere["coordinates"]->setFloat(0.0f,1.0f,0.0f,1.0f);
-    return sphere;
-}
 
-Geometry createPlaneGeometry(Context context)
-{
-    std::string usedPTXpath(ptxPath("groundplane.cu"));
-    Geometry plane = context->createGeometry();
-    plane->setPrimitiveCount(1);
-    plane->setBoundingBoxProgram(context->createProgramFromPTXFile(usedPTXpath,"groundPlaneBB"));
-    plane->setIntersectionProgram(context->createProgramFromPTXFile(usedPTXpath,"groundPlaneIntersect"));
-    //height
-    plane["height"]->setFloat(std::numeric_limits<float>::min(),0.0f,std::numeric_limits<float>::max());
-    return plane;
-}
 
-Material createSphereMaterial(Context context)
-{
-    std::string usedPTXpath(ptxPath("material.cu"));
-    Material material = context->createMaterial();
-    material->setAnyHitProgram(1,context->createProgramFromPTXFile(usedPTXpath,"anyhit_shadow"));
-    material->setClosestHitProgram(0,context->createProgramFromPTXFile(usedPTXpath,"closesthit_radiance"));
-    material["color"]->setFloat(0.8f,0.4f,0.1f);
-    return material;
-}
-
-Material createPlaneMaterial(Context context)
-{
-    std::string usedPTXpath(ptxPath("material.cu"));
-    Material material = context->createMaterial();
-    material->setAnyHitProgram(1,context->createProgramFromPTXFile(usedPTXpath,"anyhit_shadow"));
-    material->setClosestHitProgram(0,context->createProgramFromPTXFile(usedPTXpath,"closesthit_radiance"));
-    material["color"]->setFloat(0.1f,0.4f,0.3f);
-    return material;
-}
 
 void createInstances(Context context, std::vector<Geometry> geometry, std::vector<Material> material)
 {

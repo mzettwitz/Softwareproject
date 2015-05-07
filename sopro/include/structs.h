@@ -10,6 +10,7 @@
 
 #include <../cuda/commonStructs.h>
 
+using namespace optix;
 
 /*! * \struct PerRayData_shadow
  *

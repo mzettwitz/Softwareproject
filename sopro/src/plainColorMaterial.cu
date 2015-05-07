@@ -4,10 +4,27 @@
  *
  */
 
-#include "../include/material.h"
+#include "../include/structs.h"
+
+#include <optix.h>
+#include <optixu/optixu_math_namespace.h>
+#include <optixu/optixu_matrix_namespace.h>
 
 using namespace optix;
 
+rtDeclareVariable(PerRayData_radiance,prd_radiance,rtPayload,);
+rtDeclareVariable(PerRayData_shadow,prd_shadow,rtPayload,);
+rtDeclareVariable(optix::Ray, ray, rtCurrentRay,);
+rtDeclareVariable(unsigned int, shadowRayType,,);
+rtDeclareVariable(unsigned int, radianceRayType,,);
+rtDeclareVariable(float, sceneEpsilon,,);
+rtDeclareVariable(rtObject, topShadower,,);
+rtBuffer<BasicLight> lights;
+rtDeclareVariable(float, intersectionDistance, rtIntersectionDistance,);
+rtDeclareVariable(float3,color,,);
+
+static __device__ void shadowed();
+static __device__ void shade();
 
 RT_PROGRAM void anyhit_shadow()
 {

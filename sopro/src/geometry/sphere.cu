@@ -3,12 +3,13 @@
 #include <optixu/optixu_matrix_namespace.h>
 #include <optixu/optixu_aabb_namespace.h>
 
+
 using namespace optix;
 
 rtDeclareVariable(float4, coordinates,,);
 rtDeclareVariable(Ray, ray,rtCurrentRay,);
 
-RT_PROGRAM void sphereIntersect(int primIdx)
+RT_PROGRAM void sphereIntersectionProgram(int primIdx)
 {
 
     //to solve : (o + td - c)² - r² = 0
@@ -50,7 +51,7 @@ RT_PROGRAM void sphereIntersect(int primIdx)
     }
 }
 
-RT_PROGRAM void sphereBounds(int,float result[6])
+RT_PROGRAM void sphereBoundingBoxProgram(int,float result[6])
 {
     //use aabb
 
