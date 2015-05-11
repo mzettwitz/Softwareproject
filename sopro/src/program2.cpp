@@ -12,8 +12,8 @@
 #include "../include/program2.h"
 #include <limits>
 
-unsigned int width = 1920;
-unsigned int height = 1080;
+unsigned int width = 800;
+unsigned int height = 600;
 
 using namespace optix;
 

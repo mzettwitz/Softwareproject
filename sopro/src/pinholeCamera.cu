@@ -35,15 +35,18 @@ RT_PROGRAM void pinholeCamera()
     float2 d = make_float2(launchIndex) / make_float2(launchDim) * 2.f - 1.f;
     float3 rayOrigin = eye;
     float3 rayDirection = normalize(d.x * U + d.y * V + W);
+
     //create ray
     optix::Ray ray = optix::make_Ray(rayOrigin,rayDirection,radiance_ray_type,sceneEpsilon,RT_DEFAULT_MAX);
+
     //trace radiance 'normal' rays from camera into scene
     PerRayData_radiance prd;
 
     prd.importance = 1.f;
     prd.depth = 0;
-	
+
     rtTrace(topObject, ray, prd);
+
     //return color to outputBuffer for each pixel
     outputBuffer[launchIndex] = prd.result;
 }
