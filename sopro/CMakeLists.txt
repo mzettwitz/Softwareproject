@@ -3,8 +3,11 @@ OPTIX_add_sample_executable(sopro
 	src/sopro.cpp
 	src/program1.cpp
 	src/program2.cpp
+	src/program3.cpp
+	src/simpleScene.cpp
 	src/baseMaterial.cpp
 	src/plainColorMaterial.cpp
+	src/display.cpp	
 
 	src/pinholeCamera.cu
 	src/miss.cu
@@ -25,11 +28,14 @@ OPTIX_add_sample_executable(sopro
 	include/sopro.h
 	include/program1.h
 	include/program2.h
+	include/program3.h
+	include/simpleScene.h
 	include/structs.h
 	include/baseMaterial.h
 	include/light.h
 	include/plainColorMaterial.h
-	
+	include/display.h	
+
 	include/geometry/baseGeometry.h
 	include/geometry/basePlane.h
 	include/geometry/areaPlane.h

@@ -2,6 +2,7 @@
 #include <optix_world.h>
 #include "../cuda/helpers.h"
 #include "../include/structs.h"
+#include "../cuda/random.h"
 
 using namespace optix;
 
@@ -28,16 +29,25 @@ rtDeclareVariable(uint2, launchIndex, rtLaunchIndex,);
 rtDeclareVariable(uint2, launchDim, rtLaunchDim,);
 
 
+
+
 //perspective view
 RT_PROGRAM void pinholeCamera()
 {
+
     //setup camera, shift over every pixel
     float2 d = make_float2(launchIndex) / make_float2(launchDim) * 2.f - 1.f;
     float3 rayOrigin = eye;
-    float3 rayDirection = normalize(d.x * U + d.y * V + W);
+    float3 direction;
+    optix::Ray ray;
+
+
+        direction= normalize((d.x) * U + (d.y) * V + W);
+
+        ray = optix::make_Ray(rayOrigin,direction,radiance_ray_type,sceneEpsilon,RT_DEFAULT_MAX);
+
 
     //create ray
-    optix::Ray ray = optix::make_Ray(rayOrigin,rayDirection,radiance_ray_type,sceneEpsilon,RT_DEFAULT_MAX);
 
     //trace radiance 'normal' rays from camera into scene
     PerRayData_radiance prd;
@@ -45,10 +55,14 @@ RT_PROGRAM void pinholeCamera()
     prd.importance = 1.f;
     prd.depth = 0;
 
+    float4 result = make_float4(0,0,0,0);
+
     rtTrace(topObject, ray, prd);
+    result += prd.result;
+
 
     //return color to outputBuffer for each pixel
-    outputBuffer[launchIndex] = prd.result;
+    outputBuffer[launchIndex] = result;
 }
 
 //if exception return excpetionColor as payload

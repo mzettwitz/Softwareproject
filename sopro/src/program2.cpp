@@ -147,9 +147,6 @@ Context createContext()
 
 }
 
-
-
-
 void createInstances(Context context, std::vector<Geometry> geometry, std::vector<Material> material)
 {
     GeometryGroup gg = context->createGeometryGroup();

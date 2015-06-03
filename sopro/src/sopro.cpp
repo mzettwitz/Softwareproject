@@ -7,10 +7,13 @@
  */
 
 #include "../include/sopro.h"
+#include <stdio.h>
 
 int main(int argc, char* argv[])
 {
-  size_t program = 2;
+
+  size_t program = 3;
+  std::cout << "Starting program " << program << std::endl;
   int res = 0;
 
 
@@ -18,7 +21,8 @@ int main(int argc, char* argv[])
   {
   case 1 : res = program1(argc,argv);break;
   case 2 : res = program2(argc,argv);break;
-  default: break;
+  case 3 : res = program3(argc,argv);break;
+  default: res = 0 ;break;
   }
 
   return res;
