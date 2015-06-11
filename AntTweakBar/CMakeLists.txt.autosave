@@ -1,0 +1,28 @@
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include")
+
+add_library(AntTweakBar STATIC
+  src/nvTime.cpp
+  src/framebufferObject.cpp
+  include/framebufferObject.h
+  include/nvArray.h
+  include/nvGlutManipulators.h
+  include/nvManipulators.h
+  include/nvMath.h
+  include/nvMatrix.h
+  include/nvQuaternion.h
+  include/nvSDKPath.h
+  include/nvShaderUtils.h
+  include/nvShape.h
+  include/nvTime.h
+  include/nvVector.h
+  include/nvVertexBuffer.h
+  include/renderVertexArray.h
+  include/renderbuffer.h
+  )
+
+OPTIX_add_sample_executable(AntTB 
+    
+	include/AntTweakBar.h
+        src/TwBar.cpp
+	
+)

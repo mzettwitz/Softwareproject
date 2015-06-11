@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "baseMaterial.h"
+#include "../include/baseMaterial.h"
 
 using namespace optix;
 
@@ -37,8 +37,6 @@ public :
     }
     void setColor(const float3 &c);
     Material createMaterial(Context context) const;
-
-
 };
 
 

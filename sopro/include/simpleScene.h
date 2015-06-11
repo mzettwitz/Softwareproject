@@ -35,6 +35,9 @@ public:
     void trace(SimpleScene::Camera &camera);
     Buffer getOutputBuffer();
 
+    // Getter
+    optix::Context get_mContext();
+
 };
 
 #endif //SIMPLESCENE_H

@@ -3,7 +3,6 @@
 #include "../include/simpleScene.h"
 
 
-
 int program3(int argc, char* argv[])
 {
     Display::init(argc,argv);

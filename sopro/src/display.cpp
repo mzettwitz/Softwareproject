@@ -4,6 +4,8 @@
 #include <iostream>
 #include <optixu/optixpp_namespace.h>
 #include <optixu/optixu_math_namespace.h>
+#include "../include/antTBar.h"
+
 using namespace optix;
 
 SimpleScene*        Display::mScene = 0;
@@ -17,6 +19,24 @@ void Display::init(int &argc, char **argv)
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
     glutInitWindowSize(mWidth,mHeight);
+
+
+    int test = 0;
+    TwBar *bar;
+
+    // AntTweakBar
+    // Init ATB
+    TwWindowSize(mWidth, mHeight);
+    TwInit(TW_OPENGL, NULL);
+
+
+    // Create ATB
+
+    bar = TwNewBar("MyBar");
+    TwDefine(" MyBar size='200 400' color='118 185 0' ");
+    //TwDefine(" GLOBAL help='This example shows how to integrate AntTweakBar with GLUT and OpenGL.' ");
+    TwAddVarRW(bar, "Test", TW_TYPE_INT32, &test, "");
+
 }
 
 void Display::run(const std::string &title, SimpleScene *scene)
@@ -68,6 +88,10 @@ void Display::run(const std::string &title, SimpleScene *scene)
     glutDisplayFunc(display);
     //glutKeyboardFunc(keyPressed);
     glutMainLoop();
+
+    //KILL ATB
+    TwTerminate();
+
 }
 
 void Display::display()
@@ -85,6 +109,7 @@ void Display::display()
     mScene->trace(c);
     displayFrame();
     glutSwapBuffers();
+
 }
 
 void Display::displayFrame()
@@ -138,6 +163,16 @@ void Display::displayFrame()
     glPixelStorei(GL_UNPACK_ALIGNMENT,align);
     glDrawPixels(static_cast<GLsizei>(bufferWidth),static_cast<GLsizei>(bufferHeight),glFormat,glDataType,imageData);
     buffer->unmap();
+    //DRAW ATB
+    TwDraw();
+
+    glBegin(GL_TRIANGLES);
+        glColor3f(0,1,0);
+        glVertex3f(0,0,0);
+        glVertex3f(1,0,0);
+        glVertex3f(0,1,0);
+    glEnd();
+
     glutPostRedisplay();
 }
 

@@ -7,6 +7,7 @@
 #include <cstring>
 #include "../sutil/sutil.h"
 #include "../include/program2.h"
+
 SimpleScene::SimpleScene()
 {
     mContext = Context::create();
@@ -124,6 +125,11 @@ void SimpleScene::updateGeometry()
 
     createInstances(mContext,geom,mat);
 
+}
+
+// Getter
+optix::Context SimpleScene::get_mContext(){
+    return mContext;
 }
 
 

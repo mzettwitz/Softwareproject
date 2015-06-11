@@ -25,7 +25,6 @@ protected:
 public :
     virtual Material createMaterial(Context context) const = 0;
     void setPTXPath(const std::string &path);
-
 };
 
 

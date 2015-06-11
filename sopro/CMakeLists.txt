@@ -5,6 +5,9 @@ OPTIX_add_sample_executable(sopro
 	src/program2.cpp
 	src/program3.cpp
 	src/simpleScene.cpp
+
+        src/antTBar.cpp
+
 	src/baseMaterial.cpp
 	src/plainColorMaterial.cpp
 	src/display.cpp	
@@ -31,6 +34,7 @@ OPTIX_add_sample_executable(sopro
 	include/program3.h
 	include/simpleScene.h
 	include/structs.h
+	include/antTBar.h
 	include/baseMaterial.h
 	include/light.h
 	include/plainColorMaterial.h

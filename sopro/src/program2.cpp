@@ -10,6 +10,7 @@
 
 
 #include "../include/program2.h"
+#include "../include/antTBar.h"
 #include <limits>
 
 unsigned int width = 800;
@@ -21,6 +22,7 @@ using namespace optix;
  * \brief program2
  *          setup state for Optix
  *          includes Context, Geometry, Material, Instances
+ *          includes GUI for editor functionionality
  *
  * \param argc
  * \param argv
@@ -64,6 +66,9 @@ int program2(int argc,char* argv[])
     //displayImage
     context->checkError(sutilDisplayBufferInGlutWindow(argv[0],context["outputBuffer"]->getBuffer()->get()));
 
+    // AntTweakBar GUI
+    //antTBar(width, height); //call at end of mainloopA
+
     //clean
     context->destroy();
     } catch( Exception &e)
@@ -98,7 +103,6 @@ Context createContext()
     light.pos = make_float3(100.f,100.f,-40.f);
     light.casts_shadow = 1;
     light.padding = 0;
-
 
 
 

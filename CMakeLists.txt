@@ -75,7 +75,7 @@
 
 # This sets up the name of our project.  For our purposes the main thing this controls is
 # the name of the VS solution file.
-project(OptiX-Samples)
+project(SoPro-Optix)
 
 # This enforces a particular version of CMake that we require to process the script files
 # properly.
@@ -92,6 +92,11 @@ set(CMAKE_MODULE_PATH
   "${CMAKE_SOURCE_DIR}/CMake"
   ${CMAKE_MODULE_PATH}
   )
+
+
+# Set C++ mode to C++11
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+
 
 # Set the default build to Release.  Note this doesn't do anything for the VS
 # default build target which defaults to Debug when you first start it.
@@ -257,11 +262,17 @@ function(OPTIX_add_sample_executable target_name)
     ${cmake_options}
     )
 
+  ######################## ADD AntTweakBar ##############################
+#INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/AntTweakBar/include)
+include (FindANTTWEAKBAR)
+#LINK_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/AntTweakBar/lib/)
+
   # Most of the samples link against the sutil library and the optix library.  Here is the
   # rule that specifies this linkage.
   target_link_libraries( ${target_name}
     sutil
     optix
+    AntTweakBar
     ${optix_rpath}
     )
   if(USING_GNU_CXX)
@@ -277,6 +288,7 @@ endfunction()
 # and the CMakeLists.txt file.
 add_subdirectory(sopro)
 add_subdirectory(simpleAnimation)
+#add_subdirectory(AntTweakBar)
 # Our sutil library.  The rules to build it are found in the subdirectory.
 add_subdirectory(sutil)
 

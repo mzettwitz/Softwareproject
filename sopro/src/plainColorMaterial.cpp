@@ -16,4 +16,3 @@ Material plainColorMaterial::createMaterial(Context context) const
     material["color"]->setFloat(mColor.x,mColor.y,mColor.z);
     return material;
 }
-
