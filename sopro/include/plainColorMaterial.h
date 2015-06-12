@@ -4,7 +4,7 @@
  *
  * Contains basic attributes like color for materials and shadowing.
  *
- * \var color RGB color
+ * \var mColor RGB color
  * \var prd_radiance Information about traced ray hit
  * \var prd_shadow Information about shadow attenuation
  * \var ray Incoming camera ray

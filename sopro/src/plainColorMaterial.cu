@@ -1,8 +1,3 @@
-/*!
- * TODO: closest hit
- * anyhit, for shadows
- *
- */
 
 #include "../include/structs.h"
 
