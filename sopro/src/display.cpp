@@ -31,12 +31,24 @@ void Display::init(int &argc, char **argv)
     glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
     glutInitWindowSize(mWidth,mHeight);
 
+    // AntTweakBar
+    // redirecte GLUT events to ATB
+    glutMouseFunc((GLUTmousebuttonfun)TwEventMouseButtonGLUT);
+    glutMotionFunc((GLUTmousemotionfun)TwEventMouseMotionGLUT);
+    glutPassiveMotionFunc((GLUTmousemotionfun)TwEventMouseMotionGLUT); // same as MouseMotion
+    glutKeyboardFunc((GLUTkeyboardfun)TwEventKeyboardGLUT);
+    glutSpecialFunc((GLUTspecialfun)TwEventSpecialGLUT);
 
+
+    // send the "glutGetModifers" function pointer to ATB
+    TwGLUTModifiersFunc(glutGetModifiers);
+
+    //hardcoded
     int test = 0;
     //TwBar *bar;
 
-    // AntTweakBar
     // Init ATB
+<<<<<<< HEAD
     //TwWindowSize(mWidth, mHeight);
     //TwInit(TW_OPENGL, NULL);
 
@@ -45,6 +57,14 @@ void Display::init(int &argc, char **argv)
 
    // bar = TwNewBar("MyBar");
     //TwDefine(" MyBar size='200 400' color='118 185 0' ");
+=======
+    TwInit(TW_OPENGL, NULL);
+
+
+    // Create ATB
+    bar = TwNewBar("MyBar");
+    TwDefine(" MyBar size='200 400' color='118 185 0' ");
+>>>>>>> 567047dde46d6853ac455a6cb2e7851d2176d6e7
     //TwDefine(" GLOBAL help='This example shows how to integrate AntTweakBar with GLUT and OpenGL.' ");
    // TwAddVarRW(bar, "Test", TW_TYPE_INT32, &test, "");
 
@@ -93,7 +113,11 @@ void Display::run(const std::string &title, SimpleScene *scene)
     glutShowWindow();
     glutReshapeWindow(buffer_width,buffer_height);
 
+<<<<<<< HEAD
    // glutReshapeFunc(resize);
+=======
+    glutReshapeFunc(resize);
+>>>>>>> 567047dde46d6853ac455a6cb2e7851d2176d6e7
     glutMotionFunc(mouseMotion);
     glutMouseFunc(mouseButton);
     glutDisplayFunc(display);
@@ -170,15 +194,20 @@ void Display::displayFrame()
     glPixelStorei(GL_UNPACK_ALIGNMENT,align);
     glDrawPixels(static_cast<GLsizei>(bufferWidth),static_cast<GLsizei>(bufferHeight),glFormat,glDataType,imageData);
     buffer->unmap();
+
     //DRAW ATB
    // TwDraw();
 
+<<<<<<< HEAD
    /* glBegin(GL_TRIANGLES);
         glColor3f(0,1,0);
         glVertex3f(0,0,0);
         glVertex3f(1,0,0);
         glVertex3f(0,1,0);
     glEnd();*/
+=======
+
+>>>>>>> 567047dde46d6853ac455a6cb2e7851d2176d6e7
 
     glutPostRedisplay();
 }
@@ -186,6 +215,8 @@ void Display::displayFrame()
 void Display::resize(int width, int height)
 {
 
+    // Send the new window size to AntTweakBar
+    TwWindowSize(width, height);
 }
 
 void Display::keyPressed(unsigned char key, int x, int y)
