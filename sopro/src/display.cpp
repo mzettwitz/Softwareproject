@@ -4,15 +4,26 @@
 #include <iostream>
 #include <optixu/optixpp_namespace.h>
 #include <optixu/optixu_math_namespace.h>
-#include "../include/antTBar.h"
+//#include "../include/antTBar.h"
 
 using namespace optix;
 
 SimpleScene*        Display::mScene = 0;
 std::string         Display::mTitle = "";
-int                 Display::mWidth = 0;
-int                 Display::mHeight = 0;
-
+int                 Display::mWidth = 800;
+int                 Display::mHeight = 800;
+float               Display::horizontalAngle = 0.0f;
+float               Display::verticalAngle = 0.0f;
+float               Display::initialFOV = 45.f;
+float               Display::mouseSpeed = 0.002f;
+float3              Display::cameraPosition = make_float3(7,3,7);
+float3              Display::cameraDirection = make_float3(0,0,0);
+float3              Display::cameraRight = make_float3(0,0,1);
+float3              Display::cameraUp = make_float3(0,0,0);
+int                 Display::oldx = 0;
+int                 Display::oldy = 0;
+float                 Display::deltaTime = 0.0f;
+int                 Display::mState = Display::mouseState::IDLE;
 float ttime = 1.f;
 void Display::init(int &argc, char **argv)
 {
@@ -22,20 +33,20 @@ void Display::init(int &argc, char **argv)
 
 
     int test = 0;
-    TwBar *bar;
+    //TwBar *bar;
 
     // AntTweakBar
     // Init ATB
-    TwWindowSize(mWidth, mHeight);
-    TwInit(TW_OPENGL, NULL);
+    //TwWindowSize(mWidth, mHeight);
+    //TwInit(TW_OPENGL, NULL);
 
 
     // Create ATB
 
-    bar = TwNewBar("MyBar");
-    TwDefine(" MyBar size='200 400' color='118 185 0' ");
+   // bar = TwNewBar("MyBar");
+    //TwDefine(" MyBar size='200 400' color='118 185 0' ");
     //TwDefine(" GLOBAL help='This example shows how to integrate AntTweakBar with GLUT and OpenGL.' ");
-    TwAddVarRW(bar, "Test", TW_TYPE_INT32, &test, "");
+   // TwAddVarRW(bar, "Test", TW_TYPE_INT32, &test, "");
 
 }
 
@@ -46,8 +57,8 @@ void Display::run(const std::string &title, SimpleScene *scene)
 
     glutCreateWindow(title.c_str());
 
-    float3 pos = make_float3(0,0,0);
-    float3 dir = make_float3(1,0,0);
+    float3 pos = make_float3(7,3,-3);
+    float3 dir = make_float3(0,0,0);
     float3 rig = make_float3(0,0,1);
     SimpleScene::Camera c(pos,dir,rig);
 
@@ -83,33 +94,29 @@ void Display::run(const std::string &title, SimpleScene *scene)
     glutReshapeWindow(buffer_width,buffer_height);
 
    // glutReshapeFunc(resize);
-    //glutMotionFunc(mouseMotion);
-    //glutMouseFunc(mouseButton);
+    glutMotionFunc(mouseMotion);
+    glutMouseFunc(mouseButton);
     glutDisplayFunc(display);
-    //glutKeyboardFunc(keyPressed);
+    glutKeyboardFunc(keyPressed);
     glutMainLoop();
 
     //KILL ATB
-    TwTerminate();
+   //TwTerminate();
 
 }
 
 void Display::display()
 {
-    float3 position,direction,right;
+    int start = glutGet(GLUT_ELAPSED_TIME);
+    SimpleScene::Camera c(cameraPosition,cameraDirection,cameraRight);
 
-    SimpleScene::Camera c(position,direction,right);
-
-    c.position = make_float3(5,10,5);
-    c.direction = make_float3(sin(ttime),15 + ttime,5 + ttime);
-    c.right = make_float3(0,1 + ttime,ttime);
-
-    std::cout << c.direction.y << std::endl;
-    ttime += 0.1;
+    std::cout << c.position.y << std::endl;
     mScene->trace(c);
     displayFrame();
     glutSwapBuffers();
 
+    int end = glutGet(GLUT_ELAPSED_TIME);
+    deltaTime = float(end-start)/1000.0f;
 }
 
 void Display::displayFrame()
@@ -164,14 +171,14 @@ void Display::displayFrame()
     glDrawPixels(static_cast<GLsizei>(bufferWidth),static_cast<GLsizei>(bufferHeight),glFormat,glDataType,imageData);
     buffer->unmap();
     //DRAW ATB
-    TwDraw();
+   // TwDraw();
 
-    glBegin(GL_TRIANGLES);
+   /* glBegin(GL_TRIANGLES);
         glColor3f(0,1,0);
         glVertex3f(0,0,0);
         glVertex3f(1,0,0);
         glVertex3f(0,1,0);
-    glEnd();
+    glEnd();*/
 
     glutPostRedisplay();
 }
@@ -184,15 +191,57 @@ void Display::resize(int width, int height)
 void Display::keyPressed(unsigned char key, int x, int y)
 {
 
+    if(key == 119)
+    {
+        cameraPosition += make_float3(0.0f,0.02f,0.0f);
+    }
+    if(key == 49)
+    {
+        cameraPosition += 0.02f * cameraDirection;
+    }
+    if(key == 50)
+        cameraPosition += 0.02f * cameraRight;
+    if(key == 51)
+    {
+        cameraPosition -= 0.02f * cameraRight;
+    }
+    if(key == 52)
+    {
+        cameraPosition -= 0.02f * cameraDirection;
+    }
+    glutPostRedisplay();
 }
 
 void Display::mouseButton(int button, int state, int x, int y)
 {
 
+    if(button == GLUT_LEFT_BUTTON)
+    {
+        if(state == GLUT_DOWN)
+        Display::mState = mouseState::MOVE;
+    }
+    else
+    {
+        state = mouseState::IDLE;
+    }
+
 }
 
 void Display::mouseMotion(int x, int y)
 {
+    int deltaX = x - oldx;
+    int deltaY = y - oldy;
+   // if(mState ==  mouseState::MOVE)
+    //{
+    horizontalAngle += mouseSpeed *  deltaTime * float(mWidth/2 - x);
+    verticalAngle += mouseSpeed * deltaTime * float(mHeight/2 - y);
 
+    cameraDirection = make_float3(cos(verticalAngle) * sin(horizontalAngle),sin(verticalAngle),cos(verticalAngle) * cos(horizontalAngle));
+    cameraRight = make_float3(sin(horizontalAngle - 3.14f/2.0f),0,cos(horizontalAngle - 3.14f/2.0f));
+
+  //  }
+    oldx = x;
+    oldy = y;
+    glutPostRedisplay();
 }
 

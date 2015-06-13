@@ -19,14 +19,15 @@ void SimpleScene::initScene(SimpleScene::Camera &camera)
     mContext->setRayTypeCount(2);
     mContext->setEntryPointCount(1);
 
-    mContext["radiance_ray_type"]->setUint(0u);
-    mContext["shadow_ray_type"]->setUint(1u);
-    mContext["sceneEpsilon"]->setFloat(1.e-3f);
+    mContext["radianceRayTtype"]->setUint(0u);
+    mContext["shadowRayType"]->setUint(1u);
     mContext["maxDepth"]->setUint(10u);
+    mContext["sceneEpsilon"]->setFloat(1.e-3f);
+
 
     mWidth = 800;
     mHeight = 800;
-    mContext["outputBuffer"]->set(createOutputBuffer(RT_FORMAT_FLOAT4,mWidth,mHeight));
+
 
     BasicLight light;
 
@@ -42,6 +43,7 @@ void SimpleScene::initScene(SimpleScene::Camera &camera)
     lightBuffer->unmap();
     mContext["lights"]->set(lightBuffer);
 
+        mContext["outputBuffer"]->set(createOutputBuffer(RT_FORMAT_FLOAT4,mWidth,mHeight));
     std::string usedPTXPath(ptxPath("pinholeCamera.cu"));
 
     Program rayGenerationProgram = mContext->createProgramFromPTXFile(usedPTXPath,"pinholeCamera");
@@ -86,11 +88,19 @@ optix::Buffer SimpleScene::getOutputBuffer()
 
 void SimpleScene::trace(SimpleScene::Camera &camera)
 {
+    float3 eye = camera.position;
+    float3 lookat = camera.direction+camera.position;
+    float3 up = cross(camera.direction,camera.right);
+    float fov = 45.0f;
+    float aspectRatio = float(mWidth)/float(mHeight);
+    float3 u,v,w;
+
+    sutilCalculateCameraVariables(&eye.x,&lookat.x,&up.x,fov,aspectRatio,&u.x,&v.x,&w.x);
     //update Camera
-    mContext["eye"]->setFloat(camera.position);
-    mContext["U"]->setFloat(camera.direction);
-    mContext["V"]->setFloat((camera.right));
-    mContext["W"]->setFloat(cross(camera.direction,camera.right));
+    mContext["eye"]->setFloat(eye);
+    mContext["U"]->setFloat(u);
+    mContext["V"]->setFloat(v);
+    mContext["W"]->setFloat(w);
 
     optix::Buffer buffer = mContext["outputBuffer"]->getBuffer();
     RTsize bufferWidth, bufferHeight;
