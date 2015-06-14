@@ -7,6 +7,9 @@
  * \var mAmbientColor RGB color for ambient coloring
  * \var mDiffuseColor RGB color for diffuse material color
  * \var mSpecularColor RGB color for specular material color
+ * \var mAmbientCoeff flaot value between [0,1] to describe the ratio of ambient color
+ * \var mDiffuseCoeff flaot value between [0,1] to describe the ratio of diffuse color
+ * \var mSpecularCoeff flaot value between [0,1] to describe the ratio of specular color
  * \var mShininess float value for reflection degree
  * \var prd_radiance Information about traced ray hit
  * \var prd_shadow Information about shadow attenuation
@@ -31,11 +34,14 @@ private:
     float3 mAmbientColor;
     float3 mDiffuseColor;
     float3 mSpecularColor;
+    float mAbientCoeff;
+    float mDiffuseCoeff;
+    float mSpecularCoeff;
     float mShininess;
 
 public:
-    phongMaterial(float3 a, float3 d, float3 s, float shine, std::string path) :
-        mAmbientColor(a), mDiffuseColor(d), mSpecularColor(s), mShininess(shine)
+    phongMaterial(float3 aCol, float3 dCol, float3 sCol, float aCoef, float dCoef, float sCoef, float shine, std::string path) :
+        mAmbientColor(aCol), mDiffuseColor(dCol), mSpecularColor(sCol), mAbientCoeff(aCoef), mDiffuseCoeff(dCoef), mSpecularCoeff(sCoef), mShininess(shine)
     {
         setPTXPath(path);
     }
@@ -49,6 +55,13 @@ public:
     void setDiffuseColor(const float3 &diffuseColor);
     float3 specularColor() const;
     void setSpecularColor(const float3 &specularColor);
+    float abientCoeff() const;
+    void setAbientCoeff(float abientCoeff);
+    float diffuseCoeff() const;
+    void setDiffuseCoeff(float diffuseCoeff);
+    float specularCoeff() const;
+    void setSpecularCoeff(float specularCoeff);
     float shininess() const;
     void setShininess(float shininess);
+
 };
