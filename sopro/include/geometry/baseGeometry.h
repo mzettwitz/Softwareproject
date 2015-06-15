@@ -15,21 +15,30 @@
 
 using namespace optix;
 
-class baseGeometry
+class BaseGeometry
 {
 protected:
     float3 mPos;
     std::string mIntersectionProgram;
     std::string mBoundingBoxProgram;
     std::string mPTXpath;
+    typedef enum
+    {
+        SPHERE = 1,
+        MESH = 2,
+        INFINITEPLANE = 3,
+        AREAPLANE = 4
+    } GeometryType;
+    GeometryType mGeometryType;
 public:
     virtual Geometry createGeometry(Context context) const = 0;
     void setPosition(const float3 &p);
     void setIntersectionProgram(const std::string &intersection);
     void setBoundingBoxProgram(const std::string &boundingbox);
     void setPTXpath(const std::string &p);
+    GeometryType getGeometryType() const;
 protected:
-    baseGeometry(float3 pos, std::string intersect, std::string boundingbox,std::string path) : mPos(pos),mIntersectionProgram(intersect),mBoundingBoxProgram(boundingbox)
+    BaseGeometry(float3 pos, std::string intersect, std::string boundingbox,std::string path) : mPos(pos),mIntersectionProgram(intersect),mBoundingBoxProgram(boundingbox)
     {
         setPTXpath(path);
     }

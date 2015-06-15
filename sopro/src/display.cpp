@@ -4,11 +4,11 @@
 #include <iostream>
 #include <optixu/optixpp_namespace.h>
 #include <optixu/optixu_math_namespace.h>
-//#include "../include/antTBar.h"
+#include "../include/antTBar.h"
 
 using namespace optix;
 
-SimpleScene*        Display::mScene = 0;
+Scene*        Display::mScene = 0;
 std::string         Display::mTitle = "";
 int                 Display::mWidth = 800;
 int                 Display::mHeight = 800;
@@ -22,9 +22,9 @@ float3              Display::cameraRight = make_float3(0,0,1);
 float3              Display::cameraUp = make_float3(0,0,0);
 int                 Display::oldx = 0;
 int                 Display::oldy = 0;
-float                 Display::deltaTime = 0.0f;
+float               Display::deltaTime = 0.0f;
 int                 Display::mState = Display::mouseState::IDLE;
-float ttime = 1.f;
+
 void Display::init(int &argc, char **argv)
 {
     glutInit(&argc, argv);
@@ -45,32 +45,20 @@ void Display::init(int &argc, char **argv)
 
     //hardcoded
     int test = 0;
-    //TwBar *bar;
+    TwBar *bar;
 
     // Init ATB
-<<<<<<< HEAD
-    //TwWindowSize(mWidth, mHeight);
-    //TwInit(TW_OPENGL, NULL);
-
-
-    // Create ATB
-
-   // bar = TwNewBar("MyBar");
-    //TwDefine(" MyBar size='200 400' color='118 185 0' ");
-=======
     TwInit(TW_OPENGL, NULL);
 
 
     // Create ATB
     bar = TwNewBar("MyBar");
     TwDefine(" MyBar size='200 400' color='118 185 0' ");
->>>>>>> 567047dde46d6853ac455a6cb2e7851d2176d6e7
     //TwDefine(" GLOBAL help='This example shows how to integrate AntTweakBar with GLUT and OpenGL.' ");
-   // TwAddVarRW(bar, "Test", TW_TYPE_INT32, &test, "");
-
+    TwAddVarRW(bar, "Test", TW_TYPE_INT32, &test, "");
 }
 
-void Display::run(const std::string &title, SimpleScene *scene)
+void Display::run(const std::string &title, Scene *scene)
 {
     mScene = scene;
     mTitle = title;
@@ -80,7 +68,7 @@ void Display::run(const std::string &title, SimpleScene *scene)
     float3 pos = make_float3(7,3,-3);
     float3 dir = make_float3(0,0,0);
     float3 rig = make_float3(0,0,1);
-    SimpleScene::Camera c(pos,dir,rig);
+    Scene::Camera c(pos,dir,rig);
 
     glPixelStorei(GL_UNPACK_ALIGNMENT,1);
 
@@ -113,11 +101,8 @@ void Display::run(const std::string &title, SimpleScene *scene)
     glutShowWindow();
     glutReshapeWindow(buffer_width,buffer_height);
 
-<<<<<<< HEAD
-   // glutReshapeFunc(resize);
-=======
+    //GLUT functions
     glutReshapeFunc(resize);
->>>>>>> 567047dde46d6853ac455a6cb2e7851d2176d6e7
     glutMotionFunc(mouseMotion);
     glutMouseFunc(mouseButton);
     glutDisplayFunc(display);
@@ -125,18 +110,51 @@ void Display::run(const std::string &title, SimpleScene *scene)
     glutMainLoop();
 
     //KILL ATB
-   //TwTerminate();
+   TwTerminate();
 
 }
 
 void Display::display()
 {
-    int start = glutGet(GLUT_ELAPSED_TIME);
-    SimpleScene::Camera c(cameraPosition,cameraDirection,cameraRight);
 
-    std::cout << c.position.y << std::endl;
+    int start = glutGet(GLUT_ELAPSED_TIME);
+    //for camera update
+    Scene::Camera c(cameraPosition,cameraDirection,cameraRight);
+
+    //callback from ATB
+    //get all objects in Scene
+    /* something like this
+     *
+     * drawTWbar()
+     * {
+     *     //dropdownmenu
+     *        for(int i = 0;i < mScene->getSceneObjects().size();++i)
+     *          {
+     *              mScene->getSceneObject(i)->getName();
+     *              add to dropdownmenu;
+     *          }
+     *     //parameters
+     *          unsigned int index = dropdownmenu.selected().index;
+     *
+     *          BaseMaterial::MaterialType matType= mScene->getSceneObject(i)->getMaterial()->getMaterialType();
+     *          BaseGeometry::GeometryType geomType= mScene->getSceneObject(i)->getGeometry()->getGeometryType();
+     *
+     * switch...
+     *
+     *
+     * setMaterial
+     * }
+     *
+     *
+     *
+     */
+    //DRAW ATB
+   TwDraw();
+        //call for optix trace
     mScene->trace(c);
+    //transfer optix buffer to opengl buffer
     displayFrame();
+
     glutSwapBuffers();
 
     int end = glutGet(GLUT_ELAPSED_TIME);
@@ -195,19 +213,7 @@ void Display::displayFrame()
     glDrawPixels(static_cast<GLsizei>(bufferWidth),static_cast<GLsizei>(bufferHeight),glFormat,glDataType,imageData);
     buffer->unmap();
 
-    //DRAW ATB
-   // TwDraw();
 
-<<<<<<< HEAD
-   /* glBegin(GL_TRIANGLES);
-        glColor3f(0,1,0);
-        glVertex3f(0,0,0);
-        glVertex3f(1,0,0);
-        glVertex3f(0,1,0);
-    glEnd();*/
-=======
-
->>>>>>> 567047dde46d6853ac455a6cb2e7851d2176d6e7
 
     glutPostRedisplay();
 }
@@ -222,24 +228,33 @@ void Display::resize(int width, int height)
 void Display::keyPressed(unsigned char key, int x, int y)
 {
 
+    //space
     if(key == 119)
     {
         cameraPosition += make_float3(0.0f,0.02f,0.0f);
     }
+    //1
     if(key == 49)
     {
         cameraPosition += 0.02f * cameraDirection;
     }
+    //2
     if(key == 50)
+    {
         cameraPosition += 0.02f * cameraRight;
+    }
+    //3
     if(key == 51)
     {
         cameraPosition -= 0.02f * cameraRight;
     }
+    //4
     if(key == 52)
     {
         cameraPosition -= 0.02f * cameraDirection;
     }
+
+    //needs to be called, to update change
     glutPostRedisplay();
 }
 
@@ -262,15 +277,14 @@ void Display::mouseMotion(int x, int y)
 {
     int deltaX = x - oldx;
     int deltaY = y - oldy;
-   // if(mState ==  mouseState::MOVE)
-    //{
-    horizontalAngle += mouseSpeed *  deltaTime * float(mWidth/2 - x);
-    verticalAngle += mouseSpeed * deltaTime * float(mHeight/2 - y);
+    if(mState ==  mouseState::MOVE)
+    {
+        horizontalAngle += mouseSpeed *  deltaTime * float(mWidth/2 - x);
+        verticalAngle += mouseSpeed * deltaTime * float(mHeight/2 - y);
 
-    cameraDirection = make_float3(cos(verticalAngle) * sin(horizontalAngle),sin(verticalAngle),cos(verticalAngle) * cos(horizontalAngle));
-    cameraRight = make_float3(sin(horizontalAngle - 3.14f/2.0f),0,cos(horizontalAngle - 3.14f/2.0f));
-
-  //  }
+        cameraDirection = make_float3(cos(verticalAngle) * sin(horizontalAngle),sin(verticalAngle),cos(verticalAngle) * cos(horizontalAngle));
+        cameraRight = make_float3(sin(horizontalAngle - 3.14f/2.0f),0,cos(horizontalAngle - 3.14f/2.0f));
+    }
     oldx = x;
     oldy = y;
     glutPostRedisplay();

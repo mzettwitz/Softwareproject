@@ -5,14 +5,16 @@
 
 
 
-class infinitePlane : protected baseGeometry
+class infinitePlane : protected BaseGeometry
 {
 private:
     float mHeight;
 
 public:
-    infinitePlane(float height, std::string intersect,std::string boundingbox,std::string path) : mHeight(height),baseGeometry(make_float3(0.0f,0.0f,0.0f),intersect,boundingbox,path)
-    {}
+    infinitePlane(float height, std::string intersect,std::string boundingbox,std::string path) : mHeight(height),BaseGeometry(make_float3(0.0f,0.0f,0.0f),intersect,boundingbox,path)
+    {
+        mGeometryType = INFINITEPLANE;
+    }
     Geometry createGeometry(Context context) const;
 };
 

@@ -5,7 +5,8 @@ OPTIX_add_sample_executable(sopro
 	src/program1.cpp
 	src/program2.cpp
 	src/program3.cpp
-	src/simpleScene.cpp
+	src/scene.cpp
+	src/sceneobject.cpp
 	src/display.cpp	
 	
 	#GUI/AntTweakBar
@@ -42,7 +43,8 @@ OPTIX_add_sample_executable(sopro
 	include/program1.h
 	include/program2.h
 	include/program3.h
-	include/simpleScene.h
+	include/sceneobject.h
+	include/scene.h
 	include/display.h
 
 	#Data

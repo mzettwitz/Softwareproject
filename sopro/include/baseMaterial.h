@@ -17,14 +17,22 @@
 
 using namespace optix;
 
-class baseMaterial
+class BaseMaterial
 {
 
 protected:
     std::string mPTXpath;
+    typedef enum
+    {
+        PLAIN = 1,
+        PHONG = 2,
+        DISNEY = 3
+    } MaterialType;
+    MaterialType mMaterialType;
 public :
     virtual Material createMaterial(Context context) const = 0;
     void setPTXPath(const std::string &path);
+    MaterialType getMaterialType() const;
 };
 
 
