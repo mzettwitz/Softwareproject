@@ -10,6 +10,9 @@ Material phongMaterial::createMaterial(Context context) const
     material["ambientColor"]->setFloat(mAmbientColor.x,mAmbientColor.y,mAmbientColor.z);
     material["diffuseColor"]->setFloat(mDiffuseColor.x,mDiffuseColor.y,mDiffuseColor.z);
     material["specularColor"]->setFloat(mSpecularColor.x,mSpecularColor.y,mSpecularColor.z);
+    material["ambientCoefficient"]->setFloat(mAbientCoeff);
+    material["diffuseCoefficient"]->setFloat(mDiffuseCoeff);
+    material["specularCoefficient"]->setFloat(mSpecularCoeff);
     material["shininess"]->setFloat(mShininess);
     return material;
 }
@@ -44,6 +47,36 @@ float3 phongMaterial::specularColor() const
 void phongMaterial::setSpecularColor(const float3 &specularColor)
 {
     mSpecularColor = specularColor;
+}
+
+float phongMaterial::abientCoeff() const
+{
+    return mAbientCoeff;
+}
+
+void phongMaterial::setAbientCoeff(float abientCoeff)
+{
+    mAbientCoeff = abientCoeff;
+}
+
+float phongMaterial::diffuseCoeff() const
+{
+    return mDiffuseCoeff;
+}
+
+void phongMaterial::setDiffuseCoeff(float diffuseCoeff)
+{
+    mDiffuseCoeff = diffuseCoeff;
+}
+
+float phongMaterial::specularCoeff() const
+{
+    return mSpecularCoeff;
+}
+
+void phongMaterial::setSpecularCoeff(float specularCoeff)
+{
+    mSpecularCoeff = specularCoeff;
 }
 
 float phongMaterial::shininess() const
