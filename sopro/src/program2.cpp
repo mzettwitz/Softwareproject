@@ -40,21 +40,21 @@ int program2(int argc,char* argv[])
         std::vector<Material> mat;
         std::vector<Geometry> geom;
     //create sphere
-    sphere s(make_float3(0.0f,1.0f,0.0f),1.0f,"sphereIntersectionProgram","sphereBoundingBoxProgram","sphere.cu");
+    Sphere s(make_float3(0.0f,1.0f,0.0f),1.0f,"sphereIntersectionProgram","sphereBoundingBoxProgram","sphere.cu");
     geom.push_back(s.createGeometry(context));
-    plainColorMaterial sphereMaterial(make_float3(0.8f,0.4f,0.1f),"plainColorMaterial.cu");
+    PlainColorMaterial sphereMaterial(make_float3(0.8f,0.4f,0.1f),"plainColorMaterial.cu");
     mat.push_back(sphereMaterial.createMaterial(context));
 
     //create sphere
-    sphere s2(make_float3(2.0f,1.2f,0.0f),1.2f,"sphereIntersectionProgram","sphereBoundingBoxProgram","sphere.cu");
+    Sphere s2(make_float3(2.0f,1.2f,0.0f),1.2f,"sphereIntersectionProgram","sphereBoundingBoxProgram","sphere.cu");
     geom.push_back(s2.createGeometry(context));
-    plainColorMaterial sphereMaterial2(make_float3(1.0f,0.2f,0.6f),"plainColorMaterial.cu");
+    PlainColorMaterial sphereMaterial2(make_float3(1.0f,0.2f,0.6f),"plainColorMaterial.cu");
     mat.push_back(sphereMaterial2.createMaterial(context));
 
     //create groundplane
     infinitePlane plane(0.0f,"infinitePlaneIntersectionProgram","infinitePlaneBoundingBoxProgram","infinitePlane.cu");
     geom.push_back(plane.createGeometry(context));
-    plainColorMaterial planeMaterial(make_float3(0.2f,0.3f,0.4f),"plainColorMaterial.cu");
+    PlainColorMaterial planeMaterial(make_float3(0.2f,0.3f,0.4f),"plainColorMaterial.cu");
     mat.push_back(planeMaterial.createMaterial(context));
 
 
@@ -116,7 +116,7 @@ Context createContext()
 
     //Outputbuffer
     Variable outputBuffer = context["outputBuffer"];
-    Buffer buffer = context->createBuffer(RT_BUFFER_OUTPUT,RT_FORMAT_FLOAT4,width,height);
+    Buffer buffer = context->createBuffer(RT_BUFFER_OUTPUT,RT_FORMAT_UNSIGNED_BYTE4,width,height);
     outputBuffer->setBuffer(buffer);
     //RayGenerationProgram
     std::string usedPTXPath(ptxPath("pinholeCamera.cu"));

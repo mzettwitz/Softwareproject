@@ -42,11 +42,11 @@ void Scene::trace(const Scene::Camera &camera)
 void Scene::initScene(const Scene::Camera &camera)
 {
     //specify context
-    mContext->setRayTypeCount(3);
+    mContext->setRayTypeCount(2);
     mContext->setEntryPointCount(1);
     mContext["radianceRayType"]->setUint(0u);
     mContext["shadowRayType"]->setUint(1u);
-    mContext["reflectanceRayType"]->setUint(2u);
+  //  mContext["reflectanceRayType"]->setUint(2u);
     mContext["maxDepth"]->setUint(10u);
     mContext["sceneEpsilon"]->setFloat(1.e-3f);
 
@@ -96,9 +96,6 @@ void Scene::initScene(const Scene::Camera &camera)
     mContext["V"]->setFloat(v);
     mContext["W"]->setFloat(w);
 
-    mContext->validate();
-    mContext->compile();
-
     //pass geometry/material to optix
     mGeometryGroup->setChildCount(mSceneObjects.size());
 
@@ -111,10 +108,16 @@ void Scene::initScene(const Scene::Camera &camera)
         mGeometryGroup->setChild(i,gi);
     }
 
-    optix::Acceleration acceleration = mGeometryGroup->getAcceleration();
-    acceleration->setBuilder("Trbvh");
+    mGeometryGroup->setAcceleration(mContext->createAcceleration("NoAccel","NoAccel"));
+
     mContext["topObject"]->set(mGeometryGroup);
     mContext["topShadower"]->set(mGeometryGroup);
+
+
+    mContext->validate();
+    mContext->compile();
+
+
 
     //set Camera
 
@@ -129,12 +132,25 @@ void Scene::updateScene(const Scene::Camera &camera)
 void Scene::addSceneObject(const SceneObject &object)
 {
     mSceneObjects.push_back(object);
+    mGeometryGroup->setChildCount(mSceneObjects.size());
+    GeometryInstance gi = mContext->createGeometryInstance();
+    gi->setGeometry(object.getGeometry()->createGeometry(mContext));
+    gi->setMaterialCount(1);
+    gi->setMaterial(0,object.getMaterial()->createMaterial(mContext));
+    mGeometryGroup->setChild(mSceneObjects.size()-1,gi);
 }
 
 void Scene::addSceneObject(BaseGeometry *geometry, BaseMaterial *material, const std::string &name)
 {
-    SceneObject obj(name,geometry,material);
-    mSceneObjects.push_back(obj);
+    SceneObject object(name,geometry,material);
+    mSceneObjects.push_back(object);
+
+    mGeometryGroup->setChildCount(mSceneObjects.size());
+    GeometryInstance gi = mContext->createGeometryInstance();
+    gi->setGeometry(object.getGeometry()->createGeometry(mContext));
+    gi->setMaterialCount(1);
+    gi->setMaterial(0,object.getMaterial()->createMaterial(mContext));
+    mGeometryGroup->setChild(mSceneObjects.size()-1,gi);
 }
 
 void Scene::removeObject(const std::string &object)
@@ -144,6 +160,7 @@ void Scene::removeObject(const std::string &object)
         if(mSceneObjects.at(i).getName() == object)
         {
             mSceneObjects.erase(mSceneObjects.begin()+i);
+            mGeometryGroup->removeChild(i);
             return;
         }
 
@@ -155,6 +172,7 @@ void Scene::removeObject(const unsigned int index)
     if(index < mSceneObjects.size())
     {
         mSceneObjects.erase(mSceneObjects.begin()+index);
+        mGeometryGroup->removeChild(index);
         return;
     }
     printf("index out of bounds");
@@ -215,4 +233,9 @@ SceneObject* Scene::getSceneObject(const std::string &name)
     }
 
     return nullptr;
+}
+
+std::vector<SceneObject>* Scene::getSceneObjects()
+{
+    return &mSceneObjects;
 }

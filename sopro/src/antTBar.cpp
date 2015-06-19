@@ -6,10 +6,10 @@ bool disneyState = false;
 bool glasState = false; // evtl array mit states für jedes objekt übergeben
 
 void antTBar(int &width, int &height, std::vector<Material> &mat, Context &context)
-{
+{/*
     // Init ATB
-    TwInit(TW_OPENGL, NULL);
-    TwWindowSize(width, height);
+ //   TwInit(TW_OPENGL, NULL);
+  //  TwWindowSize(width, height);
 
     // Create ATB
     TwBar *matBar = TwNewBar("MaterialEditor");
@@ -110,7 +110,7 @@ void antTBar(int &width, int &height, std::vector<Material> &mat, Context &conte
             // IDEA: different shading options for each object
 
     */
-    TwDraw();
+    //TwDraw();
 }
 
 /*

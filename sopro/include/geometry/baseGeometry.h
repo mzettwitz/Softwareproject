@@ -17,11 +17,7 @@ using namespace optix;
 
 class BaseGeometry
 {
-protected:
-    float3 mPos;
-    std::string mIntersectionProgram;
-    std::string mBoundingBoxProgram;
-    std::string mPTXpath;
+public:
     typedef enum
     {
         SPHERE = 1,
@@ -29,6 +25,12 @@ protected:
         INFINITEPLANE = 3,
         AREAPLANE = 4
     } GeometryType;
+protected:
+    float3 mPos;
+    std::string mIntersectionProgram;
+    std::string mBoundingBoxProgram;
+    std::string mPTXpath;
+
     GeometryType mGeometryType;
 public:
     virtual Geometry createGeometry(Context context) const = 0;

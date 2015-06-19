@@ -19,16 +19,18 @@ using namespace optix;
 
 class BaseMaterial
 {
-
-protected:
-    std::string mPTXpath;
+public:
     typedef enum
     {
         PLAIN = 1,
         PHONG = 2,
-        DISNEY = 3
+        DISNEY = 3,
+        GLASS = 4
     } MaterialType;
     MaterialType mMaterialType;
+protected:
+    std::string mPTXpath;
+
 public :
     virtual Material createMaterial(Context context) const = 0;
     void setPTXPath(const std::string &path);

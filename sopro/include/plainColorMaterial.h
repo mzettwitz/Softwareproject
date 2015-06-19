@@ -26,18 +26,19 @@ using namespace optix;
 
 
 
-class plainColorMaterial : protected BaseMaterial
+class PlainColorMaterial : protected BaseMaterial
 {
 
     float3 mColor;
 public :
-    plainColorMaterial(float3 c, std::string path) : mColor(c)
+    PlainColorMaterial(float3 c, std::string path) : mColor(c)
     {
         mMaterialType = PLAIN;
         setPTXPath(path);
     }
     void setColor(const float3 &c);
     Material createMaterial(Context context) const;
+    float3 color() const;
 };
 
 

@@ -9,14 +9,20 @@ using namespace optix;
 rtDeclareVariable(float3,plane,,);
 rtDeclareVariable(Ray,ray,rtCurrentRay,);
 rtDeclareVariable(float,sceneEpsilon,,);
+rtDeclareVariable(float3,shadingNormal, attribute shadingNormal,);
+rtDeclareVariable(float3, geometricNormal, attribute geometricNormal,);
 
 RT_PROGRAM void infinitePlaneIntersectionProgram(int primIdx)
 {
-    float t = (-ray.origin.y + plane.y) / ray.direction.y;
-
-    if(rtPotentialIntersection(t))
+    float t = 0;
+    if( t = (-ray.origin.y + plane.y) / ray.direction.y)
     {
-        rtReportIntersection(0);
+
+        if(rtPotentialIntersection(t))
+        {
+            rtReportIntersection(0);
+            shadingNormal = geometricNormal = make_float3(0.0f,1.0f,0.0f);
+        }
     }
 }
 

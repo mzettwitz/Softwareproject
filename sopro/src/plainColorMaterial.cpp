@@ -2,12 +2,12 @@
 
 using namespace optix;
 
-void plainColorMaterial::setColor(const float3 &c)
+void PlainColorMaterial::setColor(const float3 &c)
 {
     mColor = c;
 }
 
-Material plainColorMaterial::createMaterial(Context context) const
+Material PlainColorMaterial::createMaterial(Context context) const
 {
 
     Material material = context->createMaterial();
@@ -15,4 +15,14 @@ Material plainColorMaterial::createMaterial(Context context) const
     material->setClosestHitProgram(0,context->createProgramFromPTXFile(mPTXpath,"closesthit_radiance"));
     material["color"]->setFloat(mColor.x,mColor.y,mColor.z);
     return material;
+}
+
+float3 PlainColorMaterial::color() const
+{
+    return mColor;
+}
+
+bool operator!=(const PlainColorMaterial &mat1, const PlainColorMaterial &mat2)
+{
+    return (mat1.color().x != mat2.color().x || mat1.color().y != mat2.color().y || mat1.color().z != mat2.color().z);
 }

@@ -32,30 +32,30 @@ void Display::init(int &argc, char **argv)
     glutInitWindowSize(mWidth,mHeight);
 
     // AntTweakBar
-    // redirecte GLUT events to ATB
-    glutMouseFunc((GLUTmousebuttonfun)TwEventMouseButtonGLUT);
-    glutMotionFunc((GLUTmousemotionfun)TwEventMouseMotionGLUT);
-    glutPassiveMotionFunc((GLUTmousemotionfun)TwEventMouseMotionGLUT); // same as MouseMotion
-    glutKeyboardFunc((GLUTkeyboardfun)TwEventKeyboardGLUT);
-    glutSpecialFunc((GLUTspecialfun)TwEventSpecialGLUT);
+     //redirecte GLUT events to ATB
+    //glutMouseFunc((GLUTmousebuttonfun)TwEventMouseButtonGLUT);
+    //glutMotionFunc((GLUTmousemotionfun)TwEventMouseMotionGLUT);
+  //  glutPassiveMotionFunc((GLUTmousemotionfun)TwEventMouseMotionGLUT); // same as MouseMotion
+   // glutKeyboardFunc((GLUTkeyboardfun)TwEventKeyboardGLUT);
+  //  glutSpecialFunc((GLUTspecialfun)TwEventSpecialGLUT);
 
 
     // send the "glutGetModifers" function pointer to ATB
-    TwGLUTModifiersFunc(glutGetModifiers);
+  //  TwGLUTModifiersFunc(glutGetModifiers);
 
     //hardcoded
     int test = 0;
     TwBar *bar;
 
     // Init ATB
-    TwInit(TW_OPENGL, NULL);
+  //  TwInit(TW_OPENGL, NULL);
 
 
     // Create ATB
-    bar = TwNewBar("MyBar");
-    TwDefine(" MyBar size='200 400' color='118 185 0' ");
+  //  bar = TwNewBar("MyBar");
+  //  TwDefine(" MyBar size='200 400' color='118 185 0' ");
     //TwDefine(" GLOBAL help='This example shows how to integrate AntTweakBar with GLUT and OpenGL.' ");
-    TwAddVarRW(bar, "Test", TW_TYPE_INT32, &test, "");
+ //   TwAddVarRW(bar, "Test", TW_TYPE_INT32, &test, "");
 }
 
 void Display::run(const std::string &title, Scene *scene)
@@ -76,6 +76,13 @@ void Display::run(const std::string &title, Scene *scene)
     try
     {
         mScene->initScene(c);
+    } catch (Exception e)
+    {
+        std::cout << "Failed to initialize Scene" << std::endl;
+        exit(2);
+    }
+    try
+    {
         Buffer buffer = mScene->getOutputBuffer();
         RTsize buffer_width_rts, buffer_height_rts;
         buffer->getSize(buffer_width_rts,buffer_height_rts);
@@ -110,7 +117,7 @@ void Display::run(const std::string &title, Scene *scene)
     glutMainLoop();
 
     //KILL ATB
-   TwTerminate();
+ //  TwTerminate();
 
 }
 
@@ -149,7 +156,7 @@ void Display::display()
      *
      */
     //DRAW ATB
-   TwDraw();
+ //  TwDraw();
         //call for optix trace
     mScene->trace(c);
     //transfer optix buffer to opengl buffer
@@ -222,7 +229,7 @@ void Display::resize(int width, int height)
 {
 
     // Send the new window size to AntTweakBar
-    TwWindowSize(width, height);
+    //TwWindowSize(width, height);
 }
 
 void Display::keyPressed(unsigned char key, int x, int y)

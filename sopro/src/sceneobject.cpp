@@ -1,4 +1,7 @@
 #include "../include/sceneobject.h"
+#include "../include/plainColorMaterial.h"
+#include "../include/phongMaterial.h"
+#include  "../include/structs.h"
 
 BaseGeometry* SceneObject::getGeometry() const
 {
@@ -17,8 +20,61 @@ std::string SceneObject::getName() const
 
 void SceneObject::setMaterial(BaseMaterial *material)
 {
-    mMaterial = material;
-    markAsChanged();
+    if(material->getMaterialType() != mMaterial->getMaterialType())
+    {
+        mMaterial = material;
+        markAsChanged();
+        return;
+    }
+
+    if(mMaterial->getMaterialType() == BaseMaterial::PLAIN )
+    {
+        PlainColorMaterial* mat1 = dynamic_cast<PlainColorMaterial*>(mMaterial);
+        PlainColorMaterial* mat2 = dynamic_cast<PlainColorMaterial*>(material);
+        if(&mat1 != &mat2)
+        {
+            mMaterial = material;
+            markAsChanged();
+            return;
+        }
+    }
+    else if(mMaterial->getMaterialType() == BaseMaterial::PHONG)
+    {
+        PhongMaterial* mat1 = dynamic_cast<PhongMaterial*>(mMaterial);
+        PhongMaterial* mat2 = dynamic_cast<PhongMaterial*>(material);
+        if(&mat1 != &mat2)
+        {
+            mMaterial = material;
+            markAsChanged();
+            return;
+        }
+    }
+    else if(mMaterial->getMaterialType() == BaseMaterial::DISNEY)
+    {
+        /*DisneyMaterial* mat1 = dynamic_cast<DisneyMaterial*>(mMaterial);
+         *DisneyMaterial* mat2 = dynmiac_cast<DisneyMaterial*>(material);
+         * if(&mat1 != &mat2)
+         * {
+         *      mMaterial = material;
+         *      markAsChanged();
+         *      return;
+         * }
+         */
+            //dummy
+    }
+    else if(mMaterial->getMaterialType() == BaseMaterial::GLASS)
+    {
+        /*GlassMaterial* mat1 = dynamic_cast<GlassMaterial*>(mMaterial);
+         *GlassMaterial* mat2 = dynmiac_cast<GlassMaterial*>(material);
+         * if(&mat1 != &mat2)
+         * {
+         *      mMaterial = material;
+         *      markAsChanged();
+         *      return;
+         * }
+         */
+            //dummy
+    }
 }
 
 bool SceneObject::changed()

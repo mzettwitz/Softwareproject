@@ -2,7 +2,7 @@
 
 using namespace optix;
 
-Geometry sphere::createGeometry(Context context) const
+Geometry Sphere::createGeometry(Context context) const
 {
 
     Geometry geometry = context->createGeometry();

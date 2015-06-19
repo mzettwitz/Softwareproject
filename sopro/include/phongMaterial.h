@@ -28,7 +28,7 @@
 
 using namespace optix;
 
-class phongMaterial : protected BaseMaterial
+class PhongMaterial : protected BaseMaterial
 {
 private:
     float3 mAmbientColor;
@@ -40,7 +40,7 @@ private:
     float mShininess;
 
 public:
-    phongMaterial(float3 aCol, float3 dCol, float3 sCol, float aCoef, float dCoef, float sCoef, float shine, std::string path) :
+    PhongMaterial(float3 aCol, float3 dCol, float3 sCol, float aCoef, float dCoef, float sCoef, float shine, std::string path) :
         mAmbientColor(aCol), mDiffuseColor(dCol), mSpecularColor(sCol), mAbientCoeff(aCoef), mDiffuseCoeff(dCoef), mSpecularCoeff(sCoef), mShininess(shine)
     {
         mMaterialType = PHONG;

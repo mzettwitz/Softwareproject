@@ -39,3 +39,5 @@ struct PerRayData_radiance
     int depth;              //24
     float2 padding;         //32 :)
 };
+
+

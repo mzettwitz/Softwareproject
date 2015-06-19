@@ -1,6 +1,6 @@
 #include "../../include/geometry/areaPlane.h"
 
-Geometry areaPlane::createGeometry(Context context) const
+Geometry AreaPlane::createGeometry(Context context) const
 {
     Geometry geometry = context->createGeometry();
     geometry->setPrimitiveCount(1);

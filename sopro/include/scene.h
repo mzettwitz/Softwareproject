@@ -33,7 +33,7 @@ public:
     void                            addSceneObject(BaseGeometry *geometry, BaseMaterial *material, const std::string &name);
     void                            removeObject(const std::string &object);
     void                            removeObject(const unsigned int index);
-    std::vector<SceneObject>        getSceneObjects() const;
+    std::vector<SceneObject>*       getSceneObjects();
     SceneObject*                    getSceneObject(const std::string &name);
     SceneObject*                    getSceneObject(const unsigned int index);
     int                             getSceneObjectCount();   

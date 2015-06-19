@@ -13,7 +13,7 @@
 
 #include "baseGeometry.h"
 
-class areaPlane : protected BaseGeometry
+class AreaPlane : protected BaseGeometry
 {
 private:
     /*!
@@ -36,7 +36,7 @@ public:
      * \param path
      * specifies path to ptx files
      */
-    areaPlane(float3 pos,float2 dim,std::string intersect,std::string boundingbox,std::string path) : BaseGeometry(pos,intersect,boundingbox,path), mDimensions(dim)
+    AreaPlane(float3 pos,float2 dim,std::string intersect,std::string boundingbox,std::string path) : BaseGeometry(pos,intersect,boundingbox,path), mDimensions(dim)
     {
         mGeometryType = AREAPLANE;
     }
