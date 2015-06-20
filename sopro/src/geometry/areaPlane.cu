@@ -8,6 +8,7 @@ rtDeclareVariable(float3, position,,);
 rtDeclareVariable(float3,dimensions,,);
 rtDeclareVariable(Ray,ray,rtCurrentRay,);
 rtDeclareVariable(float,sceneEpsilon,,);
+rtDeclareVariable(float4, normal, attribute normal,);
 
 RT_PROGRAM void areaPlaneIntersectionProgram(int primIdx)
 {

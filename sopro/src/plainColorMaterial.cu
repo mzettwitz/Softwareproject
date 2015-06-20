@@ -17,8 +17,7 @@ rtDeclareVariable(rtObject, topShadower,,);
 rtBuffer<BasicLight> lights;
 rtDeclareVariable(float, intersectionDistance, rtIntersectionDistance,);
 rtDeclareVariable(float3,color,,);
-rtDeclareVariable(float3,shadingNormal,attribute shadingNormal,);
-rtDeclareVariable(float3,geometricNormal, attribute geometricNormal,);
+rtDeclareVariable(float3, normal, attribute normal,);
 
 static __device__ void shadowed();
 static __device__ void shade();
@@ -79,8 +78,8 @@ static __device__ void shade()
         if(fmaxf(shadowPrd.attenuation) > 0.0f)
         {
             float4 ret = make_float4(color,1.f) * make_float4(lights[i].color,1.f);
-            float3 world_geo_normal = normalize(rtTransformNormal(RT_OBJECT_TO_WORLD,shadingNormal));
-            ret *= dot(world_geo_normal,shadowDirection);
+            float3 worldGeoNormal = normalize(rtTransformNormal(RT_OBJECT_TO_WORLD,normal));
+            ret *= dot(worldGeoNormal,shadowDirection);
 
             result = ret;
         }

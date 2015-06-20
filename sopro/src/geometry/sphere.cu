@@ -8,8 +8,7 @@ using namespace optix;
 
 rtDeclareVariable(float4, coordinates,,);
 rtDeclareVariable(Ray, ray,rtCurrentRay,);
-rtDeclareVariable(float3, shadingNormal, attribute shadingNormal,);
-rtDeclareVariable(float3, geometricNormal, attribute geometricNormal,);
+rtDeclareVariable(float3, normal , attribute normal,);
 
 RT_PROGRAM void sphereIntersectionProgram(int primIdx)
 {
@@ -37,20 +36,18 @@ RT_PROGRAM void sphereIntersectionProgram(int primIdx)
         {
             if(rtPotentialIntersection(lambda1))
             {
-                shadingNormal = geometricNormal = c - o + lambda1 * (o+d);
+                normal = -c + o + lambda1 * d;
                 rtReportIntersection(0);
             }
         }
         else
         {
-            if(lambda2 > 0.0f)
-            {
                if(rtPotentialIntersection(lambda2))
                {
-                   shadingNormal = geometricNormal =  c - o + lambda2 * (o+d);
+                   normal =  -c + o + lambda2 * d;
                     rtReportIntersection(0);
                }
-            }
+
         }
     }
 }

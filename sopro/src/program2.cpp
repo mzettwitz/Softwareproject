@@ -116,7 +116,7 @@ Context createContext()
 
     //Outputbuffer
     Variable outputBuffer = context["outputBuffer"];
-    Buffer buffer = context->createBuffer(RT_BUFFER_OUTPUT,RT_FORMAT_UNSIGNED_BYTE4,width,height);
+    Buffer buffer = context->createBuffer(RT_BUFFER_OUTPUT,RT_FORMAT_FLOAT4,width,height);
     outputBuffer->setBuffer(buffer);
     //RayGenerationProgram
     std::string usedPTXPath(ptxPath("pinholeCamera.cu"));
