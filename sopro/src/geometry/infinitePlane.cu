@@ -2,8 +2,6 @@
 #include <optixu/optixu_math_namespace.h>
 #include <optixu/optixu_matrix_namespace.h>
 
-
-
 using namespace optix;
 
 rtDeclareVariable(float3,plane,,);
@@ -16,10 +14,8 @@ RT_PROGRAM void infinitePlaneIntersectionProgram(int primIdx)
     float t = 0;
     if( t = (-ray.origin.y + plane.y) / ray.direction.y)
     {
-
         if(rtPotentialIntersection(t))
         {
-
             normal = make_float3(0.0f,1.0f,0.0f);
             rtReportIntersection(0);
         }

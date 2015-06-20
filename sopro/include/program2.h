@@ -13,7 +13,7 @@
 #include <optixu/optixu_math_namespace.h>
 #include <vector>
 
-#include "../include/plainColorMaterial.h"
+#include "../include/material/lambertMaterial.h"
 #include "../include/geometry/infinitePlane.h"
 #include "../include/geometry/sphere.h"
 

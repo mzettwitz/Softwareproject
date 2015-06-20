@@ -1,13 +1,13 @@
-#include "../include/plainColorMaterial.h"
+#include "../../include/material/lambertMaterial.h"
 
 using namespace optix;
 
-void PlainColorMaterial::setColor(const float3 &c)
+void LambertMaterial::setColor(const float3 &c)
 {
     mColor = c;
 }
 
-Material PlainColorMaterial::createMaterial(Context context) const
+Material LambertMaterial::createMaterial(Context context) const
 {
 
     Material material = context->createMaterial();
@@ -17,12 +17,12 @@ Material PlainColorMaterial::createMaterial(Context context) const
     return material;
 }
 
-float3 PlainColorMaterial::color() const
+float3 LambertMaterial::color() const
 {
     return mColor;
 }
 
-bool operator!=(const PlainColorMaterial &mat1, const PlainColorMaterial &mat2)
+bool operator!=(const LambertMaterial &mat1, const LambertMaterial &mat2)
 {
     return (mat1.color().x != mat2.color().x || mat1.color().y != mat2.color().y || mat1.color().z != mat2.color().z);
 }

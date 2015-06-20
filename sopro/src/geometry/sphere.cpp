@@ -4,7 +4,6 @@ using namespace optix;
 
 Geometry Sphere::createGeometry(Context context) const
 {
-
     Geometry geometry = context->createGeometry();
     geometry->setPrimitiveCount(1);
     geometry->setBoundingBoxProgram(context->createProgramFromPTXFile(mPTXpath,mBoundingBoxProgram));

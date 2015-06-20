@@ -11,7 +11,7 @@ private:
     float mHeight;
 
 public:
-    infinitePlane(float height, std::string intersect,std::string boundingbox,std::string path) : mHeight(height),BaseGeometry(make_float3(0.0f,0.0f,0.0f),intersect,boundingbox,path)
+    infinitePlane(float height) : mHeight(height),BaseGeometry(make_float3(0.0f,0.0f,0.0f),"infinitePlaneIntersectionProgram","infinitePlaneBoundingBoxProgram","infinitePlane.cu")
     {
         mGeometryType = INFINITEPLANE;
     }

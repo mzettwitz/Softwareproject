@@ -10,8 +10,8 @@
 #pragma once
 
 #include "../AntTweakBar/include/AntTweakBar.h"
-#include "../include/baseMaterial.h"
-#include "../include/plainColorMaterial.h"
+#include "material/baseMaterial.h"
+#include "material/lambertMaterial.h"
 
 
 

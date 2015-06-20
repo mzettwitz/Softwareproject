@@ -40,4 +40,12 @@ struct PerRayData_radiance
     float2 padding;         //32 :)
 };
 
+struct PointLight
+{
+
+    float3 position;        //12
+    float3 color;           //24
+    float intensity;        //28
+    int padding;            //32 :)
+};
 

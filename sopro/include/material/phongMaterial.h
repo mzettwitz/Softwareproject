@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "../include/baseMaterial.h"
+#include "baseMaterial.h"
 
 using namespace optix;
 
@@ -40,11 +40,11 @@ private:
     float mShininess;
 
 public:
-    PhongMaterial(float3 aCol, float3 dCol, float3 sCol, float aCoef, float dCoef, float sCoef, float shine, std::string path) :
+    PhongMaterial(float3 aCol, float3 dCol, float3 sCol, float aCoef, float dCoef, float sCoef, float shine) :
         mAmbientColor(aCol), mDiffuseColor(dCol), mSpecularColor(sCol), mAbientCoeff(aCoef), mDiffuseCoeff(dCoef), mSpecularCoeff(sCoef), mShininess(shine)
     {
         mMaterialType = PHONG;
-        setPTXPath(path);
+        setPTXPath("phongMaterial.cu");
     }
 
     Material createMaterial(Context context) const;

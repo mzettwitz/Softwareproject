@@ -1,4 +1,4 @@
-#include "../include/baseMaterial.h"
+#include "../../include/material/baseMaterial.h"
 
 void BaseMaterial::setPTXPath(const std::string &path)
 {

@@ -1,7 +1,7 @@
 #ifndef SCENEOBJECT_H
 #define SCENEOBJECT_H
 
-#include "baseMaterial.h"
+#include "material/baseMaterial.h"
 #include "geometry/baseGeometry.h"
 
 class SceneObject

@@ -19,22 +19,22 @@
 
 #pragma once
 
-#include "../include/baseMaterial.h"
+#include "baseMaterial.h"
 
 using namespace optix;
 
 
 
 
-class PlainColorMaterial : protected BaseMaterial
+class LambertMaterial : protected BaseMaterial
 {
 
     float3 mColor;
 public :
-    PlainColorMaterial(float3 c, std::string path) : mColor(c)
+    LambertMaterial(float3 c) : mColor(c)
     {
-        mMaterialType = PLAIN;
-        setPTXPath(path);
+        mMaterialType = LAMBERT;
+        setPTXPath("lambertMaterial.cu");
     }
     void setColor(const float3 &c);
     Material createMaterial(Context context) const;

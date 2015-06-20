@@ -8,7 +8,7 @@ class Sphere : protected BaseGeometry
 
     float mRadius;
 public:
-    Sphere(float3 pos,float r,std::string intersect, std::string boundingbox, std::string path) : mRadius(r),BaseGeometry(pos,intersect,boundingbox,path)
+    Sphere(float3 pos,float r) : mRadius(r),BaseGeometry(pos,"sphereIntersectionProgram","sphereBoundingBoxProgram","sphere.cu")
     {
         mGeometryType = SPHERE;
     }

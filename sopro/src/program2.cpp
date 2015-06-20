@@ -40,21 +40,21 @@ int program2(int argc,char* argv[])
         std::vector<Material> mat;
         std::vector<Geometry> geom;
     //create sphere
-    Sphere s(make_float3(0.0f,1.0f,0.0f),1.0f,"sphereIntersectionProgram","sphereBoundingBoxProgram","sphere.cu");
+    Sphere s(make_float3(0.0f,1.0f,0.0f),1.0f);
     geom.push_back(s.createGeometry(context));
-    PlainColorMaterial sphereMaterial(make_float3(0.8f,0.4f,0.1f),"plainColorMaterial.cu");
+    LambertMaterial sphereMaterial(make_float3(0.8f,0.4f,0.1f));
     mat.push_back(sphereMaterial.createMaterial(context));
 
     //create sphere
-    Sphere s2(make_float3(2.0f,1.2f,0.0f),1.2f,"sphereIntersectionProgram","sphereBoundingBoxProgram","sphere.cu");
+    Sphere s2(make_float3(2.0f,1.2f,0.0f),1.2f);
     geom.push_back(s2.createGeometry(context));
-    PlainColorMaterial sphereMaterial2(make_float3(1.0f,0.2f,0.6f),"plainColorMaterial.cu");
+    LambertMaterial sphereMaterial2(make_float3(1.0f,0.2f,0.6f));
     mat.push_back(sphereMaterial2.createMaterial(context));
 
     //create groundplane
-    infinitePlane plane(0.0f,"infinitePlaneIntersectionProgram","infinitePlaneBoundingBoxProgram","infinitePlane.cu");
+    infinitePlane plane(0.0f);
     geom.push_back(plane.createGeometry(context));
-    PlainColorMaterial planeMaterial(make_float3(0.2f,0.3f,0.4f),"plainColorMaterial.cu");
+    LambertMaterial planeMaterial(make_float3(0.2f,0.3f,0.4f));
     mat.push_back(planeMaterial.createMaterial(context));
 
 
@@ -97,17 +97,17 @@ Context createContext()
     context["sceneEpsilon"]->setFloat(1.e-3f);
 
     //set Light(s)
-    BasicLight light;
+    PointLight light;
 
     light.color = make_float3(1.0f,1.0f,1.0f);
-    light.pos = make_float3(100.f,100.f,-40.f);
-    light.casts_shadow = 1;
+    light.position = make_float3(10.f,10.f,-4.f);
+    light.intensity = 250.0f;
     light.padding = 0;
 
 
 
     Buffer lightBuffer = context->createBuffer(RT_BUFFER_INPUT,RT_FORMAT_USER,width,height);
-    lightBuffer->setElementSize(sizeof(BasicLight));
+    lightBuffer->setElementSize(sizeof(PointLight));
     lightBuffer->setSize(1);
     memcpy(lightBuffer->map(),&light,sizeof(light));
     lightBuffer->unmap();

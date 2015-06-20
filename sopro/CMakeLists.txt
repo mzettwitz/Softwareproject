@@ -13,16 +13,16 @@ OPTIX_add_sample_executable(sopro
         src/antTBar.cpp
 
 	#Materials
-	src/baseMaterial.cpp
-	src/plainColorMaterial.cpp
-	src/phongMaterial.cpp
+	src/material/baseMaterial.cpp
+	src/material/lambertMaterial.cpp
+	src/material/phongMaterial.cpp
 
 	#Material Cuda/Raytracing
 	src/pinholeCamera.cu
 	src/miss.cu
 	src/entrypoint.cu
-	src/plainColorMaterial.cu
-	src/phongMaterial.cu
+	src/material/lambertMaterial.cu
+	src/material/phongMaterial.cu
 	
 	#Geometry
 	src/geometry/baseGeometry.cpp
@@ -54,10 +54,9 @@ OPTIX_add_sample_executable(sopro
 	include/antTBar.h
 
 	#Material
-	include/light.h
-	include/baseMaterial.h
-	include/plainColorMaterial.h
-	include/phongMaterial.h
+	include/material/baseMaterial.h
+	include/material/lambertMaterial.h
+	include/material/phongMaterial.h
 
 	#Geometry
 	include/geometry/baseGeometry.h

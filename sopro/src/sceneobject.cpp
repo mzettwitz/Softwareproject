@@ -1,6 +1,6 @@
 #include "../include/sceneobject.h"
-#include "../include/plainColorMaterial.h"
-#include "../include/phongMaterial.h"
+#include "../include/material/lambertMaterial.h"
+#include "../include/material/phongMaterial.h"
 #include  "../include/structs.h"
 
 BaseGeometry* SceneObject::getGeometry() const
@@ -27,10 +27,10 @@ void SceneObject::setMaterial(BaseMaterial *material)
         return;
     }
 
-    if(mMaterial->getMaterialType() == BaseMaterial::PLAIN )
+    if(mMaterial->getMaterialType() == BaseMaterial::LAMBERT )
     {
-        PlainColorMaterial* mat1 = dynamic_cast<PlainColorMaterial*>(mMaterial);
-        PlainColorMaterial* mat2 = dynamic_cast<PlainColorMaterial*>(material);
+        LambertMaterial* mat1 = dynamic_cast<LambertMaterial*>(mMaterial);
+        LambertMaterial* mat2 = dynamic_cast<LambertMaterial*>(material);
         if(&mat1 != &mat2)
         {
             mMaterial = material;

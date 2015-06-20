@@ -1,4 +1,4 @@
-#include "../include/phongMaterial.h"
+#include "../../include/material/phongMaterial.h"
 
 using namespace optix;
 
