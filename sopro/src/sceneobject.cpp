@@ -20,8 +20,9 @@ std::string SceneObject::getName() const
 
 void SceneObject::setMaterial(BaseMaterial *material)
 {
-    if(material->getMaterialType() != mMaterial->getMaterialType())
+    if(material->getMaterialType() != this->getMaterial()->getMaterialType())
     {
+        std::cout << mMaterial->getMaterialType() << std::endl;
         mMaterial = material;
         markAsChanged();
         return;

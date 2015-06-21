@@ -36,6 +36,7 @@ RT_PROGRAM void sphereIntersectionProgram(int primIdx)
             if(rtPotentialIntersection(lambda1))
             {
                 normal = -c + o + lambda1 * d;
+                normal = normalize(normal);
                 rtReportIntersection(0);
             }
         }
@@ -44,6 +45,7 @@ RT_PROGRAM void sphereIntersectionProgram(int primIdx)
             if(rtPotentialIntersection(lambda2))
             {
                 normal =  -c + o + lambda2 * d;
+                normal = normalize(normal);
                 rtReportIntersection(0);
             }
         }

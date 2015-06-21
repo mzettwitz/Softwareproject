@@ -53,15 +53,15 @@ void Scene::initScene(const Scene::Camera &camera)
     mWidth  = 800;
     mHeight = 800;
 
-    BasicLight light;
+    PointLight light;
 
     light.color = optix::make_float3(1.0f,1.0f,1.0f);
-    light.pos = optix::make_float3(100.f,100.f,-40.f);
-    light.casts_shadow = 1;
+    light.position = optix::make_float3(10.f,10.f,-4.f);
+    light.intensity = 250.0f;
     light.padding = 0;
 
     optix::Buffer lightBuffer = mContext->createBuffer(RT_BUFFER_INPUT,RT_FORMAT_USER,mWidth,mHeight);
-    lightBuffer->setElementSize(sizeof(BasicLight));
+    lightBuffer->setElementSize(sizeof(PointLight));
     lightBuffer->setSize(1);
     std::memcpy(lightBuffer->map(),&light,sizeof(light));
     lightBuffer->unmap();
@@ -113,14 +113,8 @@ void Scene::initScene(const Scene::Camera &camera)
     mContext["topObject"]->set(mGeometryGroup);
     mContext["topShadower"]->set(mGeometryGroup);
 
-
     mContext->validate();
     mContext->compile();
-
-
-
-    //set Camera
-
 }
 
 void Scene::updateScene(const Scene::Camera &camera)
@@ -138,6 +132,9 @@ void Scene::addSceneObject(const SceneObject &object)
     gi->setMaterialCount(1);
     gi->setMaterial(0,object.getMaterial()->createMaterial(mContext));
     mGeometryGroup->setChild(mSceneObjects.size()-1,gi);
+
+    gi->getGeometry()->markDirty();
+    mGeometryGroup->getAcceleration()->markDirty();
 }
 
 void Scene::addSceneObject(BaseGeometry *geometry, BaseMaterial *material, const std::string &name)
@@ -151,6 +148,9 @@ void Scene::addSceneObject(BaseGeometry *geometry, BaseMaterial *material, const
     gi->setMaterialCount(1);
     gi->setMaterial(0,object.getMaterial()->createMaterial(mContext));
     mGeometryGroup->setChild(mSceneObjects.size()-1,gi);
+
+    gi->getGeometry()->markDirty();
+    mGeometryGroup->getAcceleration()->markDirty();
 }
 
 void Scene::removeObject(const std::string &object)
@@ -165,6 +165,7 @@ void Scene::removeObject(const std::string &object)
         }
 
     }
+    mGeometryGroup->getAcceleration()->markDirty();
 }
 
 void Scene::removeObject(const unsigned int index)
@@ -173,8 +174,10 @@ void Scene::removeObject(const unsigned int index)
     {
         mSceneObjects.erase(mSceneObjects.begin()+index);
         mGeometryGroup->removeChild(index);
+        mGeometryGroup->getAcceleration()->markDirty();
         return;
     }
+
     printf("index out of bounds");
 }
 
@@ -185,7 +188,7 @@ void Scene::updateSceneObjects()
     {
         if(mSceneObjects.at(i).changed())
         {
-
+            mGeometryGroup->getChild(i)->getMaterial(0)->destroy();
             mGeometryGroup->getChild(i)->setMaterial(0,mSceneObjects.at(i).getMaterial()->createMaterial(mContext));
         }
     }
@@ -238,4 +241,9 @@ SceneObject* Scene::getSceneObject(const std::string &name)
 std::vector<SceneObject>* Scene::getSceneObjects()
 {
     return &mSceneObjects;
+}
+
+int Scene::getSceneObjectCount()
+{
+    return mSceneObjects.size();
 }

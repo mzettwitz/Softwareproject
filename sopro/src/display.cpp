@@ -5,6 +5,7 @@
 #include <optixu/optixpp_namespace.h>
 #include <optixu/optixu_math_namespace.h>
 #include "../include/antTBar.h"
+#include "../include/geometry/sphere.h"
 
 using namespace optix;
 
@@ -24,6 +25,10 @@ int                 Display::oldx = 0;
 int                 Display::oldy = 0;
 float               Display::deltaTime = 0.0f;
 int                 Display::mState = Display::mouseState::IDLE;
+
+//dummy purpose
+float               p = 0.0f;
+int                 count = 0;
 
 void Display::init(int &argc, char **argv)
 {
@@ -260,8 +265,43 @@ void Display::keyPressed(unsigned char key, int x, int y)
     {
         cameraPosition -= 0.02f * cameraDirection;
     }
+    //5, dummy purpose
+    if(key == 53)
+    {
+        LambertMaterial* l = new LambertMaterial(make_float3(0.02f * p,0.5f,0.3f));
+        Sphere* s = new Sphere(make_float3(p,0.0f,0.0f),1.0f);
+        std::string name = "sphere_" + std::to_string(mScene->getSceneObjectCount());
+        SceneObject* obj = new SceneObject(name,s,l);
+        mScene->addSceneObject(*obj);
+        p += 2.5f;
+        std::cout << p << std::endl;
+    }
+    //6 dummy purpose
+    if(key == 54)
+    {
+        std::cout << mScene->getSceneObjectCount() << std::endl;
+    }
+    //7 dummy purpose
+    if(key == 55)
+    {
+        if(mScene->getSceneObjectCount() > 0)
+        {
+            mScene->removeObject(mScene->getSceneObjectCount()-1);
+            p -= 2.5f;
+        }
+    }
+    //8 dummy purpose
+    if(key == 56)
+    {
+        if(count < mScene->getSceneObjectCount())
+        {
+            LambertMaterial* l1 = new LambertMaterial(make_float3(1.0f,1.0f,1.0f));
+            mScene->getSceneObject(count)->setMaterial(l1);
+            ++count;
+        }
 
-    //needs to be called, to update change
+    }
+        //needs to be called, to update change
     glutPostRedisplay();
 }
 

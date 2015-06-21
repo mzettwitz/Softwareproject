@@ -28,7 +28,7 @@
 
 using namespace optix;
 
-class PhongMaterial : protected BaseMaterial
+class PhongMaterial : public BaseMaterial
 {
 private:
     float3 mAmbientColor;
@@ -47,7 +47,7 @@ public:
         setPTXPath("phongMaterial.cu");
     }
 
-    Material createMaterial(Context context) const;
+    Material createMaterial(Context context) const override;
 
     // Getter & Setter
     float3 ambientColor() const;

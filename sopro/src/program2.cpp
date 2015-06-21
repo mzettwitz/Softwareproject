@@ -100,7 +100,7 @@ Context createContext()
     PointLight light;
 
     light.color = make_float3(1.0f,1.0f,1.0f);
-    light.position = make_float3(10.f,10.f,-4.f);
+    light.position = make_float3(10.f,10.f,4.f);
     light.intensity = 250.0f;
     light.padding = 0;
 

@@ -13,7 +13,7 @@
 
 #include "baseGeometry.h"
 
-class AreaPlane : protected BaseGeometry
+class AreaPlane : public BaseGeometry
 {
 private:
     /*!

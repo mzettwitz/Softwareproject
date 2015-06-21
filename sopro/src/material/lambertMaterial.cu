@@ -14,7 +14,7 @@ rtDeclareVariable(unsigned int, shadowRayType,,);
 rtDeclareVariable(unsigned int, radianceRayType,,);
 rtDeclareVariable(float, sceneEpsilon,,);
 rtDeclareVariable(rtObject, topShadower,,);
-rtBuffer<BasicLight> lights;
+rtBuffer<PointLight> lights;
 rtDeclareVariable(float, intersectionDistance, rtIntersectionDistance,);
 rtDeclareVariable(float3,color,,);
 rtDeclareVariable(float3, normal, attribute normal,);
@@ -64,11 +64,11 @@ static __device__ void shade()
     float4 result = make_float4(0.0f,0.0f,0.0f,1.0f);
     for(unsigned int i = 0;i < lights.size();++i)
     {
-
         float3 hitPoint = ray.origin + intersectionDistance * ray.direction;
-        float3 shadowDirection = normalize(lights[i].pos - hitPoint);
+        float3 shadowDirection = lights[i].position - hitPoint;
+        float maxLambda = length(shadowDirection);
+        shadowDirection = normalize(shadowDirection);
         hitPoint = hitPoint + sceneEpsilon * shadowDirection;
-        float maxLambda = length(lights[i].pos - hitPoint);
 
         Ray shadowRay = make_Ray(hitPoint, shadowDirection,
                                  shadowRayType, sceneEpsilon,maxLambda);
@@ -78,17 +78,11 @@ static __device__ void shade()
         if(fmaxf(shadowPrd.attenuation) > 0.0f)
         {
             float4 ret = make_float4(color,1.f) * make_float4(lights[i].color,1.f);
-            float3 worldGeoNormal = normalize(rtTransformNormal(RT_OBJECT_TO_WORLD,normal));
-            ret *= dot(worldGeoNormal,shadowDirection);
-
-            result = ret;
-        }
-        else
-        {
-            result += make_float4(0.0f,0.0f,0.0f,1.0f);
+            ret *= (lights[i].intensity * dot(normal,shadowDirection)) / (maxLambda * maxLambda);
+            result += ret;
         }
     }
     result.w = 1.0f;
-    prd_radiance.result = result;
+    prd_radiance.result = result/lights.size();
 }
 

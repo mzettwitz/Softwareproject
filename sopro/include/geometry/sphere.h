@@ -3,7 +3,7 @@
 
 #include "baseGeometry.h"
 
-class Sphere : protected BaseGeometry
+class Sphere : public BaseGeometry
 {
 
     float mRadius;

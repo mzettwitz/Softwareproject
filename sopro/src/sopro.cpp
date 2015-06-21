@@ -12,7 +12,7 @@
 int main(int argc, char* argv[])
 {
 
-  size_t program = 2;
+  size_t program = 3;
   std::cout << "Starting program " << program << std::endl;
   int res = 0;
 

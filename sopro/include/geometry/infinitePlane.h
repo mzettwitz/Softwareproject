@@ -5,7 +5,7 @@
 
 
 
-class infinitePlane : protected BaseGeometry
+class infinitePlane : public BaseGeometry
 {
 private:
     float mHeight;

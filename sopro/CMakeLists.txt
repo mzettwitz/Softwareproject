@@ -16,6 +16,8 @@ OPTIX_add_sample_executable(sopro
 	src/material/baseMaterial.cpp
 	src/material/lambertMaterial.cpp
 	src/material/phongMaterial.cpp
+	src/material/glassMaterial.cpp
+	src/material/disneyMaterial.cpp
 
 	#Material Cuda/Raytracing
 	src/pinholeCamera.cu
@@ -23,7 +25,9 @@ OPTIX_add_sample_executable(sopro
 	src/entrypoint.cu
 	src/material/lambertMaterial.cu
 	src/material/phongMaterial.cu
-	
+	src/material/glassMaterial.cu
+	src/material/disneyMaterial.cu
+
 	#Geometry
 	src/geometry/baseGeometry.cpp
 	src/geometry/basePlane.cpp
@@ -57,6 +61,8 @@ OPTIX_add_sample_executable(sopro
 	include/material/baseMaterial.h
 	include/material/lambertMaterial.h
 	include/material/phongMaterial.h
+	include/material/glassMaterial.h
+	include/material/disneyMaterial.h	
 
 	#Geometry
 	include/geometry/baseGeometry.h
