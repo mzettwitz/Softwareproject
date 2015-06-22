@@ -3,7 +3,7 @@
 
 using namespace optix;
 
-Geometry infinitePlane::createGeometry(Context context) const
+Geometry InfinitePlane::createGeometry(Context context) const
 {
     Geometry geometry = context->createGeometry();
     geometry->setPrimitiveCount(1);

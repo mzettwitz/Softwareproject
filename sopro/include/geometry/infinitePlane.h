@@ -5,13 +5,13 @@
 
 
 
-class infinitePlane : public BaseGeometry
+class InfinitePlane : public BaseGeometry
 {
 private:
     float mHeight;
 
 public:
-    infinitePlane(float height) : mHeight(height),BaseGeometry(make_float3(0.0f,0.0f,0.0f),"infinitePlaneIntersectionProgram","infinitePlaneBoundingBoxProgram","infinitePlane.cu")
+    InfinitePlane(float height) : mHeight(height),BaseGeometry(make_float3(0.0f,0.0f,0.0f),"infinitePlaneIntersectionProgram","infinitePlaneBoundingBoxProgram","infinitePlane.cu")
     {
         mGeometryType = INFINITEPLANE;
     }

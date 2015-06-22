@@ -52,7 +52,7 @@ int program2(int argc,char* argv[])
     mat.push_back(sphereMaterial2.createMaterial(context));
 
     //create groundplane
-    infinitePlane plane(0.0f);
+    InfinitePlane plane(0.0f);
     geom.push_back(plane.createGeometry(context));
     LambertMaterial planeMaterial(make_float3(0.2f,0.3f,0.4f));
     mat.push_back(planeMaterial.createMaterial(context));

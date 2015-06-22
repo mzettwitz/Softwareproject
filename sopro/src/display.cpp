@@ -12,8 +12,8 @@ using namespace optix;
 
 std::shared_ptr<Scene>        Display::mScene = 0;
 std::string         Display::mTitle = "";
-int                 Display::mWidth = 400;
-int                 Display::mHeight = 400;
+int                 Display::mWidth = 800;
+int                 Display::mHeight = 800;
 float               Display::horizontalAngle = 0.0f;
 float               Display::verticalAngle = 0.0f;
 float               Display::initialFOV = 45.f;
@@ -249,22 +249,22 @@ void Display::keyPressed(unsigned char key, int x, int y)
     //1
     if(key == 49)
     {
-        cameraPosition += 0.02f * cameraDirection;
+        cameraPosition += 0.2f * cameraDirection;
     }
     //2
     if(key == 50)
     {
-        cameraPosition += 0.02f * cameraRight;
+        cameraPosition += 0.2f * cameraRight;
     }
     //3
     if(key == 51)
     {
-        cameraPosition -= 0.02f * cameraRight;
+        cameraPosition -= 0.2f * cameraRight;
     }
     //4
     if(key == 52)
     {
-        cameraPosition -= 0.02f * cameraDirection;
+        cameraPosition -= 0.2f * cameraDirection;
     }
     //5, dummy purpose
     if(key == 53)
@@ -296,8 +296,12 @@ void Display::keyPressed(unsigned char key, int x, int y)
     {
         if(count < mScene->getSceneObjectCount())
         {
-            std::shared_ptr<LambertMaterial> l1 = std::make_shared<LambertMaterial>(make_float3(1.0f,1.0f,1.0f));
-            mScene->getSceneObject(count)->setMaterial(l1);
+            if(mScene->getSceneObject(count)->getGeometry()->getGeometryType() == BaseGeometry::INFINITEPLANE){
+                count++;
+            }
+                std::shared_ptr<LambertMaterial> l1 = std::make_shared<LambertMaterial>(make_float3(1.0f,0.5f,0.1f * count));
+                mScene->getSceneObject(count)->setMaterial(l1);
+
             ++count;
         }
 
@@ -305,7 +309,7 @@ void Display::keyPressed(unsigned char key, int x, int y)
     if(key == 57)
       {
         std::shared_ptr<LambertMaterial> p = std::make_shared<LambertMaterial>(make_float3(1.0f,1.0f,1.0f));
-        std::shared_ptr<infinitePlane> plane = std::make_shared<infinitePlane>(-2.0f);
+        std::shared_ptr<InfinitePlane> plane = std::make_shared<InfinitePlane>(-2.0f);
         std::shared_ptr<SceneObject> sc = std::make_shared<SceneObject>("groundPlane",plane,p);
         mScene->addSceneObject(sc);
     }
@@ -319,29 +323,43 @@ void Display::mouseButton(int button, int state, int x, int y)
     if(button == GLUT_LEFT_BUTTON)
     {
         if(state == GLUT_DOWN)
-        Display::mState = mouseState::MOVE;
+        {
+            Display::mState = mouseState::MOVE;
+        }
     }
-    else
+    else if(button == GLUT_RIGHT_BUTTON)
     {
-        state = mouseState::IDLE;
+
+        if(state == GLUT_DOWN)
+        {
+            Display::mState = mouseState::ROTATE;
+        }
+    }
+    else if(button == GLUT_MIDDLE_BUTTON)
+    {
+        if(state == GLUT_DOWN)
+        {
+            //do something
+        }
     }
 
 }
 
 void Display::mouseMotion(int x, int y)
 {
-    int deltaX = x - oldx;
-    int deltaY = y - oldy;
-    if(mState ==  mouseState::MOVE)
+    if(mState ==  mouseState::ROTATE)
     {
-        horizontalAngle += mouseSpeed *  deltaTime * float(mWidth - x);
-        verticalAngle += mouseSpeed * deltaTime * float(mHeight - y);
+        std::cout << horizontalAngle << "," << verticalAngle << std::endl;
+        horizontalAngle += mouseSpeed *  deltaTime * float(mWidth/2 - x);
+        verticalAngle += mouseSpeed * deltaTime * float(mHeight/2 - y);
 
         cameraDirection = make_float3(cos(verticalAngle) * sin(horizontalAngle),sin(verticalAngle),cos(verticalAngle) * cos(horizontalAngle));
         cameraRight = make_float3(sin(horizontalAngle - 3.14f/2.0f),0,cos(horizontalAngle - 3.14f/2.0f));
     }
-    oldx = x;
-    oldy = y;
+    if(mState == mouseState::MOVE)
+    {
+        cameraPosition += cameraDirection * deltaTime * mouseSpeed * 10.0f * float(mHeight/2 -y);
+    }
+
     glutPostRedisplay();
 }
-
