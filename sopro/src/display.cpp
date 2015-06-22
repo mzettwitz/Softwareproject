@@ -6,13 +6,14 @@
 #include <optixu/optixu_math_namespace.h>
 #include "../include/antTBar.h"
 #include "../include/geometry/sphere.h"
+#include "../include/geometry/infinitePlane.h"
 
 using namespace optix;
 
-Scene*        Display::mScene = 0;
+std::shared_ptr<Scene>        Display::mScene = 0;
 std::string         Display::mTitle = "";
-int                 Display::mWidth = 800;
-int                 Display::mHeight = 800;
+int                 Display::mWidth = 400;
+int                 Display::mHeight = 400;
 float               Display::horizontalAngle = 0.0f;
 float               Display::verticalAngle = 0.0f;
 float               Display::initialFOV = 45.f;
@@ -53,7 +54,7 @@ void Display::init(int &argc, char **argv)
     TwBar *bar;
 
     // Init ATB
-  //  TwInit(TW_OPENGL, NULL);
+   // TwInit(TW_OPENGL, NULL);
 
 
     // Create ATB
@@ -63,7 +64,7 @@ void Display::init(int &argc, char **argv)
  //   TwAddVarRW(bar, "Test", TW_TYPE_INT32, &test, "");
 }
 
-void Display::run(const std::string &title, Scene *scene)
+void Display::run(const std::string &title, std::shared_ptr<Scene> scene)
 {
     mScene = scene;
     mTitle = title;
@@ -268,11 +269,11 @@ void Display::keyPressed(unsigned char key, int x, int y)
     //5, dummy purpose
     if(key == 53)
     {
-        LambertMaterial* l = new LambertMaterial(make_float3(0.02f * p,0.5f,0.3f));
-        Sphere* s = new Sphere(make_float3(p,0.0f,0.0f),1.0f);
+        std::shared_ptr<LambertMaterial> l = std::make_shared<LambertMaterial>(make_float3(0.02f * p,0.5f,0.3f));
+        std::shared_ptr<Sphere> s = std::make_shared<Sphere>(make_float3(p,0.0f,0.0f),1.0f);
         std::string name = "sphere_" + std::to_string(mScene->getSceneObjectCount());
-        SceneObject* obj = new SceneObject(name,s,l);
-        mScene->addSceneObject(*obj);
+        std::shared_ptr<SceneObject> obj = std::make_shared<SceneObject>(name,s,l);
+        mScene->addSceneObject(obj);
         p += 2.5f;
         std::cout << p << std::endl;
     }
@@ -295,11 +296,18 @@ void Display::keyPressed(unsigned char key, int x, int y)
     {
         if(count < mScene->getSceneObjectCount())
         {
-            LambertMaterial* l1 = new LambertMaterial(make_float3(1.0f,1.0f,1.0f));
+            std::shared_ptr<LambertMaterial> l1 = std::make_shared<LambertMaterial>(make_float3(1.0f,1.0f,1.0f));
             mScene->getSceneObject(count)->setMaterial(l1);
             ++count;
         }
 
+    }
+    if(key == 57)
+      {
+        std::shared_ptr<LambertMaterial> p = std::make_shared<LambertMaterial>(make_float3(1.0f,1.0f,1.0f));
+        std::shared_ptr<infinitePlane> plane = std::make_shared<infinitePlane>(-2.0f);
+        std::shared_ptr<SceneObject> sc = std::make_shared<SceneObject>("groundPlane",plane,p);
+        mScene->addSceneObject(sc);
     }
         //needs to be called, to update change
     glutPostRedisplay();
@@ -326,8 +334,8 @@ void Display::mouseMotion(int x, int y)
     int deltaY = y - oldy;
     if(mState ==  mouseState::MOVE)
     {
-        horizontalAngle += mouseSpeed *  deltaTime * float(mWidth/2 - x);
-        verticalAngle += mouseSpeed * deltaTime * float(mHeight/2 - y);
+        horizontalAngle += mouseSpeed *  deltaTime * float(mWidth - x);
+        verticalAngle += mouseSpeed * deltaTime * float(mHeight - y);
 
         cameraDirection = make_float3(cos(verticalAngle) * sin(horizontalAngle),sin(verticalAngle),cos(verticalAngle) * cos(horizontalAngle));
         cameraRight = make_float3(sin(horizontalAngle - 3.14f/2.0f),0,cos(horizontalAngle - 3.14f/2.0f));

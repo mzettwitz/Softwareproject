@@ -8,10 +8,8 @@ int program3(int argc, char* argv[])
     Display::init(argc,argv);
     std::string title = "program3";
 
-    Scene scene;
+    std::shared_ptr<Scene> scene = std::make_shared<Scene>();
 
-    Display::run(title,&scene);
-
-
+    Display::run(title,scene);
     return 0;
 }

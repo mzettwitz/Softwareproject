@@ -1,14 +1,18 @@
 #include "../include/sceneobject.h"
 #include "../include/material/lambertMaterial.h"
 #include "../include/material/phongMaterial.h"
+#include "../include/material/glassMaterial.h"
+#include "../include/material/disneyMaterial.h"
 #include  "../include/structs.h"
 
-BaseGeometry* SceneObject::getGeometry() const
+
+
+std::shared_ptr<BaseGeometry> SceneObject::getGeometry() const
 {
     return mGeometry;
 }
 
-BaseMaterial* SceneObject::getMaterial() const
+std::shared_ptr<BaseMaterial> SceneObject::getMaterial() const
 {
     return mMaterial;
 }
@@ -18,9 +22,9 @@ std::string SceneObject::getName() const
     return mName;
 }
 
-void SceneObject::setMaterial(BaseMaterial *material)
+void SceneObject::setMaterial(std::shared_ptr<BaseMaterial> material)
 {
-    if(material->getMaterialType() != this->getMaterial()->getMaterialType())
+    if(material->getMaterialType() != mMaterial->getMaterialType())
     {
         std::cout << mMaterial->getMaterialType() << std::endl;
         mMaterial = material;
@@ -30,8 +34,8 @@ void SceneObject::setMaterial(BaseMaterial *material)
 
     if(mMaterial->getMaterialType() == BaseMaterial::LAMBERT )
     {
-        LambertMaterial* mat1 = dynamic_cast<LambertMaterial*>(mMaterial);
-        LambertMaterial* mat2 = dynamic_cast<LambertMaterial*>(material);
+        std::shared_ptr<LambertMaterial> mat1 = std::dynamic_pointer_cast<LambertMaterial>(mMaterial);
+        std::shared_ptr<LambertMaterial> mat2 = std::dynamic_pointer_cast<LambertMaterial>(material);
         if(&mat1 != &mat2)
         {
             mMaterial = material;
@@ -41,8 +45,8 @@ void SceneObject::setMaterial(BaseMaterial *material)
     }
     else if(mMaterial->getMaterialType() == BaseMaterial::PHONG)
     {
-        PhongMaterial* mat1 = dynamic_cast<PhongMaterial*>(mMaterial);
-        PhongMaterial* mat2 = dynamic_cast<PhongMaterial*>(material);
+        std::shared_ptr<PhongMaterial> mat1 = std::dynamic_pointer_cast<PhongMaterial>(mMaterial);
+        std::shared_ptr<PhongMaterial> mat2 = std::dynamic_pointer_cast<PhongMaterial>(material);
         if(&mat1 != &mat2)
         {
             mMaterial = material;
@@ -52,8 +56,8 @@ void SceneObject::setMaterial(BaseMaterial *material)
     }
     else if(mMaterial->getMaterialType() == BaseMaterial::DISNEY)
     {
-        /*DisneyMaterial* mat1 = dynamic_cast<DisneyMaterial*>(mMaterial);
-         *DisneyMaterial* mat2 = dynmiac_cast<DisneyMaterial*>(material);
+        /*std::shared_ptr<DisneyMaterial> mat1 = std::dynamic_pointer_cast<DisneyMaterial>(mMaterial);
+         *std::shared_ptr<DisneyMaterial> mat2 = std::dynamic_pointer_cast<DisneyMaterial>(material);
          * if(&mat1 != &mat2)
          * {
          *      mMaterial = material;
@@ -65,8 +69,8 @@ void SceneObject::setMaterial(BaseMaterial *material)
     }
     else if(mMaterial->getMaterialType() == BaseMaterial::GLASS)
     {
-        /*GlassMaterial* mat1 = dynamic_cast<GlassMaterial*>(mMaterial);
-         *GlassMaterial* mat2 = dynmiac_cast<GlassMaterial*>(material);
+        /*std::shared_ptr<GlassMaterial> mat1 = dynamic_cast<GlassMaterial*>(mMaterial);
+         *std::shared_ptrGlassMaterial> mat2 = dynmiac_cast<GlassMaterial*>(material);
          * if(&mat1 != &mat2)
          * {
          *      mMaterial = material;

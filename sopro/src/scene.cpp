@@ -12,6 +12,13 @@ Scene::Scene()
 {
     mContext = optix::Context::create();
     mGeometryGroup = mContext->createGeometryGroup();
+    mSceneObjects = std::make_shared<std::vector<std::shared_ptr<SceneObject>>>();
+}
+
+Scene::~Scene()
+{
+    mGeometryGroup->destroy();
+    mContext->destroy();
 }
 
 void Scene::trace(const Scene::Camera &camera)
@@ -97,14 +104,14 @@ void Scene::initScene(const Scene::Camera &camera)
     mContext["W"]->setFloat(w);
 
     //pass geometry/material to optix
-    mGeometryGroup->setChildCount(mSceneObjects.size());
+    mGeometryGroup->setChildCount(mSceneObjects->size());
 
-    for(unsigned int i = 0;i < mSceneObjects.size();++i)
+    for(unsigned int i = 0;i < mSceneObjects->size();++i)
     {
         GeometryInstance gi = mContext->createGeometryInstance();
         gi->setMaterialCount(1);
-        gi->setGeometry(mSceneObjects.at(i).getGeometry()->createGeometry(mContext));
-        gi->setMaterial(0,mSceneObjects.at(i).getMaterial()->createMaterial(mContext));
+        gi->setGeometry(mSceneObjects->at(i)->getGeometry()->createGeometry(mContext));
+        gi->setMaterial(0,mSceneObjects->at(i)->getMaterial()->createMaterial(mContext));
         mGeometryGroup->setChild(i,gi);
     }
 
@@ -123,31 +130,31 @@ void Scene::updateScene(const Scene::Camera &camera)
     updateSceneObjects();
 }
 
-void Scene::addSceneObject(const SceneObject &object)
+void Scene::addSceneObject(std::shared_ptr<SceneObject> object)
 {
-    mSceneObjects.push_back(object);
-    mGeometryGroup->setChildCount(mSceneObjects.size());
+    mSceneObjects->push_back(object);
+    mGeometryGroup->setChildCount(mSceneObjects->size());
     GeometryInstance gi = mContext->createGeometryInstance();
-    gi->setGeometry(object.getGeometry()->createGeometry(mContext));
+    gi->setGeometry(object->getGeometry()->createGeometry(mContext));
     gi->setMaterialCount(1);
-    gi->setMaterial(0,object.getMaterial()->createMaterial(mContext));
-    mGeometryGroup->setChild(mSceneObjects.size()-1,gi);
+    gi->setMaterial(0,object->getMaterial()->createMaterial(mContext));
+    mGeometryGroup->setChild(mSceneObjects->size()-1,gi);
 
     gi->getGeometry()->markDirty();
     mGeometryGroup->getAcceleration()->markDirty();
 }
 
-void Scene::addSceneObject(BaseGeometry *geometry, BaseMaterial *material, const std::string &name)
+void Scene::addSceneObject(std::shared_ptr<BaseGeometry> geometry, std::shared_ptr<BaseMaterial> material, const std::string &name)
 {
-    SceneObject object(name,geometry,material);
-    mSceneObjects.push_back(object);
+    std::shared_ptr<SceneObject> object = std::make_shared<SceneObject>(name,geometry,material);
+    mSceneObjects->push_back(object);
 
-    mGeometryGroup->setChildCount(mSceneObjects.size());
+    mGeometryGroup->setChildCount(mSceneObjects->size());
     GeometryInstance gi = mContext->createGeometryInstance();
-    gi->setGeometry(object.getGeometry()->createGeometry(mContext));
+    gi->setGeometry(object->getGeometry()->createGeometry(mContext));
     gi->setMaterialCount(1);
-    gi->setMaterial(0,object.getMaterial()->createMaterial(mContext));
-    mGeometryGroup->setChild(mSceneObjects.size()-1,gi);
+    gi->setMaterial(0,object->getMaterial()->createMaterial(mContext));
+    mGeometryGroup->setChild(mSceneObjects->size()-1,gi);
 
     gi->getGeometry()->markDirty();
     mGeometryGroup->getAcceleration()->markDirty();
@@ -155,11 +162,11 @@ void Scene::addSceneObject(BaseGeometry *geometry, BaseMaterial *material, const
 
 void Scene::removeObject(const std::string &object)
 {
-    for(int i = 0;i < mSceneObjects.size();++i)
+    for(int i = 0;i < mSceneObjects->size();++i)
     {
-        if(mSceneObjects.at(i).getName() == object)
+        if(mSceneObjects->at(i)->getName() == object)
         {
-            mSceneObjects.erase(mSceneObjects.begin()+i);
+            mSceneObjects->erase(mSceneObjects->begin()+i);
             mGeometryGroup->removeChild(i);
             return;
         }
@@ -170,9 +177,9 @@ void Scene::removeObject(const std::string &object)
 
 void Scene::removeObject(const unsigned int index)
 {
-    if(index < mSceneObjects.size())
+    if(index < mSceneObjects->size())
     {
-        mSceneObjects.erase(mSceneObjects.begin()+index);
+        mSceneObjects->erase(mSceneObjects->begin()+index);
         mGeometryGroup->removeChild(index);
         mGeometryGroup->getAcceleration()->markDirty();
         return;
@@ -184,12 +191,12 @@ void Scene::removeObject(const unsigned int index)
 void Scene::updateSceneObjects()
 {
 
-    for(int i = 0;i < mSceneObjects.size();++i)
+    for(int i = 0;i < mSceneObjects->size();++i)
     {
-        if(mSceneObjects.at(i).changed())
+        if(mSceneObjects->at(i)->changed())
         {
             mGeometryGroup->getChild(i)->getMaterial(0)->destroy();
-            mGeometryGroup->getChild(i)->setMaterial(0,mSceneObjects.at(i).getMaterial()->createMaterial(mContext));
+            mGeometryGroup->getChild(i)->setMaterial(0,mSceneObjects->at(i)->getMaterial()->createMaterial(mContext));
         }
     }
 }
@@ -215,35 +222,35 @@ optix::Buffer Scene::getOutputBuffer()
     return mContext["outputBuffer"].get()->getBuffer();
 }
 
-SceneObject* Scene::getSceneObject(const unsigned int index)
+std::shared_ptr<SceneObject> Scene::getSceneObject(const unsigned int index)
 {
-    return &(mSceneObjects.at(index));
+    return (mSceneObjects->at(index));
 }
 
-SceneObject* Scene::getSceneObject(const std::string &name)
+std::shared_ptr<SceneObject> Scene::getSceneObject(const std::string &name)
 {
     if(&name == nullptr)
     {
         return nullptr;
     }
 
-    for(unsigned int i = 0;i < mSceneObjects.size();++i)
+    for(unsigned int i = 0;i < mSceneObjects->size();++i)
     {
-        if(mSceneObjects.at(i).getName() == name)
+        if(mSceneObjects->at(i)->getName() == name)
         {
-            return &mSceneObjects.at(i);
+            return mSceneObjects->at(i);
         }
     }
 
     return nullptr;
 }
 
-std::vector<SceneObject>* Scene::getSceneObjects()
+std::shared_ptr<std::vector<std::shared_ptr<SceneObject>>> Scene::getSceneObjects()
 {
-    return &mSceneObjects;
+    return mSceneObjects;
 }
 
 int Scene::getSceneObjectCount()
 {
-    return mSceneObjects.size();
+    return mSceneObjects->size();
 }

@@ -3,6 +3,8 @@
 
 #include "sceneobject.h"
 #include <optixpp_namespace.h>
+#include <memory>
+#include <vector>
 
 class Scene
 {
@@ -18,7 +20,7 @@ public:
     };
 
 private:
-    std::vector<SceneObject>        mSceneObjects;
+    std::shared_ptr<std::vector<std::shared_ptr<SceneObject>>>        mSceneObjects;
     optix::GeometryGroup            mGeometryGroup;
     optix::Context                  mContext;
     unsigned int                    mWidth;
@@ -27,15 +29,16 @@ private:
 
 public:
                                     Scene();
+                                    ~Scene();
     void                            trace(const Scene::Camera &camera);
     void                            initScene(const Scene::Camera &camera);
-    void                            addSceneObject(const SceneObject &object);
-    void                            addSceneObject(BaseGeometry *geometry, BaseMaterial *material, const std::string &name);
+    void                            addSceneObject(std::shared_ptr<SceneObject> object);
+    void                            addSceneObject(std::shared_ptr<BaseGeometry> geometry, std::shared_ptr<BaseMaterial> material, const std::string &name);
     void                            removeObject(const std::string &object);
     void                            removeObject(const unsigned int index);
-    std::vector<SceneObject>*       getSceneObjects();
-    SceneObject*                    getSceneObject(const std::string &name);
-    SceneObject*                    getSceneObject(const unsigned int index);
+    std::shared_ptr<std::vector<std::shared_ptr<SceneObject>>>   getSceneObjects();
+    std::shared_ptr<SceneObject>    getSceneObject(const std::string &name);
+    std::shared_ptr<SceneObject>    getSceneObject(const unsigned int index);
     int                             getSceneObjectCount();   
     optix::Buffer                   getOutputBuffer();
 

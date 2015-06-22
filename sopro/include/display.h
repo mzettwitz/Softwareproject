@@ -3,11 +3,12 @@
 
 #include "scene.h"
 #include <string>
+#include <memory>
 
 class Display
 {
 private:
-    static Scene*               mScene;
+    static std::shared_ptr<Scene> mScene;
     static std::string          mTitle;
     static int                  mWidth, mHeight;
     static float                horizontalAngle;
@@ -33,7 +34,7 @@ private:
 
 public:
     static void                 init(int &argc, char** argv);
-    static void                 run(const std::string &title, Scene *scene);
+    static void                 run(const std::string &title, std::shared_ptr<Scene> scene);
 
 private:
     static void                 displayFrame();
