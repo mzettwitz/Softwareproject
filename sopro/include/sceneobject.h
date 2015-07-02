@@ -25,7 +25,6 @@ public:
     //check, if material changed
     bool            changed();
 
-private:
     //called, after material has changed
     void            markAsChanged();
 };

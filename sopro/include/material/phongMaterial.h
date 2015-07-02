@@ -34,14 +34,14 @@ private:
     float3 mAmbientColor;
     float3 mDiffuseColor;
     float3 mSpecularColor;
-    float mAbientCoeff;
+    float mAmbientCoeff;
     float mDiffuseCoeff;
     float mSpecularCoeff;
     float mShininess;
 
 public:
     PhongMaterial(float3 aCol, float3 dCol, float3 sCol, float aCoef, float dCoef, float sCoef, float shine) :
-        mAmbientColor(aCol), mDiffuseColor(dCol), mSpecularColor(sCol), mAbientCoeff(aCoef), mDiffuseCoeff(dCoef), mSpecularCoeff(sCoef), mShininess(shine)
+        mAmbientColor(aCol), mDiffuseColor(dCol), mSpecularColor(sCol), mAmbientCoeff(aCoef), mDiffuseCoeff(dCoef), mSpecularCoeff(sCoef), mShininess(shine)
     {
         mMaterialType = PHONG;
         setPTXPath("phongMaterial.cu");
@@ -50,19 +50,32 @@ public:
     Material createMaterial(Context context) const override;
 
     // Getter & Setter
-    float3 ambientColor() const;
+    const float3& ambientColor() const;
+    float3& ambientColor();
     void setAmbientColor(const float3 &ambientColor);
-    float3 diffuseColor() const;
+
+    const float3& diffuseColor() const;
+    float3& diffuseColor();
     void setDiffuseColor(const float3 &diffuseColor);
-    float3 specularColor() const;
+
+    const float3& specularColor() const;
+    float3& specularColor();
     void setSpecularColor(const float3 &specularColor);
-    float abientCoeff() const;
-    void setAbientCoeff(float abientCoeff);
-    float diffuseCoeff() const;
+
+    const float& ambientCoeff() const;
+    float& ambientCoeff();
+    void setAmbientCoeff(float ambientCoeff);
+
+    const float& diffuseCoeff() const;
+    float& diffuseCoeff();
     void setDiffuseCoeff(float diffuseCoeff);
-    float specularCoeff() const;
+
+    const float& specularCoeff() const;
+    float& specularCoeff();
     void setSpecularCoeff(float specularCoeff);
-    float shininess() const;
+
+    const float& shininess() const;
+    float& shininess();
     void setShininess(float shininess);
 
 };

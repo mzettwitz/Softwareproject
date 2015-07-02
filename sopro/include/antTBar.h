@@ -12,10 +12,16 @@
 #include "../AntTweakBar/include/AntTweakBar.h"
 #include "material/baseMaterial.h"
 #include "material/lambertMaterial.h"
+#include "material/phongMaterial.h"
+#include "material/glassMaterial.h"
+#include "material/disneyMaterial.h"
+#include "scene.h"
+#include <memory>
+#include <iostream>
 
 
 
-void antTBar(int &width, int &height, std::vector<Material> &mat, Context &context);
+void antTBar(std::shared_ptr<Scene> scene, TwBar *bar);
 
 //void TW_CALL setPhong(const void *value, void * /*clientData*/);
 //void TW_CALL getPhong(void *value, void * /*clientData*/);
@@ -23,6 +29,6 @@ void antTBar(int &width, int &height, std::vector<Material> &mat, Context &conte
 //void TW_CALL setDisney(const void *value, void * /*clientData*/);
 //void TW_CALL getDisney(void *value, void * /*clientData*/);
 
-float3 fTof3(float f[3]);
+
 
 

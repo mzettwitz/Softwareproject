@@ -17,7 +17,12 @@ Material LambertMaterial::createMaterial(Context context) const
     return material;
 }
 
-float3 LambertMaterial::color() const
+const float3& LambertMaterial::color() const
+{
+    return mColor;
+}
+
+float3& LambertMaterial::color()
 {
     return mColor;
 }
@@ -26,3 +31,4 @@ bool operator!=(const LambertMaterial &mat1, const LambertMaterial &mat2)
 {
     return (mat1.color().x != mat2.color().x || mat1.color().y != mat2.color().y || mat1.color().z != mat2.color().z);
 }
+

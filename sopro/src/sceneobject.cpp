@@ -98,4 +98,3 @@ void SceneObject::markAsChanged()
 {
     mChanged = true;
 }
-

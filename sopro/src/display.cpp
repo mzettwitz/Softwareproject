@@ -26,10 +26,26 @@ int                 Display::oldx = 0;
 int                 Display::oldy = 0;
 float               Display::deltaTime = 0.0f;
 int                 Display::mState = Display::mouseState::IDLE;
+// Declare ATB
+TwBar *bar;
 
 //dummy purpose
 float               p = 0.0f;
 int                 count = 0;
+
+static void TW_CALL getLambertCB(void* value, void* clientData)
+{
+    SceneObject* tmpSO =  ((SceneObject*) clientData);
+    *((float3*) value) =  ((LambertMaterial*) tmpSO->getMaterial().get())->color();
+}
+
+static void TW_CALL setLambertCB(const void* value, void* clientData)
+{
+   SceneObject* tmpSO =  ((SceneObject*) clientData);
+   ((LambertMaterial*) tmpSO->getMaterial().get())->setColor(*((float3*)value));
+   tmpSO->markAsChanged();
+}
+
 
 void Display::init(int &argc, char **argv)
 {
@@ -38,30 +54,25 @@ void Display::init(int &argc, char **argv)
     glutInitWindowSize(mWidth,mHeight);
 
     // AntTweakBar
-     //redirecte GLUT events to ATB
-    //glutMouseFunc((GLUTmousebuttonfun)TwEventMouseButtonGLUT);
-    //glutMotionFunc((GLUTmousemotionfun)TwEventMouseMotionGLUT);
-  //  glutPassiveMotionFunc((GLUTmousemotionfun)TwEventMouseMotionGLUT); // same as MouseMotion
-   // glutKeyboardFunc((GLUTkeyboardfun)TwEventKeyboardGLUT);
-  //  glutSpecialFunc((GLUTspecialfun)TwEventSpecialGLUT);
+    //redirect GLUT events to ATB
+    glutMouseFunc((GLUTmousebuttonfun)TwEventMouseButtonGLUT);
+    glutMotionFunc((GLUTmousemotionfun)TwEventMouseMotionGLUT);
+    glutPassiveMotionFunc((GLUTmousemotionfun)TwEventMouseMotionGLUT); // same as MouseMotion
+    glutKeyboardFunc((GLUTkeyboardfun)TwEventKeyboardGLUT);
+    glutSpecialFunc((GLUTspecialfun)TwEventSpecialGLUT);
 
 
     // send the "glutGetModifers" function pointer to ATB
-  //  TwGLUTModifiersFunc(glutGetModifiers);
-
-    //hardcoded
-    int test = 0;
-    TwBar *bar;
+    TwGLUTModifiersFunc(glutGetModifiers);
 
     // Init ATB
-   // TwInit(TW_OPENGL, NULL);
-
+    TwInit(TW_OPENGL, NULL);
 
     // Create ATB
-  //  bar = TwNewBar("MyBar");
-  //  TwDefine(" MyBar size='200 400' color='118 185 0' ");
-    //TwDefine(" GLOBAL help='This example shows how to integrate AntTweakBar with GLUT and OpenGL.' ");
- //   TwAddVarRW(bar, "Test", TW_TYPE_INT32, &test, "");
+    bar = TwNewBar("MatBar");
+    TwDefine(" MatBar size='200 400' color='118 185 0' alpha=160");
+
+
 }
 
 void Display::run(const std::string &title, std::shared_ptr<Scene> scene)
@@ -120,51 +131,26 @@ void Display::run(const std::string &title, std::shared_ptr<Scene> scene)
     glutMouseFunc(mouseButton);
     glutDisplayFunc(display);
     glutKeyboardFunc(keyPressed);
+
+    antTBar(scene, bar);
+
     glutMainLoop();
 
     //KILL ATB
- //  TwTerminate();
+    TwTerminate();
 
 }
 
 void Display::display()
 {
-
     int start = glutGet(GLUT_ELAPSED_TIME);
+
     //for camera update
     Scene::Camera c(cameraPosition,cameraDirection,cameraRight);
 
-    //callback from ATB
-    //get all objects in Scene
-    /* something like this
-     *
-     * drawTWbar()
-     * {
-     *     //dropdownmenu
-     *        for(int i = 0;i < mScene->getSceneObjects().size();++i)
-     *          {
-     *              mScene->getSceneObject(i)->getName();
-     *              add to dropdownmenu;
-     *          }
-     *     //parameters
-     *          unsigned int index = dropdownmenu.selected().index;
-     *
-     *          BaseMaterial::MaterialType matType= mScene->getSceneObject(i)->getMaterial()->getMaterialType();
-     *          BaseGeometry::GeometryType geomType= mScene->getSceneObject(i)->getGeometry()->getGeometryType();
-     *
-     * switch...
-     *
-     *
-     * setMaterial
-     * }
-     *
-     *
-     *
-     */
-    //DRAW ATB
- //  TwDraw();
-        //call for optix trace
+    //call for optix trace
     mScene->trace(c);
+
     //transfer optix buffer to opengl buffer
     displayFrame();
 
@@ -226,7 +212,7 @@ void Display::displayFrame()
     glDrawPixels(static_cast<GLsizei>(bufferWidth),static_cast<GLsizei>(bufferHeight),glFormat,glDataType,imageData);
     buffer->unmap();
 
-
+    TwDraw();   // draw ATB
 
     glutPostRedisplay();
 }
@@ -234,8 +220,8 @@ void Display::displayFrame()
 void Display::resize(int width, int height)
 {
 
-    // Send the new window size to AntTweakBar
-    //TwWindowSize(width, height);
+    // Send the new window size to TweakBar
+    TwWindowSize(width, height);
 }
 
 void Display::keyPressed(unsigned char key, int x, int y)
@@ -266,7 +252,7 @@ void Display::keyPressed(unsigned char key, int x, int y)
     {
         cameraPosition -= 0.2f * cameraDirection;
     }
-    //5, dummy purpose
+    //5, dummy purpose, add dummy sphere
     if(key == 53)
     {
         std::shared_ptr<LambertMaterial> l = std::make_shared<LambertMaterial>(make_float3(0.02f * p,0.5f,0.3f));
@@ -276,22 +262,29 @@ void Display::keyPressed(unsigned char key, int x, int y)
         mScene->addSceneObject(obj);
         p += 2.5f;
         std::cout << p << std::endl;
+
+        // add ATB variable
+        TwAddVarCB(bar, name.c_str(), TW_TYPE_COLOR3F, setLambertCB, getLambertCB,
+                   mScene->getSceneObject(mScene->getSceneObjectCount()-1).get(), " group='Dummy Objects' ");
+
     }
-    //6 dummy purpose
+    //6 dummy purpose, print number of scene objects
     if(key == 54)
     {
         std::cout << mScene->getSceneObjectCount() << std::endl;
     }
-    //7 dummy purpose
+    //7 dummy purpose, delete dummy sphere
     if(key == 55)
     {
         if(mScene->getSceneObjectCount() > 0)
         {
+            TwRemoveVar(bar, mScene->getSceneObject(mScene->getSceneObjectCount()-1)->getName().c_str());
             mScene->removeObject(mScene->getSceneObjectCount()-1);
             p -= 2.5f;
+
         }
     }
-    //8 dummy purpose
+    //8 dummy purpose, change color of dummy
     if(key == 56)
     {
         if(count < mScene->getSceneObjectCount())
@@ -306,12 +299,16 @@ void Display::keyPressed(unsigned char key, int x, int y)
         }
 
     }
+    // 9 dummy purpose, add infinity plane
     if(key == 57)
       {
         std::shared_ptr<LambertMaterial> p = std::make_shared<LambertMaterial>(make_float3(1.0f,1.0f,1.0f));
         std::shared_ptr<InfinitePlane> plane = std::make_shared<InfinitePlane>(-2.0f);
         std::shared_ptr<SceneObject> sc = std::make_shared<SceneObject>("groundPlane",plane,p);
         mScene->addSceneObject(sc);
+        //add variable to ATB
+        TwAddVarCB(bar, "groundPlane", TW_TYPE_COLOR3F, setLambertCB, getLambertCB,
+                   mScene->getSceneObject(mScene->getSceneObjectCount()-1).get(), " group='Infinity Ground Plane' ");
     }
         //needs to be called, to update change
     glutPostRedisplay();
@@ -319,17 +316,35 @@ void Display::keyPressed(unsigned char key, int x, int y)
 
 void Display::mouseButton(int button, int state, int x, int y)
 {
-
-    if(button == GLUT_LEFT_BUTTON)
+    // send event to AntTweakBar if not handled
+    if( !TwEventMouseButtonGLUT( button, state, x, y) )
     {
-        if(state == GLUT_DOWN)
+        //left button pressed
+        if(button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
         {
+            TwMouseMotion(x, y);
+            TwMouseButton(TW_MOUSE_PRESSED, TW_MOUSE_LEFT);
             Display::mState = mouseState::MOVE;
         }
+        //left button released
+        if(button == GLUT_LEFT_BUTTON && state == GLUT_UP)
+        {
+            TwMouseMotion(x, y);
+            TwMouseButton(TW_MOUSE_RELEASED, TW_MOUSE_LEFT);
+            Display::mState = mouseState::IDLE;
+        }
+    }
+
+    // send event to GLUT
+    if(button == GLUT_LEFT_BUTTON)
+    {
+    	if(state == GLUT_DOWN)
+         {
+       	     Display::mState = mouseState::MOVE;
+       	 }
     }
     else if(button == GLUT_RIGHT_BUTTON)
     {
-
         if(state == GLUT_DOWN)
         {
             Display::mState = mouseState::ROTATE;
@@ -342,12 +357,16 @@ void Display::mouseButton(int button, int state, int x, int y)
             //do something
         }
     }
-
 }
+
 
 void Display::mouseMotion(int x, int y)
 {
-    if(mState ==  mouseState::ROTATE)
+    // using ATB bar?
+    if( mState == mouseState::MOVE && TwEventMouseMotionGLUT( x, y))
+    {    }
+    // else set camera
+    else if(mState ==  mouseState::ROTATE)
     {
         std::cout << horizontalAngle << "," << verticalAngle << std::endl;
         horizontalAngle += mouseSpeed *  deltaTime * float(mWidth/2 - x);
@@ -356,10 +375,12 @@ void Display::mouseMotion(int x, int y)
         cameraDirection = make_float3(cos(verticalAngle) * sin(horizontalAngle),sin(verticalAngle),cos(verticalAngle) * cos(horizontalAngle));
         cameraRight = make_float3(sin(horizontalAngle - 3.14f/2.0f),0,cos(horizontalAngle - 3.14f/2.0f));
     }
-    if(mState == mouseState::MOVE)
+    else if (mState == mouseState::MOVE)
     {
         cameraPosition += cameraDirection * deltaTime * mouseSpeed * 10.0f * float(mHeight/2 -y);
     }
 
     glutPostRedisplay();
 }
+
+

@@ -28,8 +28,8 @@ private:
     {
        ROTATE = 1,
        MOVE = 2,
-       IDLE = 3
-
+       IDLE = 3,
+       CLICKED = 4
     };
 
 public:

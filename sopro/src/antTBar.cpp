@@ -5,30 +5,113 @@ bool phongState = false;
 bool disneyState = false;
 bool glasState = false; // evtl array mit states für jedes objekt übergeben
 
-void antTBar(int &width, int &height, std::vector<Material> &mat, Context &context)
-{/*
-    // Init ATB
- //   TwInit(TW_OPENGL, NULL);
-  //  TwWindowSize(width, height);
 
-    // Create ATB
-    TwBar *matBar = TwNewBar("MaterialEditor");
-    TwDefine(" MaterialEditor size='200 400' color='118 185 0' alpha=160");
+// Callbacks
+// Lambert
+static void TW_CALL getLambertCB(void* value, void* clientData)
+{
+    SceneObject* tmpSO =  ((SceneObject*) clientData);
+    *((float3*) value) =  ((LambertMaterial*) tmpSO->getMaterial().get())->color();
+}
+static void TW_CALL setLambertCB(const void* value, void* clientData)
+{
+   SceneObject* tmpSO =  ((SceneObject*) clientData);
+   ((LambertMaterial*) tmpSO->getMaterial().get())->setColor(*((float3*)value));
+   tmpSO->markAsChanged();
+}
+
+// Phong
+
+
+
+// Variable init
+void antTBar(std::shared_ptr<Scene> scene, TwBar *bar)
+{
+    // DUMMY FOR ENUM
+/*
+    // Define enum type to pick the material type
+    TwEnumVal shadeEV[] = // array used to describe the material type
+    {
+        { BaseMaterial::LAMBERT,"Lambert"   },
+        { BaseMaterial::PHONG,  "Phong"     },
+        { BaseMaterial::DISNEY, "Disney"    },
+        { BaseMaterial::GLASS,  "Glass"     }
+    };
+    TwType shadeMode = TwDefineEnum("ShadeMode", shadeEV, 4);
+
+    // Define structs to describe the material properties of each material type
+    // Lambert
+    TwStructMember lambertMembers[] = // array used to describe tweakable variables of the Lambert structure
+    {
+        //{ "Mode",   shadeMode, offsetof(BaseMaterial, BaseMaterial::mMaterialType),    " help='Shading mode' " },
+        { "Color",  TW_TYPE_COLOR3F, offsetof(LambertMaterial, LambertMaterial::mColor),     " help='Diffuse Lambert color' " }
+    };
+    TwType lambertType = TwDefineStruct("Lambert", lambertMembers, 1, sizeof(LambertMaterial), NULL, NULL);
+
+*/
+    for(int i = 0; i < scene->getSceneObjectCount(); i++)
+    {
+        const char* name = scene->getSceneObject(i)->getName().c_str();
+
+        if(scene->getSceneObject(i)->getMaterial()->getMaterialType() == BaseMaterial::LAMBERT){
+            //std::shared_ptr<LambertMaterial> objMat = std::dynamic_pointer_cast<LambertMaterial>(scene->getSceneObject(i)->getMaterial());
+            //TwAddVarCB(bar, name, lambertType, LambertMaterial::setLambertColorCB(),LambertMaterial::getLambertColorCB(),objMat, NULL);
+            TwAddVarCB(bar, name, TW_TYPE_COLOR3F, setLambertCB, getLambertCB, scene->getSceneObject(i).get(), " group='Lambert Objects' ");
+        }
+    }
 
     // Test purposes
-    for(int i = 0; i < mat.size(); i++)
+    /*
+    std::shared_ptr<SceneObject> obj = scene->getSceneObject(0);
+    const char* name = obj->getName().c_str();
+
+    //delete scene->getSceneObject(i)->getMaterial();
+
+    // Color
+    float fColor[3];
+    std::shared_ptr<LambertMaterial> objMat = std::dynamic_pointer_cast<LambertMaterial>(obj->getMaterial());
+    if(scene->getSceneObject(0)->getMaterial()->getMaterialType() == 1)
     {
-        const char* name = "colorProps " + (char)i;
-
-        // Color
-        float fColor[] = {0.f,0.f,0.f};
-
-        TwAddVarRW(matBar, name, TW_TYPE_COLOR3F, fColor, " group='BasicMaterial' "); // evtl string am Ende selber schreiben mit i
-        
-        float3 f3Color = fTof3(fColor);
-        plainColorMaterial newMat(f3Color,"plainColorMaterial.cu");
-        mat[i] = (newMat.createMaterial(context));	//overwrite specific material in vector
+        fColor[0] = objMat->color().x;
+        fColor[1] = objMat->color().y;
+        fColor[2] = objMat->color().z;
     }
+
+    TwAddVarRW(bar, name, TW_TYPE_COLOR3F, fColor, " group='BasicMaterial' ");
+    objMat->setColor(make_float3(fColor[0], fColor[1], fColor[2]));
+    std::shared_ptr<LambertMaterial> lamMat = std::make_shared<LambertMaterial>(make_float3(fColor[0], fColor[1], fColor[2]));
+    scene->getSceneObject(0)->setMaterial(lamMat);
+*/
+
+
+    //callback from ATB
+    //get all objects in Scene
+    /* something like this
+     *
+     * drawTWbar()
+     * {
+     *     //dropdownmenu
+     *        for(int i = 0;i < mScene->getSceneObjects().size();++i)
+     *          {
+     *              mScene->getSceneObject(i)->getName();
+     *              add to dropdownmenu;
+     *          }
+     *     //parameters
+     *          unsigned int index = dropdownmenu.selected().index;
+     *
+     *          BaseMaterial::MaterialType matType= mScene->getSceneObject(i)->getMaterial()->getMaterialType();
+     *          BaseGeometry::GeometryType geomType= mScene->getSceneObject(i)->getGeometry()->getGeometryType();
+     *
+     * switch...
+     *
+     *
+     * setMaterial
+     * }
+     *
+     *
+     *
+     */
+
 
 
     /*
@@ -110,8 +193,10 @@ void antTBar(int &width, int &height, std::vector<Material> &mat, Context &conte
             // IDEA: different shading options for each object
 
     */
-    //TwDraw();
 }
+
+
+
 
 /*
 
@@ -157,9 +242,5 @@ void antTBar(int &width, int &height, std::vector<Material> &mat, Context &conte
             *static_cast<bool *>(value) = glasState;
         }
 */
-
-float3 fTof3(float f[3]){
-    return float3{f[0], f[1], f[2]};
-}
 
 

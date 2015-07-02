@@ -28,8 +28,8 @@ using namespace optix;
 
 class LambertMaterial : public BaseMaterial
 {
-
     float3 mColor;
+
 public :
     LambertMaterial(float3 c) : mColor(c)
     {
@@ -37,8 +37,12 @@ public :
         setPTXPath("lambertMaterial.cu");
     }
     void setColor(const float3 &c);
-    Material createMaterial(Context context) const override;
-    float3 color() const;
+    Material createMaterial(Context context) const override;    
+
+    // Special getter for ATB
+    const float3& color() const;
+    float3& color();
+
 };
 
 
