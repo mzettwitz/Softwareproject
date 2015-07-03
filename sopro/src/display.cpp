@@ -50,7 +50,6 @@ void Display::init(int &argc, char **argv)
     glutKeyboardFunc((GLUTkeyboardfun)TwEventKeyboardGLUT);
     glutSpecialFunc((GLUTspecialfun)TwEventSpecialGLUT);
 
-
     // send the "glutGetModifers" function pointer to ATB
     TwGLUTModifiersFunc(glutGetModifiers);
 
@@ -59,8 +58,7 @@ void Display::init(int &argc, char **argv)
 
     // Create ATB
     bar = TwNewBar("MatBar");
-    TwDefine(" MatBar size='200 400' color='118 185 0' alpha=160");
-
+    TwDefine(" MatBar size='270 400' color='118 185 0' alpha=160");
 
 }
 

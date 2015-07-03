@@ -18,14 +18,12 @@ rtDeclareVariable(rtObject, topShadower,,);
 rtDeclareVariable(unsigned int,maxDepth,,);
 rtBuffer<PointLight> lights;
 rtDeclareVariable(float,intersectionDistance,rtIntersectionDistance,);
-rtDeclareVariable(float3, ambientColor,,);
-rtDeclareVariable(float3, diffuseColor,,);
-rtDeclareVariable(float3, specularColor,,);
+rtDeclareVariable(float3, color,,);
 rtDeclareVariable(float, ambientCoefficient,,);
 rtDeclareVariable(float, diffuseCoefficient,,);
 rtDeclareVariable(float, specularCoefficient,,);
 rtDeclareVariable(float, shininess,,);
-rtDeclareVariable(float, reflectiveIndex,,);
+rtDeclareVariable(float, specularity,,);
 rtDeclareVariable(float3, normal, attribute normal,);
 
 static __device__ void shadowed();
@@ -83,13 +81,13 @@ static __device__ void shade()
         }
     }
     //WILL NOT WORK!!!!
-    if(reflectiveIndex > 0.0f && prd_radiance.depth < maxDepth)
+    if(specularity > 0.0f && prd_radiance.depth < maxDepth)
     {
         prd_radiance.depth++;
         float maxLambda = 10000;
         Ray reflectedRay = make_Ray(hitPoint,reflect(ray.direction,normal),radianceRayType,sceneEpsilon,maxLambda);
         //count depth + 1,
         rtTrace(topShadower,reflectedRay,prd_radiance);
-        result = (1-reflectiveIndex) * result + prd_radiance.result * reflectiveIndex;
+        result = (1-specularity) * result + prd_radiance.result * specularity;
     }
 }

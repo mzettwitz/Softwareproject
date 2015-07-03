@@ -31,52 +31,139 @@ using namespace optix;
 class PhongMaterial : public BaseMaterial
 {
 private:
-    float3 mAmbientColor;
-    float3 mDiffuseColor;
-    float3 mSpecularColor;
+    float3 mColor;
     float mAmbientCoeff;
     float mDiffuseCoeff;
     float mSpecularCoeff;
     float mShininess;
+    float mSpecularity;
 
 public:
-    // advanced CTor
-    PhongMaterial(float3 aCol, float3 dCol, float3 sCol, float aCoef, float dCoef, float sCoef, float shine) :
-        mAmbientColor(aCol), mDiffuseColor(dCol), mSpecularColor(sCol),
-        mAmbientCoeff(aCoef), mDiffuseCoeff(dCoef), mSpecularCoeff(sCoef), mShininess(shine)
+    // ------------------------CTor
+    // ------------advanced CTor
+    PhongMaterial(float3 col, float aCoef, float dCoef, float sCoef, float shine, float spec) :
+        mColor(col), mAmbientCoeff(aCoef), mDiffuseCoeff(dCoef), mSpecularCoeff(sCoef),
+        mShininess(shine), mSpecularity(spec)
     {
         mMaterialType = PHONG;
         setPTXPath("phongMaterial.cu");
     }
 
-    // CTor for LambertMat
-    PhongMaterial(float3 aCol) :
-        mAmbientColor(aCol)
+    //------------- Copy CTors
+    // pass through
+    PhongMaterial(const std::shared_ptr<BaseMaterial> in1)
     {
-        mDiffuseColor = make_float3(0,0,0);
-        mSpecularColor = make_float3(0,0,0);
+        std::shared_ptr<PhongMaterial> in = std::dynamic_pointer_cast<PhongMaterial>(in1);
+        mColor = in->color();
+        mAmbientCoeff = in->ambientCoeff();
+        mDiffuseCoeff = in->diffuseCoeff();
+        mSpecularCoeff = in->specularCoeff();
+        mShininess = in->shininess();
+        mSpecularity = in->specularity();
+        mMaterialType = PHONG;
+        setPTXPath("phongMaterial.cu");
+    }
+    // change color
+    PhongMaterial(const std::shared_ptr<BaseMaterial> in1, const float3 &newColor) :
+        mColor(newColor)
+    {
+        std::shared_ptr<PhongMaterial> in = std::dynamic_pointer_cast<PhongMaterial>(in1);
+        mAmbientCoeff = in->ambientCoeff();
+        mDiffuseCoeff = in->diffuseCoeff();
+        mSpecularCoeff = in->specularCoeff();
+        mShininess = in->shininess();
+        mSpecularity = in->specularity();
+        mMaterialType = PHONG;
+        setPTXPath("phongMaterial.cu");
+    }
+    // change coeffs
+    PhongMaterial(const std::shared_ptr<BaseMaterial> in1, float value, short pos)
+    {
+        std::shared_ptr<PhongMaterial> in = std::dynamic_pointer_cast<PhongMaterial>(in1);
+        switch(pos)
+        {
+        case 1: // ambient coeff
+            mColor = in->color();
+            mAmbientCoeff = value;
+            mDiffuseCoeff = in->diffuseCoeff();
+            mSpecularCoeff = in->specularCoeff();
+            mShininess = in->shininess();
+            mSpecularity = in->specularity();
+            mMaterialType = PHONG;
+            setPTXPath("phongMaterial.cu");
+            break;
+        case 2: // diffsue coeff
+            mColor = in->color();
+            mAmbientCoeff = in->ambientCoeff();
+            mDiffuseCoeff = value;
+            mSpecularCoeff = in->specularCoeff();
+            mShininess = in->shininess();
+            mSpecularity = in->specularity();
+            mMaterialType = PHONG;
+            setPTXPath("phongMaterial.cu");
+            break;
+        case 3: // specular coeff
+            mColor = in->color();
+            mAmbientCoeff = in->ambientCoeff();
+            mDiffuseCoeff = in->diffuseCoeff();
+            mSpecularCoeff = value;
+            mShininess = in->shininess();
+            mSpecularity = in->specularity();
+            mMaterialType = PHONG;
+            setPTXPath("phongMaterial.cu");
+            break;
+        case 4: // shininess
+            mColor = in->color();
+            mAmbientCoeff = in->ambientCoeff();
+            mDiffuseCoeff = in->diffuseCoeff();
+            mSpecularCoeff = in->specularCoeff();
+            mShininess = value;
+            mSpecularity = in->specularity();
+            mMaterialType = PHONG;
+            setPTXPath("phongMaterial.cu");
+            break;
+        case 5: // specularity
+            mColor = in->color();
+            mAmbientCoeff = in->ambientCoeff();
+            mDiffuseCoeff = in->diffuseCoeff();
+            mSpecularCoeff = in->specularCoeff();
+            mShininess = in->shininess();
+            mSpecularity = value;
+            mMaterialType = PHONG;
+            setPTXPath("phongMaterial.cu");
+            break;
+        default: // pass through
+            mColor = in->color();
+            mAmbientCoeff = in->ambientCoeff();
+            mDiffuseCoeff = in->diffuseCoeff();
+            mSpecularCoeff = in->specularCoeff();
+            mShininess = in->shininess();
+            mSpecularity = in->specularity();
+            mMaterialType = PHONG;
+            setPTXPath("phongMaterial.cu");
+        }
+    }
+
+    //-------------CTor for material conversion
+    // Lambert
+    PhongMaterial(float3 col) :
+        mColor(col)
+    {
         mAmbientCoeff = 1.f;
         mDiffuseCoeff = 1.f;
         mSpecularCoeff = 1.f;
         mShininess = 1.f;
+        mSpecularity = 1.f;
         mMaterialType = PHONG;
         setPTXPath("phongMaterial.cu");
     }
 
     Material createMaterial(Context context) const override;
 
-    // Getter & Setter
-    const float3& ambientColor() const;
-    float3& ambientColor();
-    void setAmbientColor(const float3 &ambientColor);
-
-    const float3& diffuseColor() const;
-    float3& diffuseColor();
-    void setDiffuseColor(const float3 &diffuseColor);
-
-    const float3& specularColor() const;
-    float3& specularColor();
-    void setSpecularColor(const float3 &specularColor);
+    // ------------------------Getter & Setter
+    const float3& color() const;
+    float3& color();
+    void setColor(const float3 &color);
 
     const float& ambientCoeff() const;
     float& ambientCoeff();
@@ -93,5 +180,9 @@ public:
     const float& shininess() const;
     float& shininess();
     void setShininess(float shininess);
+
+    const float& specularity() const;
+    float& specularity();
+    void setSpecularity(float specularity);
 
 };
