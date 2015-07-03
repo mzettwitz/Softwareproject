@@ -31,11 +31,13 @@ class LambertMaterial : public BaseMaterial
     float3 mColor;
 
 public :
+    // advanced CTor
     LambertMaterial(float3 c) : mColor(c)
     {
         mMaterialType = LAMBERT;
         setPTXPath("lambertMaterial.cu");
     }
+
     void setColor(const float3 &c);
     Material createMaterial(Context context) const override;    
 

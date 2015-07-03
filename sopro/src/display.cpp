@@ -33,18 +33,7 @@ TwBar *bar;
 float               p = 0.0f;
 int                 count = 0;
 
-static void TW_CALL getLambertCB(void* value, void* clientData)
-{
-    SceneObject* tmpSO =  ((SceneObject*) clientData);
-    *((float3*) value) =  ((LambertMaterial*) tmpSO->getMaterial().get())->color();
-}
 
-static void TW_CALL setLambertCB(const void* value, void* clientData)
-{
-   SceneObject* tmpSO =  ((SceneObject*) clientData);
-   ((LambertMaterial*) tmpSO->getMaterial().get())->setColor(*((float3*)value));
-   tmpSO->markAsChanged();
-}
 
 
 void Display::init(int &argc, char **argv)
@@ -219,14 +208,13 @@ void Display::displayFrame()
 
 void Display::resize(int width, int height)
 {
-
     // Send the new window size to TweakBar
     TwWindowSize(width, height);
 }
 
 void Display::keyPressed(unsigned char key, int x, int y)
 {
-
+//TODO: Method to handle keyboard events with ATB
     //space
     if(key == 119)
     {
@@ -255,6 +243,7 @@ void Display::keyPressed(unsigned char key, int x, int y)
     //5, dummy purpose, add dummy sphere
     if(key == 53)
     {
+
         std::shared_ptr<LambertMaterial> l = std::make_shared<LambertMaterial>(make_float3(0.02f * p,0.5f,0.3f));
         std::shared_ptr<Sphere> s = std::make_shared<Sphere>(make_float3(p,0.0f,0.0f),1.0f);
         std::string name = "sphere_" + std::to_string(mScene->getSceneObjectCount());
@@ -264,9 +253,8 @@ void Display::keyPressed(unsigned char key, int x, int y)
         std::cout << p << std::endl;
 
         // add ATB variable
-        TwAddVarCB(bar, name.c_str(), TW_TYPE_COLOR3F, setLambertCB, getLambertCB,
-                   mScene->getSceneObject(mScene->getSceneObjectCount()-1).get(), " group='Dummy Objects' ");
-
+        TwRemoveAllVars(bar);
+        antTBar(mScene, bar);
     }
     //6 dummy purpose, print number of scene objects
     if(key == 54)
@@ -277,10 +265,13 @@ void Display::keyPressed(unsigned char key, int x, int y)
     if(key == 55)
     {
         if(mScene->getSceneObjectCount() > 0)
-        {
-            TwRemoveVar(bar, mScene->getSceneObject(mScene->getSceneObjectCount()-1)->getName().c_str());
+        {          
             mScene->removeObject(mScene->getSceneObjectCount()-1);
             p -= 2.5f;
+
+            // delete ATB variable
+            TwRemoveAllVars(bar);
+            antTBar(mScene, bar);
 
         }
     }
@@ -306,9 +297,7 @@ void Display::keyPressed(unsigned char key, int x, int y)
         std::shared_ptr<InfinitePlane> plane = std::make_shared<InfinitePlane>(-2.0f);
         std::shared_ptr<SceneObject> sc = std::make_shared<SceneObject>("groundPlane",plane,p);
         mScene->addSceneObject(sc);
-        //add variable to ATB
-        TwAddVarCB(bar, "groundPlane", TW_TYPE_COLOR3F, setLambertCB, getLambertCB,
-                   mScene->getSceneObject(mScene->getSceneObjectCount()-1).get(), " group='Infinity Ground Plane' ");
+
     }
         //needs to be called, to update change
     glutPostRedisplay();

@@ -40,9 +40,25 @@ private:
     float mShininess;
 
 public:
+    // advanced CTor
     PhongMaterial(float3 aCol, float3 dCol, float3 sCol, float aCoef, float dCoef, float sCoef, float shine) :
-        mAmbientColor(aCol), mDiffuseColor(dCol), mSpecularColor(sCol), mAmbientCoeff(aCoef), mDiffuseCoeff(dCoef), mSpecularCoeff(sCoef), mShininess(shine)
+        mAmbientColor(aCol), mDiffuseColor(dCol), mSpecularColor(sCol),
+        mAmbientCoeff(aCoef), mDiffuseCoeff(dCoef), mSpecularCoeff(sCoef), mShininess(shine)
     {
+        mMaterialType = PHONG;
+        setPTXPath("phongMaterial.cu");
+    }
+
+    // CTor for LambertMat
+    PhongMaterial(float3 aCol) :
+        mAmbientColor(aCol)
+    {
+        mDiffuseColor = make_float3(0,0,0);
+        mSpecularColor = make_float3(0,0,0);
+        mAmbientCoeff = 1.f;
+        mDiffuseCoeff = 1.f;
+        mSpecularCoeff = 1.f;
+        mShininess = 1.f;
         mMaterialType = PHONG;
         setPTXPath("phongMaterial.cu");
     }

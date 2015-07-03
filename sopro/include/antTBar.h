@@ -23,12 +23,6 @@
 
 void antTBar(std::shared_ptr<Scene> scene, TwBar *bar);
 
-//void TW_CALL setPhong(const void *value, void * /*clientData*/);
-//void TW_CALL getPhong(void *value, void * /*clientData*/);
-
-//void TW_CALL setDisney(const void *value, void * /*clientData*/);
-//void TW_CALL getDisney(void *value, void * /*clientData*/);
-
 
 
 
