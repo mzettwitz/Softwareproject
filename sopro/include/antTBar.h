@@ -22,6 +22,9 @@
 
 
 void antTBar(std::shared_ptr<Scene> scene, TwBar *bar);
+void antTBarReInit(std::string oldMat, SceneObject *scObj, TwBar *bar, std::string objName);
+void antTBarInit(SceneObject* scObj, TwBar *bar, std::string objName);
+void antTBarRemoveVariable(SceneObject* scObj, TwBar *bar, std::string objName);
 
 
 

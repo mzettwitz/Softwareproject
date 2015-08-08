@@ -251,8 +251,8 @@ void Display::keyPressed(unsigned char key, int x, int y)
         std::cout << p << std::endl;
 
         // add ATB variable
-        TwRemoveAllVars(bar);
-        antTBar(mScene, bar);
+        // init new variables
+        antTBarInit(obj.get(), bar, obj->getName());
     }
     //6 dummy purpose, print number of scene objects
     if(key == 54)
@@ -264,12 +264,12 @@ void Display::keyPressed(unsigned char key, int x, int y)
     {
         if(mScene->getSceneObjectCount() > 0)
         {          
+            // delete ATB variable
+            antTBarRemoveVariable(mScene->getSceneObject(mScene->getSceneObjectCount()-1).get(),
+                                  bar, mScene->getSceneObject(mScene->getSceneObjectCount()-1)->getName());
+
             mScene->removeObject(mScene->getSceneObjectCount()-1);
             p -= 2.5f;
-
-            // delete ATB variable
-            TwRemoveAllVars(bar);
-            antTBar(mScene, bar);
 
         }
     }
