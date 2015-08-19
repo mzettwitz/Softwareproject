@@ -80,24 +80,26 @@ static __device__ void shade()
         rtTrace(topShadower,shadowRay,shadowPrd);
 
         //phong = Ka + Kd + Ks
-        //E = lights[i].intensity /dist²
+        //radiance = lights[i].intensity /dist²
         //Ka = ambientCoeff * ambientLightIntensity
-        //Kd = diffuseCoeff * diffuseColor * distributionAngle * radiance(lightIntensity)
-        //Ks = specularCoff * (shininess+2)/(2*PI)* (dot(ReflectedLight,ray.direction)^shininess * radiance
+        //Kd = diffuseCoeff * diffuseColor * distributionAngle(surfaceNormal, light) * radiance(localLightIntensity)
+        //Ks = specularCoff * (shininess+2)/(2*PI)* distributionAngle(ReflectedLight, eyeVector)^shininess * radiance
 
 
         // ambient outside to lighten shadowed parts
-        ambientColor = lights[i].color * ambientCoefficient * radiance * color; ///-----------------------color??? correct?-------------///
+        ambientColor = lights[i].color * ambientCoefficient * radiance;  ///* color; ///-----------------------color??? correct?-------------///
         phong += ambientColor;
 
+        // if not in shadow
         if(fmaxf(shadowPrd.attenuation) > 0.0f)
         {
+            // material color * coeff * surface angle * lightintensity at hitpoint
             diffuseColor = color * diffuseCoefficient * dot(normal, lightDirection) * radiance;
+            // coeff * normalized shininess * (positiv)angle between eye and reflected light ray ^ shininess * lightintensity at hitpoint
+            specularColor = specularCoefficient * ((shininess + 2)/(2*M_PIf)) * pow(fmaxf(dot(ray.direction, reflectedRay),0.f), shininess) * radiance;
 
-            //specularColor = specularCoefficient * (shininess + 2)/(2*M_PIf) * pow(dot(reflectedRay, ray.direction), shininess) * radiance;
-            specularColor = specularCoefficient * ((shininess + 2)/(2*M_PIf)) * pow(dot(ray.direction, reflectedRay), shininess) * radiance;
-            phong += diffuseColor;
-            phong.x += specularColor;
+            phong += diffuseColor;  // because 3d color vector
+            phong.x += specularColor;   // because single value
             phong.y += specularColor;
             phong.z += specularColor;
         }
