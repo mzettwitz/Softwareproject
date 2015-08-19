@@ -212,93 +212,100 @@ void Display::resize(int width, int height)
 
 void Display::keyPressed(unsigned char key, int x, int y)
 {
-//TODO: Method to handle keyboard events with ATB
-    //space
-    if(key == 119)
+    // send event to ATB if not handled by ATB
+    if(TwEventKeyboardGLUT(key, x, y))
+    {}
+    // send event to GLUT
+    else
     {
-        cameraPosition += make_float3(0.0f,0.02f,0.0f);
-    }
-    //1
-    if(key == 49)
-    {
-        cameraPosition += 0.2f * cameraDirection;
-    }
-    //2
-    if(key == 50)
-    {
-        cameraPosition += 0.2f * cameraRight;
-    }
-    //3
-    if(key == 51)
-    {
-        cameraPosition -= 0.2f * cameraRight;
-    }
-    //4
-    if(key == 52)
-    {
-        cameraPosition -= 0.2f * cameraDirection;
-    }
-    //5, dummy purpose, add dummy sphere
-    if(key == 53)
-    {
-
-        std::shared_ptr<LambertMaterial> l = std::make_shared<LambertMaterial>(make_float3(0.02f * p,0.5f,0.3f));
-        std::shared_ptr<Sphere> s = std::make_shared<Sphere>(make_float3(p,0.0f,0.0f),1.0f);
-        std::string name = "sphere_" + std::to_string(mScene->getSceneObjectCount());
-        std::shared_ptr<SceneObject> obj = std::make_shared<SceneObject>(name,s,l);
-        mScene->addSceneObject(obj);
-        p += 2.5f;
-        std::cout << p << std::endl;
-
-        // add ATB variable
-        // init new variables
-        antTBarInit(obj.get(), bar, obj->getName());
-    }
-    //6 dummy purpose, print number of scene objects
-    if(key == 54)
-    {
-        std::cout << mScene->getSceneObjectCount() << std::endl;
-    }
-    //7 dummy purpose, delete dummy sphere
-    if(key == 55)
-    {
-        if(mScene->getSceneObjectCount() > 0)
-        {          
-            // delete ATB variable
-            antTBarRemoveVariable(mScene->getSceneObject(mScene->getSceneObjectCount()-1).get(),
-                                  bar, mScene->getSceneObject(mScene->getSceneObjectCount()-1)->getName());
-
-            mScene->removeObject(mScene->getSceneObjectCount()-1);
-            p -= 2.5f;
-
-        }
-    }
-    //8 dummy purpose, change color of dummy
-    if(key == 56)
-    {
-        if(count < mScene->getSceneObjectCount())
+        //space
+        if(key == ' ')
         {
-            if(mScene->getSceneObject(count)->getGeometry()->getGeometryType() == BaseGeometry::INFINITEPLANE){
-                count++;
+            cameraPosition += make_float3(0.0f,0.02f,0.0f);
+        }
+        //1
+        if(key == '1')
+        {
+            cameraPosition += 0.2f * cameraDirection;
+        }
+        //2
+        if(key == '2')
+        {
+            cameraPosition += 0.2f * cameraRight;
+        }
+        //3
+        if(key == '3')
+        {
+            cameraPosition -= 0.2f * cameraRight;
+        }
+        //4
+        if(key == '4')
+        {
+            cameraPosition -= 0.2f * cameraDirection;
+        }
+        //5, dummy purpose, add dummy sphere
+        if(key == '5')
+        {
+
+            std::shared_ptr<LambertMaterial> l = std::make_shared<LambertMaterial>(make_float3(0.02f * p,0.5f,0.3f));
+            std::shared_ptr<Sphere> s = std::make_shared<Sphere>(make_float3(p,0.0f,0.0f),1.0f);
+            std::string name = "sphere_" + std::to_string(mScene->getSceneObjectCount());
+            std::shared_ptr<SceneObject> obj = std::make_shared<SceneObject>(name,s,l);
+            mScene->addSceneObject(obj);
+            p += 2.5f;
+            std::cout << p << std::endl;
+
+            // add ATB variable
+            // init new variables
+            antTBarInit(obj.get(), bar, obj->getName());
+        }
+        //6 dummy purpose, print number of scene objects
+        if(key == '6')
+        {
+            std::cout << mScene->getSceneObjectCount() << std::endl;
+        }
+        //7 dummy purpose, delete dummy sphere
+        if(key == '7')
+        {
+            if(mScene->getSceneObjectCount() > 0)
+            {
+                // delete ATB variable
+                antTBarRemoveVariable(mScene->getSceneObject(mScene->getSceneObjectCount()-1).get(),
+                                      bar, mScene->getSceneObject(mScene->getSceneObjectCount()-1)->getName());
+
+                mScene->removeObject(mScene->getSceneObjectCount()-1);
+                p -= 2.5f;
+
             }
+        }
+        //8 dummy purpose, change color of dummy
+        if(key == '8')
+        {
+            if(count < mScene->getSceneObjectCount())
+            {
+                if(mScene->getSceneObject(count)->getGeometry()->getGeometryType() == BaseGeometry::INFINITEPLANE){
+                    count++;
+                }
                 std::shared_ptr<LambertMaterial> l1 = std::make_shared<LambertMaterial>(make_float3(1.0f,0.5f,0.1f * count));
                 mScene->getSceneObject(count)->setMaterial(l1);
 
-            ++count;
+                ++count;
+            }
+
         }
+        // 9 dummy purpose, add infinity plane
+        if(key == '9')
+        {
+            std::shared_ptr<LambertMaterial> p = std::make_shared<LambertMaterial>(make_float3(1.0f,1.0f,1.0f));
+            std::shared_ptr<InfinitePlane> plane = std::make_shared<InfinitePlane>(-2.0f);
+            std::shared_ptr<SceneObject> sc = std::make_shared<SceneObject>("groundPlane",plane,p);
+            mScene->addSceneObject(sc);
 
+        }
     }
-    // 9 dummy purpose, add infinity plane
-    if(key == 57)
-      {
-        std::shared_ptr<LambertMaterial> p = std::make_shared<LambertMaterial>(make_float3(1.0f,1.0f,1.0f));
-        std::shared_ptr<InfinitePlane> plane = std::make_shared<InfinitePlane>(-2.0f);
-        std::shared_ptr<SceneObject> sc = std::make_shared<SceneObject>("groundPlane",plane,p);
-        mScene->addSceneObject(sc);
-
-    }
-        //needs to be called, to update change
+    //needs to be called, to update change
     glutPostRedisplay();
+
 }
 
 void Display::mouseButton(int button, int state, int x, int y)
@@ -325,10 +332,10 @@ void Display::mouseButton(int button, int state, int x, int y)
     // send event to GLUT
     if(button == GLUT_LEFT_BUTTON)
     {
-    	if(state == GLUT_DOWN)
-         {
-       	     Display::mState = mouseState::MOVE;
-       	 }
+        if(state == GLUT_DOWN)
+        {
+            Display::mState = mouseState::MOVE;
+        }
     }
     else if(button == GLUT_RIGHT_BUTTON)
     {

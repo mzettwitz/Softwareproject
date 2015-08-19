@@ -104,7 +104,7 @@ static __device__ void shade()
             phong.z += specularColor;
         }
     }
-/*
+
     //WILL NOT WORK!!!!
     if(specularity > 0.0f && prd_radiance.depth < maxDepth)
     {
@@ -113,9 +113,8 @@ static __device__ void shade()
         Ray reflectedRay = make_Ray(hitPoint,reflect(ray.direction,normal),radianceRayType,sceneEpsilon,maxLambda);
         //count depth + 1,
         rtTrace(topShadower,reflectedRay,prd_radiance);
-        result = (1-specularity) * result + prd_radiance.result * specularity;
+        result += (1-specularity) * result + prd_radiance.result * specularity;
     }
-*/
 
     result.x += phong.x;
     result.y += phong.y;
