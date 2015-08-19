@@ -104,7 +104,7 @@ void Scene::initScene(const Scene::Camera &camera)
     mContext["W"]->setFloat(w);
 
     //create dummy for whatever
-    std::shared_ptr<Sphere> dummyGeom = std::make_shared<Sphere>(make_float3(0.0f,0.0f,0.0f),3.1f);
+    std::shared_ptr<Sphere> dummyGeom = std::make_shared<Sphere>(make_float3(0.0f,0.0f,0.0f),2.f);
     std::shared_ptr<LambertMaterial> dummyMat = std::make_shared<LambertMaterial>(make_float3(1.0f,0.0f,0.0f));
     std::shared_ptr<SceneObject> dummy = std::make_shared<SceneObject>("dummy",dummyGeom,dummyMat);
     mSceneObjects->push_back(dummy);

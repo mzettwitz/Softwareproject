@@ -51,35 +51,58 @@ static __device__ void shade()
     PerRayData_shadow shadowPrd;
     shadowPrd.attenuation = make_float3(1.0f);
 
+    //color information
     float4 result = make_float4(0.0f,0.0f,0.0f,1.0f);
+    float3 diffuseColor = make_float3(0.0f,0.0f,0.0f);
+    float3 ambientColor = make_float3(0.0f,0.0f,0.0f);
+    float specularColor = 0;
+    float3 phong = make_float3(0.0f,0.0f,0.0f);
+
+    //hitpoint information
     float3 hitPoint = ray.origin + intersectionDistance * ray.direction;
 
-
-
-
-
+    //iterate through lights
     for(unsigned int i = 0;i < lights.size();++i)
     {
-
-        float3 lightDirection = lights[i].position - hitPoint;
+        //light values
+        float3 lightDirection = lights[i].position - hitPoint;        
         float maxLambda = length(lightDirection);
+        float radiance = lights[i].intensity / (maxLambda*maxLambda);
         lightDirection = normalize(lightDirection);
-        hitPoint = hitPoint + sceneEpsilon * lightDirection;
-        Ray shadowRay = make_Ray(hitPoint,lightDirection,shadowRayType,sceneEpsilon,maxLambda);
+        float3 reflectedRay = reflect(lightDirection, normal);
+        //reflectedRay = normalize(reflectedRay);
 
+        // hitpoint offset
+        hitPoint = hitPoint + sceneEpsilon * lightDirection;
+
+        // trace new shadow ray
+        Ray shadowRay = make_Ray(hitPoint,lightDirection,shadowRayType,sceneEpsilon,maxLambda);
         rtTrace(topShadower,shadowRay,shadowPrd);
+
+        //phong = Ka + Kd + Ks
+        //E = lights[i].intensity /dist²
+        //Ka = ambientCoeff * ambientLightIntensity
+        //Kd = diffuseCoeff * diffuseColor * distributionAngle * radiance(lightIntensity)
+        //Ks = specularCoff * (shininess+2)/(2*PI)* (dot(ReflectedLight,ray.direction)^shininess * radiance
+
+
+        // ambient outside to lighten shadowed parts
+        ambientColor = lights[i].color * ambientCoefficient * radiance * color; ///-----------------------color??? correct?-------------///
+        phong += ambientColor;
 
         if(fmaxf(shadowPrd.attenuation) > 0.0f)
         {
-            //phong = Ka + Kd + Ks
-            //E = lights[i].intensity * dot(normal.lightDirection)/dist²
-            //Ka = ambientColor
-            //Kd = E * (diffuseColor + diffuseCoefficient)
-            //Ks = E * (dot(R,ray.direction)^shininess + specularCoefficient)
-            //something like that
+            diffuseColor = color * diffuseCoefficient * dot(normal, lightDirection) * radiance;
 
+            //specularColor = specularCoefficient * (shininess + 2)/(2*M_PIf) * pow(dot(reflectedRay, ray.direction), shininess) * radiance;
+            specularColor = specularCoefficient * ((shininess + 2)/(2*M_PIf)) * pow(dot(ray.direction, reflectedRay), shininess) * radiance;
+            phong += diffuseColor;
+            phong.x += specularColor;
+            phong.y += specularColor;
+            phong.z += specularColor;
         }
     }
+/*
     //WILL NOT WORK!!!!
     if(specularity > 0.0f && prd_radiance.depth < maxDepth)
     {
@@ -90,4 +113,14 @@ static __device__ void shade()
         rtTrace(topShadower,reflectedRay,prd_radiance);
         result = (1-specularity) * result + prd_radiance.result * specularity;
     }
+*/
+
+    result.x += phong.x;
+    result.y += phong.y;
+    result.z += phong.z;
+
+    result.w = 1.0f;
+    prd_radiance.result = result/lights.size();
+
+
 }

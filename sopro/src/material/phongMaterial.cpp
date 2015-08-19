@@ -7,7 +7,7 @@ Material PhongMaterial::createMaterial(Context context) const
     Material material = context->createMaterial();
     material->setAnyHitProgram(1,context->createProgramFromPTXFile(mPTXpath,"anyhit_shadow"));
     material->setClosestHitProgram(0,context->createProgramFromPTXFile(mPTXpath,"closesthit_radiance"));
-    material["Color"]->setFloat(mColor.x,mColor.y,mColor.z);
+    material["color"]->setFloat(mColor.x,mColor.y,mColor.z);
     material["ambientCoefficient"]->setFloat(mAmbientCoeff);
     material["diffuseCoefficient"]->setFloat(mDiffuseCoeff);
     material["specularCoefficient"]->setFloat(mSpecularCoeff);

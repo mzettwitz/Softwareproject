@@ -356,8 +356,8 @@ void Display::mouseMotion(int x, int y)
     else if(mState ==  mouseState::ROTATE)
     {
         std::cout << horizontalAngle << "," << verticalAngle << std::endl;
-        horizontalAngle += mouseSpeed *  deltaTime * float(mWidth/2 - x);
-        verticalAngle += mouseSpeed * deltaTime * float(mHeight/2 - y);
+        horizontalAngle += mouseSpeed *  deltaTime * float(mWidth/2 - x) * 0.2f;
+        verticalAngle += mouseSpeed * deltaTime * float(mHeight/2 - y) * 0.2f;
 
         cameraDirection = make_float3(cos(verticalAngle) * sin(horizontalAngle),sin(verticalAngle),cos(verticalAngle) * cos(horizontalAngle));
         cameraRight = make_float3(sin(horizontalAngle - 3.14f/2.0f),0,cos(horizontalAngle - 3.14f/2.0f));
