@@ -130,8 +130,9 @@ static __device__ void shade()
         {
             // material color * coeff * (positive)surface angle * lightintensity at hitpoint
             diffuseColor = color * diffuseCoefficient * fmaxf(dot(normal, lightDirection), 0.0f) * radiance;
-            // coeff * normalized shininess * (positive)angle between eye and reflected light ray ^ shininess * lightintensity at hitpoint
-            specularColor = lights[i].color * specularCoefficient * ((shininess + 2.f)/(2.f*M_PIf)) * pow(fmaxf(dot(ray.direction, reflectedLightRay),0.f), shininess) * radiance;
+            // lightcolor * coeff * normalized shininess * (positive)angle between eye and reflected light ray ^ shininess * lightintensity at hitpoint
+            specularColor = lights[i].color * specularCoefficient * ((shininess + 2.f)/(2.f*M_PIf)) *
+                    pow(fmaxf(dot(ray.direction, reflectedLightRay),0.f), shininess) * radiance;
 
             phong += diffuseColor + specularColor;
 
@@ -150,7 +151,7 @@ static __device__ void shade()
         Ray reflectedRay = make_Ray(hitPoint,reflect(ray.direction,normal),radianceRayType,sceneEpsilon,maxLambda);
         //count depth + 1,
         rtTrace(topShadower, reflectedRay, prd_radiance);
-        result += (1.0f-specularity) * result + prd_radiance.result * specularity;
+        result = (1.0f-specularity) * result + prd_radiance.result * specularity;
     }
 
     result.w = 1.0f;

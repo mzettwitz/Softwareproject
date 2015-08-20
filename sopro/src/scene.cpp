@@ -57,8 +57,8 @@ void Scene::initScene(const Scene::Camera &camera)
     mContext["maxDepth"]->setUint(10u);
     mContext["sceneEpsilon"]->setFloat(1.e-3f);
 
-    mWidth  = 800;
-    mHeight = 800;
+    mWidth  = 1600;
+    mHeight = 900;
 
     PointLight light;
 
