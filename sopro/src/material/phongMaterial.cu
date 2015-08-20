@@ -29,23 +29,57 @@ rtDeclareVariable(float3, normal, attribute normal,);
 static __device__ void shadowed();
 static __device__ void shade();
 
-
+/*!
+ * \brief Determines whether a shadow ray hits any object in the scene or not using \fn shadowed.
+ */
 RT_PROGRAM void anyhit_shadow()
 {
     shadowed();
 }
 
+/*!
+ * \brief Computes the closest intersection between camera ray and the \class SceneObject using \fn shade.
+ */
 RT_PROGRAM void closesthit_radiance()
 {
     shade();
 }
 
+/*!
+ * \brief Determines whether a shadow ray hits any object in the scene or not, sets the attenuation to 0 and terminates the ray.
+ */
 static __device__ void shadowed()
 {
     prd_shadow.attenuation = make_float3(0.0f);
     rtTerminateRay();
 }
 
+/*!
+ * \brief Computes the color of the closest intersection point from camera and object.
+ *
+ * Basicly we set up a resulting color. This color is basicly black, it gains more color information with each
+ * computation for each light source in the scene. \n
+ * First we compute the hitpoint on the object. Now we iterate through each lightsource in the scene
+ * and generate a new \class Ray from lightsource to the object to trace the shadow (using anyhit).
+ * If there is shadow: add black, if there is no shadow, compute the phong based color.
+ * Therefore we sum up the ambient light, the diffuse color and the specular color and add it,
+ * weighted by the number of lights in the scene, to the resulting color.\n
+ * At the end we generate and trace a new reflected \class Ray to compute the mirrored objects in the scene.
+ *
+ * \var shadowPrd The ray information for the shadow ray.
+ * \var result RGBA color for the resulting color in the hitpoint.
+ * \var diffuseColor RGB color for the diffuse part of the \class PhongMaterial
+ * \var ambientColor RGB color for the ambient light color of the \class PhongMaterial
+ * \var specularColor Float value to add highlights to \class PhongMaterial
+ * \var phong RGB color to sum up the three parts of the \class PhongMaterial
+ * \var hitPoint 3D float vector for the intersection between camera ray and object
+ * \var lightDirection 3D float vector for the direction of the actual lightsource
+ * \var maxLambda Float value describing the distance between actual lightsource and hitpoint
+ * \var reflectedLightRay 3D vector for the direction of the light ray, reflected on the object surface
+ * \var shadowRay A \class Ray to determine if the hitpoint is shadowed by the actual lightsource and any object in the scene
+ * \var reflectedRay A \class Ray to trace the camera \class Ray that is reflected on the specular surface (mirror effect)
+ *
+ */
 static __device__ void shade()
 {
     PerRayData_shadow shadowPrd;
@@ -69,8 +103,8 @@ static __device__ void shade()
         float maxLambda = length(lightDirection);
         float radiance = lights[i].intensity / (maxLambda*maxLambda);
         lightDirection = normalize(lightDirection);
-        float3 reflectedRay = reflect(lightDirection, normal);
-        //reflectedRay = normalize(reflectedRay);
+        float3 reflectedLightRay = reflect(lightDirection, normal);
+        reflectedLightRay = normalize(reflectedLightRay);
 
         // hitpoint offset
         hitPoint = hitPoint + sceneEpsilon * lightDirection;
@@ -96,7 +130,7 @@ static __device__ void shade()
             // material color * coeff * surface angle * lightintensity at hitpoint
             diffuseColor = color * diffuseCoefficient * dot(normal, lightDirection) * radiance;
             // coeff * normalized shininess * (positiv)angle between eye and reflected light ray ^ shininess * lightintensity at hitpoint
-            specularColor = specularCoefficient * ((shininess + 2)/(2*M_PIf)) * pow(fmaxf(dot(ray.direction, reflectedRay),0.f), shininess) * radiance;
+            specularColor = specularCoefficient * ((shininess + 2)/(2*M_PIf)) * pow(fmaxf(dot(ray.direction, reflectedLightRay),0.f), shininess) * radiance;
 
             phong += diffuseColor;  // because 3d color vector
             phong.x += specularColor;   // because single value
@@ -109,7 +143,7 @@ static __device__ void shade()
     if(specularity > 0.0f && prd_radiance.depth < maxDepth)
     {
         prd_radiance.depth++;
-        float maxLambda = 10000;
+        float maxLambda = 10000.f;
         Ray reflectedRay = make_Ray(hitPoint,reflect(ray.direction,normal),radianceRayType,sceneEpsilon,maxLambda);
         //count depth + 1,
         rtTrace(topShadower,reflectedRay,prd_radiance);

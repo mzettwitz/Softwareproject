@@ -2,25 +2,26 @@
  * \brief A Phong material header file.
  * \author Martin Zettwitz, Michael Größler, 2015
  *
- * Contains Phong based attributes like color(ambient, diffuse, specular) and shininess for materials and shadowing.
+ * Contains Phong based attributes like color, coefficients, shininess and specularity for materials and shading.
  *
- * \var mAmbientColor RGB color for ambient coloring
- * \var mDiffuseColor RGB color for diffuse material color
- * \var mSpecularColor RGB color for specular material color
- * \var mAmbientCoeff flaot value between [0,1] to describe the ratio of ambient color
- * \var mDiffuseCoeff flaot value between [0,1] to describe the ratio of diffuse color
- * \var mSpecularCoeff flaot value between [0,1] to describe the ratio of specular color
- * \var mShininess float value for reflection degree
+ * \var mMaterialType Value to define the material type (PHONG)
+ * \var mColor RGB color for (diffuse) material color
+ * \var mAmbientCoeff Flaot value between [0,1] to describe the ratio of ambient lighting
+ * \var mDiffuseCoeff Flaot value between [0,1] to describe the ratio of diffuse light distribution
+ * \var mSpecularCoeff Flaot value between [0,1] to describe the ratio of specular light distribution
+ * \var mShininess Float value for specular light distribution power
+ * \var mSpecularity Float value between [0,1] to describe the ability to reflect (mirroring)
  * \var prd_radiance Information about traced ray hit
  * \var prd_shadow Information about shadow attenuation
  * \var ray Incoming camera ray
  * \var shadowRayType Type ID of the shadow ray
  * \var radianceRayType Type ID of the traced ray
  * \var sceneEpsilon Safty distance to avoid self intersections
- * \var topShadower Top Shadowing object in object tree
+ * \var topShadower Top shadowing object in object tree
  * \var lights Lights of the Scene
  * \var intersectionDistance Distance from ray origin to intersection point
  */
+
 
 #pragma once
 
@@ -41,6 +42,16 @@ private:
 public:
     // ------------------------CTor
     // ------------advanced CTor
+    /*!
+     * \brief Advanced contructor to generate an instance of a PhongMaterial.
+     *
+     * \param col RGB float information about the (diffuse)color.
+     * \param aCoef Float value to set the ambient coefficient.
+     * \param dCoef Float value to set the diffuse coefficient.
+     * \param sCoef Float value to set the specular coefficient.
+     * \param shine Float value to set the shininess.
+     * \param spec Float value to set the specularity.
+     */
     PhongMaterial(float3 col, float aCoef, float dCoef, float sCoef, float shine, float spec) :
         mColor(col), mAmbientCoeff(aCoef), mDiffuseCoeff(dCoef), mSpecularCoeff(sCoef),
         mShininess(shine), mSpecularity(spec)
@@ -51,6 +62,11 @@ public:
 
     //------------- Copy CTors
     // pass through
+    /*!
+     * \brief Simple copy CTor to pass through an existing \class PhongMaterial object.
+     *
+     * \param in1 Smartpointer to the object you want to copy.
+     */
     PhongMaterial(const std::shared_ptr<BaseMaterial> in1)
     {
         std::shared_ptr<PhongMaterial> in = std::dynamic_pointer_cast<PhongMaterial>(in1);
@@ -64,6 +80,12 @@ public:
         setPTXPath("phongMaterial.cu");
     }
     // change color
+    /*!
+     * \brief Copy CTor to copy an existing \class PhongMaterial object and change it's color.
+     *
+     * \param in1 Smartpointer to the object you want to copy.
+     * \param newColor The new color you want to setup in your new object
+     */
     PhongMaterial(const std::shared_ptr<BaseMaterial> in1, const float3 &newColor) :
         mColor(newColor)
     {
@@ -77,6 +99,19 @@ public:
         setPTXPath("phongMaterial.cu");
     }
     // change coeffs
+    /*!
+     * \brief Advanced copy CTor to copy an existing \class PhongMaterial object and change an attribute.
+     *
+     * \param in1 Smartpointer to the object you want to copy.
+     * \param value The value for the attribute you want to change.
+     * \param pos The specific attribute you want to change:
+     * 1 = mAmbientCoeff
+     * 2 = mDiffuseCoeff
+     * 3 = mSpecularCoeff
+     * 4 = mShininess
+     * 5 = mSpecularity
+     * any other = pass through
+     */
     PhongMaterial(const std::shared_ptr<BaseMaterial> in1, float value, short pos)
     {
         std::shared_ptr<PhongMaterial> in = std::dynamic_pointer_cast<PhongMaterial>(in1);
@@ -141,11 +176,19 @@ public:
             mSpecularity = in->specularity();
             mMaterialType = PHONG;
             setPTXPath("phongMaterial.cu");
+            break;
         }
     }
 
     //-------------CTor for material conversion
     // Lambert
+    /*!
+     * \brief CTor to generate a \class PhongMaterial object based on a given color.
+     *
+     * \note Useful for conversion from \class LambertMaterial.
+     *
+     * \param col RGB color information for mColor.
+     */
     PhongMaterial(float3 col) :
         mColor(col)
     {

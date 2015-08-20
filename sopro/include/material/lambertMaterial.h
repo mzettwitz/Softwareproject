@@ -1,8 +1,8 @@
 /*! \file plainColorMaterial.h
- * \brief A material header file.
+ * \brief A Lambert material header file.
  * \author Martin Zettwitz, Michael Größler, 2015
  *
- * Contains basic attributes like color for materials and shadowing.
+ * Contains basic attributes like color for materials and shading based on Lambert.
  *
  * \var mColor RGB color
  * \var prd_radiance Information about traced ray hit
@@ -32,14 +32,20 @@ class LambertMaterial : public BaseMaterial
 
 public :
     // advanced CTor
+    /*!
+     * \brief CTor to generate a \class LambertMaterial object based on a given color.
+     *
+     * \param col RGB color information for mColor.
+     */
     LambertMaterial(float3 c) : mColor(c)
     {
         mMaterialType = LAMBERT;
         setPTXPath("lambertMaterial.cu");
     }
 
+    Material createMaterial(Context context) const override;
+
     void setColor(const float3 &c);
-    Material createMaterial(Context context) const override;    
 
     // Special getter for ATB
     const float3& color() const;
