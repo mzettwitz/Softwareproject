@@ -41,7 +41,7 @@ private:
 
 public:
     // ------------------------CTor
-    // ------------advanced CTor
+    // ------------ Advanced CTor
     /*!
      * \brief Advanced contructor to generate an instance of a PhongMaterial.
      *
@@ -104,12 +104,12 @@ public:
      *
      * \param in1 Smartpointer to the object you want to copy.
      * \param value The value for the attribute you want to change.
-     * \param pos The specific attribute you want to change:
-     * 1 = mAmbientCoeff
-     * 2 = mDiffuseCoeff
-     * 3 = mSpecularCoeff
-     * 4 = mShininess
-     * 5 = mSpecularity
+     * \param pos The specific attribute you want to change:\n
+     * 1 = mAmbientCoeff\n
+     * 2 = mDiffuseCoeff\n
+     * 3 = mSpecularCoeff\n
+     * 4 = mShininess\n
+     * 5 = mSpecularity\n
      * any other = pass through
      */
     PhongMaterial(const std::shared_ptr<BaseMaterial> in1, float value, short pos)
@@ -189,14 +189,36 @@ public:
      *
      * \param col RGB color information for mColor.
      */
-    PhongMaterial(float3 col) :
+    PhongMaterial(const float3 &col) :
         mColor(col)
     {
         mAmbientCoeff = 1.f;
         mDiffuseCoeff = 1.f;
         mSpecularCoeff = 1.f;
         mShininess = 1.f;
-        mSpecularity = 1.f;
+        mSpecularity = 0.5f;
+        mMaterialType = PHONG;
+        setPTXPath("phongMaterial.cu");
+    }
+    // Glass
+    /*!
+     * \brief CTor to generate a \class PhongMaterial object based on a given attributes.
+     *
+     * \note Useful for conversion from \class GlassMaterial.
+     *
+     * \param col RGBA color information for mColor.
+     * \param specC Float value for \var mSpecularCoeff
+     * \param shine Float value for \var mShininess
+     * \param spec Float value for \var mSpecularity
+     */
+    PhongMaterial(const float4 &col, float specC, float shine, float spec)
+    {
+        mColor = make_float3(col.x, col.y, col.z);
+        mAmbientCoeff = 1.f;
+        mDiffuseCoeff = 1.f;
+        mSpecularCoeff = specC;
+        mShininess = shine;
+        mSpecularity = spec;
         mMaterialType = PHONG;
         setPTXPath("phongMaterial.cu");
     }

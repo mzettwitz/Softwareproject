@@ -1,4 +1,4 @@
-//TODO: everything
+//TODO: fix the shading to the brdf
 
 #include "../../include/structs.h"
 
@@ -78,6 +78,7 @@ static __device__ void shadowed()
  * \var reflectedLightRay 3D vector for the direction of the light ray, reflected on the object surface
  * \var shadowRay A \class Ray to determine if the hitpoint is shadowed by the actual lightsource and any object in the scene
  * \var reflectedRay A \class Ray to trace the camera \class Ray that is reflected on the specular surface (mirror effect)
+ * \var color4F RGBA version of the RGB diffuse color to give the reflection a color(lighted areas must be colored, since light is emitted)
  *
  */
 static __device__ void shade()
@@ -89,7 +90,6 @@ static __device__ void shade()
     float4 result = make_float4(0.0f,0.0f,0.0f,1.0f);
     float3 diffuseColor = make_float3(0.0f,0.0f,0.0f);
     float3 ambientColor = make_float3(0.0f,0.0f,0.0f);
-   // float specularColor = 0;
     float3 specularColor = make_float3(0.0f,0.0f,0.0f);
     float3 phong = make_float3(0.0f,0.0f,0.0f);
 
@@ -143,15 +143,15 @@ static __device__ void shade()
     result.y += phong.y;
     result.z += phong.z;
 
-    // reflections
+    // recursive reflections
     if(specularity > 0.0f && prd_radiance.depth < maxDepth)
     {
+        float4 color4F = make_float4(color, 1.0f);
         prd_radiance.depth++;
         float maxLambda = 10000.0f;
         Ray reflectedRay = make_Ray(hitPoint,reflect(ray.direction,normal),radianceRayType,sceneEpsilon,maxLambda);
-        //count depth + 1,
         rtTrace(topShadower, reflectedRay, prd_radiance);
-        result = (1.0f-specularity) * result + prd_radiance.result * specularity;
+        result = (1.0f-specularity) * result + prd_radiance.result * specularity * (color4F * diffuseCoefficient);
     }
 
     result.w = 1.0f;

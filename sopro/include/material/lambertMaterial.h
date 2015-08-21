@@ -1,4 +1,4 @@
-/*! \file plainColorMaterial.h
+/*! \file lambertMaterial.h
  * \brief A Lambert material header file.
  * \author Martin Zettwitz, Michael Größler, 2015
  *
@@ -31,20 +31,38 @@ class LambertMaterial : public BaseMaterial
     float3 mColor;
 
 public :
-    // advanced CTor
+    //--------------------------CTor
+    //------------- Advanced CTor
     /*!
      * \brief CTor to generate a \class LambertMaterial object based on a given color.
      *
-     * \param col RGB color information for mColor.
+     * \param c RGB color information for mColor.
      */
-    LambertMaterial(float3 c) : mColor(c)
+    LambertMaterial(const float3 &c) : mColor(c)
     {
+        mMaterialType = LAMBERT;
+        setPTXPath("lambertMaterial.cu");
+    }
+
+    //--------------- CTor for material conversion
+    // Lambert
+    /*!
+     * \brief CTor to generate a \class LambertMaterial object based on a given color.
+     *
+     * \note Useful for conversion from \class GlassMaterial.
+     *
+     * \param col RGBA color information for mColor.
+     */
+    LambertMaterial(const float4 &col)
+    {
+        mColor = make_float3(col.x, col.y, col.z);
         mMaterialType = LAMBERT;
         setPTXPath("lambertMaterial.cu");
     }
 
     Material createMaterial(Context context) const override;
 
+    // Setter
     void setColor(const float3 &c);
 
     // Special getter for ATB
