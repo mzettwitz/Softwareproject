@@ -69,16 +69,14 @@ void SceneObject::setMaterial(std::shared_ptr<BaseMaterial> material)
     }
     else if(mMaterial->getMaterialType() == BaseMaterial::GLASS)
     {
-        /*std::shared_ptr<GlassMaterial> mat1 = dynamic_cast<GlassMaterial*>(mMaterial);
-         *std::shared_ptrGlassMaterial> mat2 = dynmiac_cast<GlassMaterial*>(material);
-         * if(&mat1 != &mat2)
-         * {
-         *      mMaterial = material;
-         *      markAsChanged();
-         *      return;
-         * }
-         */
-            //dummy
+        std::shared_ptr<GlassMaterial> mat1 = std::dynamic_pointer_cast<GlassMaterial>(mMaterial);
+        std::shared_ptr<GlassMaterial> mat2 = std::dynamic_pointer_cast<GlassMaterial>(material);
+        if(&mat1 != &mat2)
+        {
+            mMaterial = material;
+            markAsChanged();
+            return;
+        }
     }
 }
 

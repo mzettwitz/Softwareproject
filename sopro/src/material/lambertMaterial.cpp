@@ -2,11 +2,6 @@
 
 using namespace optix;
 
-void LambertMaterial::setColor(const float3 &c)
-{
-    mColor = c;
-}
-
 Material LambertMaterial::createMaterial(Context context) const
 {
 
@@ -15,6 +10,13 @@ Material LambertMaterial::createMaterial(Context context) const
     material->setClosestHitProgram(0,context->createProgramFromPTXFile(mPTXpath,"closesthit_radiance"));
     material["color"]->setFloat(mColor.x,mColor.y,mColor.z);
     return material;
+}
+
+
+// Getter and setter
+void LambertMaterial::setColor(const float3 &c)
+{
+    mColor = c;
 }
 
 const float3& LambertMaterial::color() const
@@ -27,6 +29,7 @@ float3& LambertMaterial::color()
     return mColor;
 }
 
+// operator overload
 bool operator!=(const LambertMaterial &mat1, const LambertMaterial &mat2)
 {
     return (mat1.color().x != mat2.color().x || mat1.color().y != mat2.color().y || mat1.color().z != mat2.color().z);

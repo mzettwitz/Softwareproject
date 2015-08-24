@@ -30,6 +30,7 @@ using namespace optix;
 
 class GlassMaterial : public BaseMaterial
 {
+private:
     float4 mColor;
     float mRefractiveIdx;
     float mSpecularity;
@@ -158,17 +159,17 @@ public :
     }
 
     //-------------CTor for material conversion
-    // Lambert and Phong
+    // Lambert
     /*!
      * \brief CTor to generate a \class GlassMaterial object based on a given color.
      *
-     * \note Useful for conversion from \class LambertMaterial or PhongMaterial.
+     * \note Useful for conversion from \class LambertMaterial.
      *
      * \param col RGB color information for mColor.
      */
     GlassMaterial(const float3 &col)
     {
-        mColor = make_float4(col.x, col.y, col.z, 1.0f);
+        mColor = make_float4(col.x, col.y, col.z, 0.5f);
         mRefractiveIdx = 1.0f;
         mSpecularity = 0.5f;
         mShininess = 1.0f;
@@ -176,12 +177,35 @@ public :
         mMaterialType = GLASS;
         setPTXPath("glassMaterial.cu");
     }
+    // Phong
+    /*!
+     * \brief CTor to generate a \class GlassMaterial object based on given attributes.
+     *
+     * \note Useful for conversion from \class PhongMaterial.
+     *
+     * \param col RGB color information for mColor.
+     * \param spec Float vaule for mSpecularity.
+     * \param shine Float value for mShininess.
+     * \param specC Float value for mSpecularCoeff.
+     */
+    GlassMaterial(const float3 &col, float spec, float shine, float specC)
+    {
+        mColor = make_float4(col.x, col.y, col.z, 0.5f);
+        mRefractiveIdx = 1.0f;
+        mSpecularity = spec;
+        mShininess = shine;
+        mSpecularCoeff = specC;
+        mMaterialType = GLASS;
+        setPTXPath("glassMaterial.cu");
+    }
+
 
 
     Material createMaterial(Context context) const override;
 
+    // ------------------------Getter & Setter
     // Setter
-    void setColor(const float4 &c);
+    void setColor(const float4 &color);
     void setRefractiveIdx(float idx);
     void setSpecularity(const float spec);
     void setShininess(const float shine);

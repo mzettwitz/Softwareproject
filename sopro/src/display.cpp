@@ -257,7 +257,7 @@ void Display::keyPressed(unsigned char key, int x, int y)
 
             // add ATB variable
             // init new variables
-            antTBarInit(obj.get(), bar, obj->getName());
+            antTBarInit(obj.get(), bar, name);
         }
         //6 dummy purpose, print number of scene objects
         if(key == '6')

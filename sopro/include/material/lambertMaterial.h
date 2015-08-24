@@ -45,7 +45,7 @@ public :
     }
 
     //--------------- CTor for material conversion
-    // Lambert
+    // Glass
     /*!
      * \brief CTor to generate a \class LambertMaterial object based on a given color.
      *

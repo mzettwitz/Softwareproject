@@ -26,9 +26,9 @@ float4 &GlassMaterial::color()
 {
     return mColor;
 }
-void GlassMaterial::setColor(const float4 &c)
+void GlassMaterial::setColor(const float4 &color)
 {
-    mColor = c;
+    mColor = color;
 }
 
 // Refractive index

@@ -1,6 +1,7 @@
 // TODO:
-// - add specularity and specular index like phong based
-// - add refraction methods
+// - refraction method correct?
+// - trace with stack
+// - Beer's law
 
 #include "../../include/structs.h"
 
@@ -30,7 +31,6 @@ rtDeclareVariable(float3, normal, attribute normal,);
 static __device__ void shadowed();
 static __device__ void shade();
 static __device__ float3 refract(const float3 &ray_in, const float3 &normal, float n1, float n2);
-static __device__ float3 refract(const float3 &ray_in, const float3 &normal, float n);
 
 /*!
  * \brief Determines whether a shadow ray hits any object in the scene or not using \fn shadowed.
@@ -115,6 +115,10 @@ static __device__ void shade()
         Ray shadowRay = make_Ray(hitPoint,lightDirection,shadowRayType,sceneEpsilon,maxLambda);
         rtTrace(topShadower,shadowRay,shadowPrd);
 
+        result.x = color.x * color.w;
+        result.y = color.y * color.w;
+        result.z = color.z * color.w;
+
         // if not in shadow
         if(fmaxf(shadowPrd.attenuation) > 0.0f)
         {
@@ -122,8 +126,6 @@ static __device__ void shade()
 
             // recursive refraction
             /* TODO:
-            a) two glass objects
-            b) one glass object and one other
 
             should look like:
             - compute the refracted direction
@@ -131,8 +133,17 @@ static __device__ void shade()
             - trace new refracted ray till it hit's something different from glass material or nothing
                 -> recursion
             */
+
+            // phong based highlights
+            glassColor += lights[i].color * specularCoeff * ((shininess + 2.f)/(2.f*M_PIf)) *
+                    pow(fmaxf(dot(ray.direction, reflectedLightRay),0.f), shininess) * radiance;
+
         }
     }
+
+    result.x += glassColor.x;
+    result.y += glassColor.y;
+    result.z += glassColor.z;
 
     // recursive reflections
     if(specularity > 0.0f && prd_radiance.depth < maxDepth)
@@ -144,17 +155,27 @@ static __device__ void shade()
         result = (1.0f-specularity) * result + prd_radiance.result * specularity;
     }
 
+    // recursive refractions
+    //TODO: IMPLEMENT STACK IN TRACE AND BEER'S LAW
+    if(prd_radiance.depth < maxDepth)
+    {
+        prd_radiance.depth++;
+        float maxLambda = 10000.0f;
+        Ray refractedRay = make_Ray(hitPoint,refract(ray.direction,normal, 1.0f, refractiveIdx),radianceRayType,sceneEpsilon,maxLambda);
+        rtTrace(topShadower, refractedRay, prd_radiance);
+        result = (1.0f-specularity) * result + prd_radiance.result * specularity;
+    }
+
     result.w = 1.0f;
 
     prd_radiance.result = result/lights.size();
-
 
 }
 
 /*!
  * \brief Refracts a ray (direction).
  *
- * Refracts a ray with two \class GlassMaterial objects
+ * Refracts a ray with two \class GlassMaterial objects, including total reflection, based on Snell's law
  *
  * \param ray_in The 3D ray direction that goes into the object
  * \param normal The 3D surface normal of the object that is entered
@@ -164,20 +185,19 @@ static __device__ void shade()
  */
 static __device__ float3 refract(const float3 &ray_in, const float3 &normal, float n1, float n2)
 {
-return ray_in;
-}
+    float alpha = dot(normal, ray_in);
+    if(alpha > 1)
+        return reflect(ray_in, normal);
+    else
+    {
+        float n = n1/n2;
+        float cosI = -1.0f * dot(normal, ray_in);
+        float cosT2 = 1.0f - n * n * (1.0f - cosI * cosI);
+        //if(cosT2 > 0.0f)
+        {
+            float3 t = (n * ray_in + (n * cosI - sqrt(cosT2)) * normal);
+            return t;
+        }
 
-/*!
- * \brief Refracts a ray (direction).
- *
- * Refracts a ray with one \class GlassMaterial and air (n=1)
- *
- * \param ray_in The 3D ray direction that goes into the object
- * \param normal The 3D surface normal of the object that is entered
- * \param n The refractive index of the \class GlassMaterial object
- * \return The 3D ray direction that after getting refracted on the surface
- */
-static __device__ float3 refract(const float3 &ray_in, const float3 &normal, float n)
-{
-    return ray_in;
+    }
 }

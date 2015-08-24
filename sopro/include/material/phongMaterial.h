@@ -211,7 +211,7 @@ public:
      * \param shine Float value for \var mShininess
      * \param spec Float value for \var mSpecularity
      */
-    PhongMaterial(const float4 &col, float specC, float shine, float spec)
+    PhongMaterial(const float3 &col, float specC, float shine, float spec)
     {
         mColor = make_float3(col.x, col.y, col.z);
         mAmbientCoeff = 1.f;
