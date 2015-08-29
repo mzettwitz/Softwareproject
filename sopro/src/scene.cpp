@@ -26,7 +26,7 @@ void Scene::trace(const Scene::Camera &camera)
     updateScene(camera);
     float3 eye = mCamera.position;
     float3 lookat = mCamera.direction+mCamera.position;
-    float3 up = cross(mCamera.direction,mCamera.right);
+    float3 up = make_float3(0,1,0);
     float fov = 45.0f;
     float aspectRatio = float(mWidth)/float(mHeight);
     float3 u,v,w;
@@ -46,7 +46,7 @@ void Scene::trace(const Scene::Camera &camera)
     mContext->launch(0,bufferWidth,bufferHeight);
 }
 
-void Scene::initScene(const Scene::Camera &camera)
+void Scene::initScene(const Scene::Camera &camera,int width, int height)
 {
     //specify context
     mContext->setRayTypeCount(2);
@@ -54,11 +54,11 @@ void Scene::initScene(const Scene::Camera &camera)
     mContext["radianceRayType"]->setUint(0u);
     mContext["shadowRayType"]->setUint(1u);
   //  mContext["reflectanceRayType"]->setUint(2u);
-    mContext["maxDepth"]->setUint(10u);
-    mContext["sceneEpsilon"]->setFloat(1.e-3f);
+    mContext["maxDepth"]->setUint(20u);
+    mContext["sceneEpsilon"]->setFloat(0.7e-3f);
 
-    mWidth  = 1600;
-    mHeight = 900;
+    mWidth  = width;
+    mHeight = height;
 
     PointLight light;
 
@@ -91,7 +91,7 @@ void Scene::initScene(const Scene::Camera &camera)
 
     float3 eye = mCamera.position;
     float3 lookat = mCamera.direction+mCamera.position;
-    float3 up = cross(mCamera.direction,mCamera.right);
+    float3 up = make_float3(0,1,0);
     float fov = 45.0f;
     float aspectRatio = float(mWidth)/float(mHeight);
     float3 u,v,w;
@@ -104,7 +104,7 @@ void Scene::initScene(const Scene::Camera &camera)
     mContext["W"]->setFloat(w);
 
     //create dummy for whatever
-    std::shared_ptr<Sphere> dummyGeom = std::make_shared<Sphere>(make_float3(0.0f,0.0f,0.0f),2.f);
+    std::shared_ptr<Sphere> dummyGeom = std::make_shared<Sphere>(make_float3(0.0f,0.0f,0.0f),0.1f);
     std::shared_ptr<LambertMaterial> dummyMat = std::make_shared<LambertMaterial>(make_float3(1.0f,0.0f,0.0f));
     std::shared_ptr<SceneObject> dummy = std::make_shared<SceneObject>("dummy",dummyGeom,dummyMat);
     mSceneObjects->push_back(dummy);
@@ -259,4 +259,11 @@ std::shared_ptr<std::vector<std::shared_ptr<SceneObject>>> Scene::getSceneObject
 int Scene::getSceneObjectCount()
 {
     return mSceneObjects->size();
+}
+
+void Scene::resizeBuffer(int width,int height)
+{
+    mWidth = width;
+    mHeight = height;
+    mContext["outputBuffer"]->getBuffer()->setSize(mWidth,mHeight);
 }

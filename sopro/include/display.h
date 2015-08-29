@@ -15,10 +15,10 @@ private:
     static float                verticalAngle;
     static float                initialFOV;
     static float                mouseSpeed;
+    static float                moveSpeed;
     static float3               cameraPosition;
     static float3               cameraDirection;
     static float3               cameraRight;
-    static float3               cameraUp;
     static int                  oldx;
     static int                  oldy;
     static float                deltaTime;

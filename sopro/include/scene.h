@@ -31,7 +31,7 @@ public:
                                     Scene();
                                     ~Scene();
     void                            trace(const Scene::Camera &camera);
-    void                            initScene(const Scene::Camera &camera);
+    void                            initScene(const Scene::Camera &camera,int width, int height);
     void                            addSceneObject(std::shared_ptr<SceneObject> object);
     void                            addSceneObject(std::shared_ptr<BaseGeometry> geometry, std::shared_ptr<BaseMaterial> material, const std::string &name);
     void                            removeObject(const std::string &object);
@@ -41,6 +41,7 @@ public:
     std::shared_ptr<SceneObject>    getSceneObject(const unsigned int index);
     int                             getSceneObjectCount();   
     optix::Buffer                   getOutputBuffer();
+    void                            resizeBuffer(int width, int height);
 
 private:
     void                            updateScene(const Scene::Camera &camera);

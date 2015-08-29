@@ -12,16 +12,16 @@ using namespace optix;
 
 std::shared_ptr<Scene>        Display::mScene = 0;
 std::string         Display::mTitle = "";
-int                 Display::mWidth = 800;
-int                 Display::mHeight = 800;
+int                 Display::mWidth = 1600;
+int                 Display::mHeight = 900;
 float               Display::horizontalAngle = 0.0f;
 float               Display::verticalAngle = 0.0f;
-float               Display::initialFOV = 45.f;
+float               Display::initialFOV = 45.0f;
 float               Display::mouseSpeed = 0.002f;
-float3              Display::cameraPosition = make_float3(7,3,7);
-float3              Display::cameraDirection = make_float3(0,0,0);
+float               Display::moveSpeed = 2.5f;
+float3              Display::cameraPosition = make_float3(7,3,-20);
+float3              Display::cameraDirection = make_float3(0,-1,0);
 float3              Display::cameraRight = make_float3(0,0,1);
-float3              Display::cameraUp = make_float3(0,0,0);
 int                 Display::oldx = 0;
 int                 Display::oldy = 0;
 float               Display::deltaTime = 0.0f;
@@ -32,7 +32,6 @@ TwBar *bar;
 //dummy purpose
 float               p = 0.0f;
 int                 count = 0;
-
 
 
 
@@ -69,9 +68,9 @@ void Display::run(const std::string &title, std::shared_ptr<Scene> scene)
 
     glutCreateWindow(title.c_str());
 
-    float3 pos = make_float3(7,3,-3);
-    float3 dir = make_float3(0,0,0);
-    float3 rig = make_float3(0,0,1);
+    float3 pos = cameraPosition;
+    float3 dir = cameraDirection;
+    float3 rig = cameraRight;
     Scene::Camera c(pos,dir,rig);
 
     glPixelStorei(GL_UNPACK_ALIGNMENT,1);
@@ -79,7 +78,7 @@ void Display::run(const std::string &title, std::shared_ptr<Scene> scene)
     int buffer_width, buffer_height;
     try
     {
-        mScene->initScene(c);
+        mScene->initScene(c,mWidth,mHeight);
     } catch (Exception e)
     {
         std::cout << "Failed to initialize Scene" << std::endl;
@@ -145,6 +144,7 @@ void Display::display()
 
     int end = glutGet(GLUT_ELAPSED_TIME);
     deltaTime = float(end-start)/1000.0f;
+    std::cout << int(1.0f/deltaTime) << std::endl;
 }
 
 void Display::displayFrame()
@@ -199,6 +199,9 @@ void Display::displayFrame()
     glDrawPixels(static_cast<GLsizei>(bufferWidth),static_cast<GLsizei>(bufferHeight),glFormat,glDataType,imageData);
     buffer->unmap();
 
+
+
+
     TwDraw();   // draw ATB
 
     glutPostRedisplay();
@@ -207,7 +210,11 @@ void Display::displayFrame()
 void Display::resize(int width, int height)
 {
     // Send the new window size to TweakBar
+    mWidth = width;
+    mHeight = height;
     TwWindowSize(width, height);
+    mScene->resizeBuffer(width,height);
+    glutPostRedisplay();
 }
 
 void Display::keyPressed(unsigned char key, int x, int y)
@@ -219,29 +226,33 @@ void Display::keyPressed(unsigned char key, int x, int y)
     else
     {
         //space
-        if(key == ' ')
+        if(key == 'w')
         {
-            cameraPosition += make_float3(0.0f,0.02f,0.0f);
+            cameraPosition += moveSpeed * normalize(cross(cameraRight,cameraDirection)) * deltaTime;
         }
         //1
-        if(key == '1')
+        if(key == 's')
         {
-            cameraPosition += 0.2f * cameraDirection;
+            cameraPosition -= moveSpeed * normalize(cross(cameraRight,cameraDirection)) * deltaTime;
         }
         //2
-        if(key == '2')
+        if(key == 'a')
         {
-            cameraPosition += 0.2f * cameraRight;
+            cameraPosition -= moveSpeed * cameraRight * deltaTime;
         }
         //3
-        if(key == '3')
+        if(key == 'd')
         {
-            cameraPosition -= 0.2f * cameraRight;
+            cameraPosition += moveSpeed * cameraRight * deltaTime;
         }
         //4
-        if(key == '4')
+        if(key == 'e')
         {
-            cameraPosition -= 0.2f * cameraDirection;
+            cameraPosition += moveSpeed * cameraDirection * deltaTime;
+        }
+        if(key == 'q')
+        {
+            cameraPosition -= moveSpeed * cameraDirection * deltaTime;
         }
         //5, dummy purpose, add dummy sphere
         if(key == '5')
@@ -300,6 +311,8 @@ void Display::keyPressed(unsigned char key, int x, int y)
             std::shared_ptr<InfinitePlane> plane = std::make_shared<InfinitePlane>(-2.0f);
             std::shared_ptr<SceneObject> sc = std::make_shared<SceneObject>("groundPlane",plane,p);
             mScene->addSceneObject(sc);
+            antTBarInit(sc.get(),bar,"groundPlane");
+
 
         }
     }
@@ -356,13 +369,14 @@ void Display::mouseButton(int button, int state, int x, int y)
 
 void Display::mouseMotion(int x, int y)
 {
+
     // using ATB bar?
     if( mState == mouseState::MOVE && TwEventMouseMotionGLUT( x, y))
     {    }
     // else set camera
     else if(mState ==  mouseState::ROTATE)
     {
-        std::cout << horizontalAngle << "," << verticalAngle << std::endl;
+
         horizontalAngle += mouseSpeed *  deltaTime * float(mWidth/2 - x) * 0.2f;
         verticalAngle += mouseSpeed * deltaTime * float(mHeight/2 - y) * 0.2f;
 
