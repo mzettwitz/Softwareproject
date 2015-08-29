@@ -163,7 +163,7 @@ static __device__ void shade()
         float maxLambda = 10000.0f;
         Ray refractedRay = make_Ray(hitPoint,refract(ray.direction,normal, 1.0f, refractiveIdx),radianceRayType,sceneEpsilon,maxLambda);
         rtTrace(topShadower, refractedRay, prd_radiance);
-        result = (1.0f-specularity) * result + prd_radiance.result * specularity;
+        result = (color.w/255.0f) * result + prd_radiance.result * (1.0f - color.w/255.0f);
     }
 
     result.w = 1.0f;

@@ -1,8 +1,19 @@
 #include "../../include/geometry/baseGeometry.h"
 
-void BaseGeometry::setPosition(const float3 &p)
+//setter
+void BaseGeometry::setPosition(const float3 &pos)
 {
-    mPos = p;
+    mPos = pos;
+}
+
+//getter
+const float3& BaseGeometry::position() const
+{
+    return mPos;
+}
+float3& BaseGeometry::position()
+{
+    mPos;
 }
 
 void BaseGeometry::setBoundingBoxProgram(const std::string &boundingbox)

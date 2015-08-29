@@ -12,3 +12,19 @@ Geometry InfinitePlane::createGeometry(Context context) const
     geometry["plane"]->setFloat(std::numeric_limits<float>::min(),mHeight,std::numeric_limits<float>::max());
     return geometry;
 }
+
+// Setter
+void InfinitePlane::setHeight(const float h)
+{
+    mHeight = h;
+}
+
+// Special getter for ATB
+const float& InfinitePlane::height() const
+{
+    return mHeight;
+}
+float& InfinitePlane::height()
+{
+    return mHeight;
+}
