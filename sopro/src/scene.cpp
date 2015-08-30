@@ -61,8 +61,9 @@ void Scene::initScene(const Scene::Camera &camera,int width, int height)
     mHeight = height;
 
     PointLight lights[] = {
-        {make_float3(10.0f,10.0f,-4.0f),make_float3(1.0f,1.0f,1.0f),250.0f,0},
-        {make_float3(-4.0f,10.0f,5.0f),make_float3(1.0f,1.0f,0.0f),400.0f,0}
+        {make_float3(10.0f,10.0f,-4.0f),make_float3(2.0f,1.0f,1.0f),250.0f,0},
+        {make_float3(-4.0f,10.0f,5.0f),make_float3(1.0f,1.0f,0.0f),400.0f,0},
+        {make_float3(-6.0,10.0f,-3.0f),make_float3(0.1f,0.6,1.0f),500.0f,0}
     };
 
     optix::Buffer lightBuffer = mContext->createBuffer(RT_BUFFER_INPUT);

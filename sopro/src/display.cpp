@@ -12,16 +12,16 @@ using namespace optix;
 
 std::shared_ptr<Scene>        Display::mScene = 0;
 std::string         Display::mTitle = "";
-int                 Display::mWidth = 1600;
-int                 Display::mHeight = 900;
+int                 Display::mWidth = 0;
+int                 Display::mHeight = 0;
 float               Display::horizontalAngle = 0.0f;
 float               Display::verticalAngle = 0.0f;
-float               Display::initialFOV = 45.0f;
+float               Display::initialFOV = 0.0f;
 float               Display::mouseSpeed = 0.002f;
 float               Display::moveSpeed = 5.0f;
-float3              Display::cameraPosition = make_float3(7,3,-20);
-float3              Display::cameraDirection = make_float3(0,-1,0);
-float3              Display::cameraRight = make_float3(0,0,1);
+float3              Display::cameraPosition = make_float3(0,0,0);
+float3              Display::cameraDirection = make_float3(0,0,0);
+float3              Display::cameraRight = make_float3(0,0,0);
 int                 Display::oldx = 0;
 int                 Display::oldy = 0;
 float               Display::deltaTime = 0.0f;
@@ -35,8 +35,11 @@ int                 count = 0;
 
 
 
-void Display::init(int &argc, char **argv)
+void Display::init(int &argc, char **argv,const unsigned int width,const unsigned int height)
 {
+
+    mWidth = width;
+    mHeight = height;
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
     glutInitWindowSize(mWidth,mHeight);
@@ -364,13 +367,13 @@ void Display::mouseButton(int button, int state, int x, int y)
         if(state == GLUT_DOWN)
         {
             Display::mState = mouseState::ROTATE;
-        }git
+        }
     }
     else if(button == GLUT_MIDDLE_BUTTON)
     {
         if(state == GLUT_DOWN)
         {
-            //do something
+            mState = mouseState::ZOOM;
         }
     }
 }
@@ -378,10 +381,15 @@ void Display::mouseButton(int button, int state, int x, int y)
 
 void Display::mouseMotion(int x, int y)
 {
+    int deltaX, deltaY = 0;
+    deltaX = x - oldx;
+    deltaY = y - oldy;
 
     // using ATB bar?
     if( mState == mouseState::MOVE && TwEventMouseMotionGLUT( x, y))
-    {    }
+    {
+
+    }
     // else set camera
     else if(mState ==  mouseState::ROTATE)
     {
@@ -394,10 +402,30 @@ void Display::mouseMotion(int x, int y)
     }
     else if (mState == mouseState::MOVE)
     {
+        cameraPosition -= cameraRight * deltaTime * mouseSpeed * 5.0f * float(mWidth/2 - x);
+        cameraPosition += cross(cameraRight,cameraDirection) * deltaTime * mouseSpeed * 5.0f * float(mHeight/2 - y);
+    }
+    else if(mState == mouseState::ZOOM)
+    {
         cameraPosition += cameraDirection * deltaTime * mouseSpeed * 10.0f * float(mHeight/2 -y);
     }
 
+    oldx = x;
+    oldy = y;
+
     glutPostRedisplay();
+}
+
+void Display::setInitialCamera(const Scene::Camera &camera)
+{
+    cameraPosition = camera.position;
+    cameraDirection = camera.direction;
+    cameraRight = camera.right;
+}
+
+void Display::setFOV(float fov)
+{
+    initialFOV = fov;
 }
 
 

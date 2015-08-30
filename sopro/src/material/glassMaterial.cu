@@ -101,6 +101,9 @@ static __device__ void shade()
 
     //color information
     float4 result = make_float4(0.0f,0.0f,0.0f,1.0f);
+    float4 specularColor = make_float4(0,0,0,1);
+
+    PerRayData_shadow shadowprd;
 
     //hitpoint information
     float3 hitPoint = ray.origin + intersectionDistance * ray.direction;
@@ -125,6 +128,34 @@ static __device__ void shade()
         refract(D,N,1,refractiveIdx,T);
         offset2 = hitPoint - sceneEpsilon * N;
         dotD = dot(-D,N);
+
+        //add specular reflections
+
+        for(unsigned int i = 0;i < lights.size();++i)
+        {
+            shadowprd.attenuation = make_float3(1.0f);
+            float3 lightDirection = lights[i].position - hitPoint;
+
+            float maxLambda = length(lightDirection);
+
+            float radiance = lights[i].intensity / (maxLambda * maxLambda);
+
+            lightDirection = normalize(lightDirection);
+            float3 reflectedLightRay = normalize(reflect(lightDirection,normal));
+
+            float3 offset3 = hitPoint + sceneEpsilon * N;
+
+            //Ray shadowRay = make_Ray(offset3,lightDirection,shadowRayType,sceneEpsilon,maxLambda);
+           // rtTrace(topShadower,shadowRay,shadowprd);
+            if(fmaxf(shadowprd.attenuation) > 0.0f)
+            {
+                specularColor = make_float4(lights[i].color * specularCoeff * ((shininess + 2.f)/(2.f*M_PIf)) *
+                    pow(fmaxf(dot(ray.direction, reflectedLightRay),0.f), shininess) * radiance,1.0f);
+            }
+                    result += specularColor;
+        }
+
+
     }
     //inside of object
     else
@@ -172,11 +203,12 @@ static __device__ void shade()
     {
         rtTrace(topObject,refractedRay,prd_refracted);
     }
+    result = result / lights.size();
+    result +=color * ( r1 * prd_reflected.result + (1-r1) * prd_refracted.result);
 
-    result =color * ( r1 * prd_reflected.result + (1-r1) * prd_refracted.result);
 
 
-    //adding some specular reflections
+
     result.w = 1.0f;
 
     prd_radiance.result = result;
@@ -188,10 +220,11 @@ static __device__ void shade()
  *
  * Refracts a ray with two \class GlassMaterial objects, including total reflection, based on Snell's law
  *
- * \param ray_in The 3D ray direction that goes into the object
- * \param normal The 3D surface normal of the object that is entered
+ * \param D The 3D ray direction that goes into the object
+ * \param N The 3D surface normal of the object that is entered
  * \param n1 The refractive index of the object, the ray is coming from
  * \param n2 The refractive index of the object, the ray is entering
+ * \param T The refracted Ray that goes through the object
  * \return The 3D ray direction that after getting refracted on the surface
  */
 static __device__ bool refract(const float3 &D, const float3 &N, float n1, float n2,float3 &T)

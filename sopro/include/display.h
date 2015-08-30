@@ -29,12 +29,14 @@ private:
        ROTATE = 1,
        MOVE = 2,
        IDLE = 3,
-       CLICKED = 4
+       ZOOM = 4
     };
 
 public:
-    static void                 init(int &argc, char** argv);
+    static void                 init(int &argc, char** argv,const unsigned int width,const unsigned int height);
     static void                 run(const std::string &title, std::shared_ptr<Scene> scene);
+    static void                 setInitialCamera(const Scene::Camera &camera);
+    static void                 setFOV(float fov);
 
 private:
     static void                 displayFrame();

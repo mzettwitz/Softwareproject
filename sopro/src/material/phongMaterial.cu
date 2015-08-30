@@ -143,11 +143,13 @@ static __device__ void shade()
             phong += diffuseColor + specularColor;
 
         }
+
+
+        result.x += phong.x;
+        result.y += phong.y;
+        result.z += phong.z;
     }
 
-    result.x += phong.x;
-    result.y += phong.y;
-    result.z += phong.z;
 
     // recursive reflections
     if(specularity > 0.0f && prd_radiance.depth < maxDepth)
