@@ -4,7 +4,7 @@
 #include <iostream>
 #include <optixu/optixpp_namespace.h>
 #include <optixu/optixu_math_namespace.h>
-#include "../include/antTBar.h"
+#include "../sopro/include/ATB/antTBar.h"
 #include "../include/geometry/sphere.h"
 #include "../include/geometry/infinitePlane.h"
 
@@ -246,11 +246,11 @@ void Display::keyPressed(unsigned char key, int x, int y)
             cameraPosition += moveSpeed * cameraRight * deltaTime;
         }
         //4
-        if(key == 'e')
+        if(key == 'q')
         {
             cameraPosition += moveSpeed * cameraDirection * deltaTime;
         }
-        if(key == 'q')
+        if(key == 'e')
         {
             cameraPosition -= moveSpeed * cameraDirection * deltaTime;
         }
@@ -268,7 +268,7 @@ void Display::keyPressed(unsigned char key, int x, int y)
 
             // add ATB variable
             // init new variables
-            antTBarInit(obj.get(), bar, name);
+            antTBarInit_material(obj.get(), bar, name);
         }
         //6 dummy purpose, print number of scene objects
         if(key == '6')
@@ -281,7 +281,7 @@ void Display::keyPressed(unsigned char key, int x, int y)
             if(mScene->getSceneObjectCount() > 0)
             {
                 // delete ATB variable
-                antTBarRemoveVariable(mScene->getSceneObject(mScene->getSceneObjectCount()-1).get(),
+                antTBarRemoveVariable_material(mScene->getSceneObject(mScene->getSceneObjectCount()-1).get(),
                                       bar, mScene->getSceneObject(mScene->getSceneObjectCount()-1)->getName());
 
                 mScene->removeObject(mScene->getSceneObjectCount()-1);
@@ -311,7 +311,7 @@ void Display::keyPressed(unsigned char key, int x, int y)
             std::shared_ptr<InfinitePlane> plane = std::make_shared<InfinitePlane>(-2.0f);
             std::shared_ptr<SceneObject> sc = std::make_shared<SceneObject>("groundPlane",plane,p);
             mScene->addSceneObject(sc);
-            antTBarInit(sc.get(),bar,"groundPlane");
+            antTBarInit_material(sc.get(),bar,"groundPlane");
 
 
         }

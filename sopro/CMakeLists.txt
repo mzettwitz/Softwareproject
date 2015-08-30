@@ -10,7 +10,10 @@ OPTIX_add_sample_executable(sopro
 	src/display.cpp	
 	
 	#GUI/AntTweakBar
-        src/antTBar.cpp
+        src/ATB/antTBar.cpp
+        src/ATB/antTBar_material.cpp
+        src/ATB/antTBar_geometry.cpp
+        src/ATB/antTBar_light.cpp
 
 	#Materials
 	src/material/baseMaterial.cpp
@@ -55,7 +58,10 @@ OPTIX_add_sample_executable(sopro
 	include/structs.h
 
 	#GUI/AntTweakBar
-	include/antTBar.h
+        include/ATB/antTBar.h
+        include/ATB/antTBar_material.h
+        include/ATB/antTBar_geometry.h
+        include/ATB/antTBar_light.h
 
 	#Material
 	include/material/baseMaterial.h

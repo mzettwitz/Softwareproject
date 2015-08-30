@@ -12,3 +12,20 @@ Geometry Sphere::createGeometry(Context context) const
 
     return geometry;
 }
+
+// Setter
+
+void Sphere::setRadius(float r)
+{
+    mRadius = r;
+}
+
+// Special getter for ATB
+const float& Sphere::radius() const
+{
+    return mRadius;
+}
+float& Sphere::radius()
+{
+    return mRadius;
+}

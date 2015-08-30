@@ -34,11 +34,19 @@ protected:
     GeometryType mGeometryType;
 public:
     virtual Geometry createGeometry(Context context) const = 0;
-    void setPosition(const float3 &p);
     void setIntersectionProgram(const std::string &intersection);
     void setBoundingBoxProgram(const std::string &boundingbox);
     void setPTXpath(const std::string &p);
     GeometryType getGeometryType() const;
+
+    // Setter
+    void setPosition(const float3 &pos);
+
+    // Special getter for ATB
+    const float3& position() const;
+    float3& position();
+
+
 protected:
     BaseGeometry(float3 pos, std::string intersect, std::string boundingbox,std::string path) : mPos(pos),mIntersectionProgram(intersect),mBoundingBoxProgram(boundingbox)
     {

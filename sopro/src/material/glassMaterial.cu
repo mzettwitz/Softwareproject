@@ -151,7 +151,15 @@ static __device__ void shade()
     }
     if(prd_refracted.depth < maxDepth)
     {
+<<<<<<< HEAD
         rtTrace(topObject,refractedRay,prd_refracted);
+=======
+        prd_radiance.depth++;
+        float maxLambda = 10000.0f;
+        Ray refractedRay = make_Ray(hitPoint,refract(ray.direction,normal, 1.0f, refractiveIdx),radianceRayType,sceneEpsilon,maxLambda);
+        rtTrace(topShadower, refractedRay, prd_radiance);
+        result = (color.w/255.0f) * result + prd_radiance.result * (1.0f - color.w/255.0f);
+>>>>>>> 55e9146c63a8ffebffa5402065cc6401eff9db25
     }
 
     result = r1 * prd_reflected.result + (1-r1) * prd_refracted.result;

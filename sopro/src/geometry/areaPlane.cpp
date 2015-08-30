@@ -11,3 +11,19 @@ Geometry AreaPlane::createGeometry(Context context) const
 
     return geometry;
 }
+
+// Setter
+void AreaPlane::setDimensions(float2 &dim)
+{
+    mDimensions = dim;
+}
+
+// Special getter for ATB
+const float2& AreaPlane::dimensions() const
+{
+    return mDimensions;
+}
+float2& AreaPlane::dimensions()
+{
+    return mDimensions;
+}

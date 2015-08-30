@@ -127,7 +127,7 @@ static __device__ void shade()
 
 
         // ambient outside to lighten shadowed parts
-        ambientColor = lights[i].color * color *  ambientCoefficient * radiance;  ///-----------------------color??? correct?-------------///
+        ambientColor = lights[i].color * color *  ambientCoefficient * radiance;
         phong = ambientColor;
 
         // if not in shadow
@@ -140,8 +140,6 @@ static __device__ void shade()
                     pow(fmaxf(dot(ray.direction, reflectedLightRay),0.f), shininess) * radiance;
 
             phong += diffuseColor + specularColor;
-
-
 
         }
     }
@@ -156,6 +154,7 @@ static __device__ void shade()
 
         PerRayData_radiance prd_radiance_reflect;
         prd_radiance_reflect.depth = prd_radiance.depth+1;
+
         float maxLambda = 10000.0f;
         Ray reflectedRay = make_Ray(hitPoint,reflect(ray.direction,normal),radianceRayType,sceneEpsilon,maxLambda);
         rtTrace(topObject, reflectedRay, prd_radiance_reflect);

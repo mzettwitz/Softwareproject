@@ -1,4 +1,5 @@
-#include "../include/antTBar.h"
+#include "../sopro/include/ATB/antTBar.h"
+#include "../sopro/include/ATB/antTBar_material.h"
 
 //--------------------------------- Global variables to recall the init function
 TwBar *gBar;
@@ -93,7 +94,7 @@ static void TW_CALL lambertButtonCB(void* clientData)
         tmpSO->setMaterial(lamMat);
     }
     // re-init new variables
-    antTBarReInit(oldMat, tmpSO, gBar, tmpSO->getName());
+    antTBarReInit_material(oldMat, tmpSO, gBar, tmpSO->getName());
 }
 
 
@@ -122,7 +123,7 @@ static void TW_CALL phongButtonCB(void* clientData)
         tmpSO->setMaterial(phongMat);
     }
     // re-init new variables
-    antTBarReInit(oldMat, tmpSO, gBar, tmpSO->getName());
+    antTBarReInit_material(oldMat, tmpSO, gBar, tmpSO->getName());
 }
 //----- AmbientCoeff getter
 static void TW_CALL getPhongAmbientCoeffCB(void* value, void* clientData)
@@ -220,7 +221,7 @@ static void TW_CALL glassButtonCB(void* clientData)
         tmpSO->setMaterial(glassMat);
     }
     // re-init new variables
-    antTBarReInit(oldMat, tmpSO, gBar, tmpSO->getName());
+    antTBarReInit_material(oldMat, tmpSO, gBar, tmpSO->getName());
 }
 //----- RefractiveIndex getter
 static void TW_CALL getGlassRefractiveIdxCB(void* value, void* clientData)
@@ -280,7 +281,7 @@ static void TW_CALL setGlassSpecularCoeffCB(const void* value, void* clientData)
 }
 
 //--------------------------------- Basic variable init
-void antTBar(std::shared_ptr<Scene> scene, TwBar *bar)
+void antTBar_material(std::shared_ptr<Scene> scene, TwBar *bar)
 {
     // save params into global to refresh the bar after conversion
     gBar = static_cast<TwBar*>(bar);
@@ -415,7 +416,7 @@ void antTBar(std::shared_ptr<Scene> scene, TwBar *bar)
 }
 
 //--------------------------------- Variable init
-void antTBarInit(SceneObject* scObj, TwBar *bar, std::string objName)
+void antTBarInit_material(SceneObject* scObj, TwBar *bar, std::string objName)
 {
     // save params into global to refresh the bar after conversion
     gBar = static_cast<TwBar*>(bar);
@@ -466,7 +467,7 @@ void antTBarInit(SceneObject* scObj, TwBar *bar, std::string objName)
     }
     //---------------- Material is Phong
     else if(scObj->getMaterial()->getMaterialType() == BaseMaterial::PHONG)
-    {      
+    {
         //---------- set name to specific variable
         std::string nameVar1 = objName + " Color";
         const char* nameVar1C = nameVar1.c_str();
@@ -544,7 +545,7 @@ void antTBarInit(SceneObject* scObj, TwBar *bar, std::string objName)
 }
 
 //--------------------------------- Clear object specific variables
-void antTBarRemoveVariable(SceneObject *scObj, TwBar *bar, std::string objName)
+void antTBarRemoveVariable_material(SceneObject *scObj, TwBar *bar, std::string objName)
 {
     // save params into global to refresh the bar after conversion
     gBar = static_cast<TwBar*>(bar);
@@ -659,7 +660,7 @@ void antTBarRemoveVariable(SceneObject *scObj, TwBar *bar, std::string objName)
 }
 
 //--------------------------------- Variable re-init
-void antTBarReInit(std::string oldMat, SceneObject* scObj, TwBar *bar, std::string objName)
+void antTBarReInit_material(std::string oldMat, SceneObject* scObj, TwBar *bar, std::string objName)
 {
     // save params into global to refresh the bar after conversion
     gBar = static_cast<TwBar*>(bar);
@@ -857,4 +858,3 @@ void antTBarReInit(std::string oldMat, SceneObject* scObj, TwBar *bar, std::stri
     }
 
 }
-
