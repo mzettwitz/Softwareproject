@@ -68,7 +68,7 @@ OPTIX_add_sample_executable(sopro
 	include/material/lambertMaterial.h
 	include/material/phongMaterial.h
 	include/material/glassMaterial.h
-	include/material/disneyMaterial.h	
+	include/material/disneyMaterial.h
 
 	#Geometry
 	include/geometry/baseGeometry.h

@@ -101,4 +101,3 @@ static __device__ void shade()
     result.w = 1.0f;
     prd_radiance.result = result/lights.size();
 }
-

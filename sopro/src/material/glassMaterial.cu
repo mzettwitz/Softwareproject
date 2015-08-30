@@ -84,14 +84,23 @@ static __device__ void shadowed()
  * \var refractedRay A \class Ray to trace the camera \class Ray that is refracted on the transparent surface (refraction effect)
  *
  */
+
+static __device__ float powGPU(float x,float p)
+{
+    float r = x;
+    while(p > 1)
+    {
+        r *=x;
+        --p;
+    }
+    return r;
+}
+
 static __device__ void shade()
 {
 
     //color information
     float4 result = make_float4(0.0f,0.0f,0.0f,1.0f);
-    float3 reflectiveColor = make_float3(0.0f,0.0f,0.0f);
-    float3 refractiveColor = make_float3(0.0f,0.0f,0.0f);
-    float3 glassColor = make_float3(0.0f,0.0f,0.0f);
 
     //hitpoint information
     float3 hitPoint = ray.origin + intersectionDistance * ray.direction;
@@ -100,26 +109,36 @@ static __device__ void shade()
     float3 N = normal;
     float3 R = make_float3(0,0,0);
     float3 T = make_float3(0,0,0);
+    float3 offset1 = make_float3(1,1,1);
+    float3 offset2 = make_float3(1,1,1);
     float  dotD = 0;
 
+    bool totalReflection = false;
+
+
+    //Glass part
     //outside of object
-    if(dot(D,N))
+    if(dot(D,N) < 0)
     {
         R = reflect(D,N);
+        offset1 = hitPoint + sceneEpsilon * N;
         refract(D,N,1,refractiveIdx,T);
+        offset2 = hitPoint - sceneEpsilon * N;
         dotD = dot(-D,N);
     }
     //inside of object
     else
     {
-        if(refract(D,-N,refractiveIdx,1,T))
+        totalReflection = refract(D,-N,refractiveIdx,1,T);
+        if(totalReflection)
         {
-            dotD = dot(D,N);
+            dotD = dot(T,N);
+            offset2 = hitPoint + sceneEpsilon * N;
         }
         else
         {
             R = reflect(D,-N);
-
+            offset1 = hitPoint - sceneEpsilon * N;
 
             PerRayData_radiance prd_reflected;
             prd_reflected.depth = prd_radiance.depth+1;
@@ -130,15 +149,15 @@ static __device__ void shade()
                 result = prd_reflected.result;
             }
             prd_radiance.result = result;
-            //rtTerminateRay();
+            return;
         }
     }
 
     float r0 = ((1-refractiveIdx)*(1-refractiveIdx))/((1+refractiveIdx)*(1+refractiveIdx));
-    float r1 = r0 + (1-r0) * (1-dotD) * (1-dotD) * (1-dotD) * (1-dotD) * (1-dotD);
+    float r1 = r0 + (1-r0) * powGPU(1-dotD,5);
 
-    Ray reflectedRay = make_Ray(hitPoint,R,radianceRayType,sceneEpsilon,10000.0f);
-    Ray refractedRay = make_Ray(hitPoint,T,radianceRayType,sceneEpsilon,10000.0f);
+    Ray reflectedRay = make_Ray(offset1,R,radianceRayType,sceneEpsilon,10000.0f);
+    Ray refractedRay = make_Ray(offset2,T,radianceRayType,sceneEpsilon,10000.0f);
 
     PerRayData_radiance prd_reflected;
     prd_reflected.depth = prd_radiance.depth+1;
@@ -151,19 +170,13 @@ static __device__ void shade()
     }
     if(prd_refracted.depth < maxDepth)
     {
-<<<<<<< HEAD
         rtTrace(topObject,refractedRay,prd_refracted);
-=======
-        prd_radiance.depth++;
-        float maxLambda = 10000.0f;
-        Ray refractedRay = make_Ray(hitPoint,refract(ray.direction,normal, 1.0f, refractiveIdx),radianceRayType,sceneEpsilon,maxLambda);
-        rtTrace(topShadower, refractedRay, prd_radiance);
-        result = (color.w/255.0f) * result + prd_radiance.result * (1.0f - color.w/255.0f);
->>>>>>> 55e9146c63a8ffebffa5402065cc6401eff9db25
     }
 
-    result = r1 * prd_reflected.result + (1-r1) * prd_refracted.result;
+    result =color * ( r1 * prd_reflected.result + (1-r1) * prd_refracted.result);
 
+
+    //adding some specular reflections
     result.w = 1.0f;
 
     prd_radiance.result = result;
@@ -183,7 +196,7 @@ static __device__ void shade()
  */
 static __device__ bool refract(const float3 &D, const float3 &N, float n1, float n2,float3 &T)
 {
-    float d = (1 - (n1 * n1 * (1- dot(D,N) * dot(D,N)) / (n2 * n2)));
+    float d = (1 - ((powGPU(n1,2) * (1- powGPU(dot(D,N),2))) / powGPU(n2,2)));
     if(d >= 0)
     {
         T = D - N * dot(D,N) * (n1/n2) - N * sqrt(d);

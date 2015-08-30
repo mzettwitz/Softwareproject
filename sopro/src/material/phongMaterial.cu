@@ -107,7 +107,8 @@ static __device__ void shade()
         shadowPrd.attenuation = make_float3(1.0f);
         //light values
         float3 lightDirection = lights[i].position - hitPoint;        
-        float maxLambda = length(lightDirection) + sceneEpsilon;
+        float maxLambda = length(lightDirection)
+                ;
         float radiance = lights[i].intensity / (maxLambda*maxLambda);
         lightDirection = normalize(lightDirection);
         float3 reflectedLightRay = reflect(lightDirection, ffNormal);

@@ -246,11 +246,11 @@ void Display::keyPressed(unsigned char key, int x, int y)
             cameraPosition += moveSpeed * cameraRight * deltaTime;
         }
         //4
-        if(key == 'q')
+        if(key == 'e')
         {
             cameraPosition += moveSpeed * cameraDirection * deltaTime;
         }
-        if(key == 'e')
+        if(key == 'q')
         {
             cameraPosition -= moveSpeed * cameraDirection * deltaTime;
         }
@@ -258,8 +258,8 @@ void Display::keyPressed(unsigned char key, int x, int y)
         if(key == '5')
         {
 
-            std::shared_ptr<LambertMaterial> l = std::make_shared<LambertMaterial>(make_float3(0.02f * p,0.5f,0.3f));
-            std::shared_ptr<Sphere> s = std::make_shared<Sphere>(make_float3(p,0.0f,0.0f),1.0f);
+            std::shared_ptr<LambertMaterial> l = std::make_shared<LambertMaterial>(make_float3(0.05f * p,0.5f,0.3f));
+            std::shared_ptr<Sphere> s = std::make_shared<Sphere>(make_float3(p*2,0.0f,0.0f),1.0f);
             std::string name = "sphere_" + std::to_string(mScene->getSceneObjectCount());
             std::shared_ptr<SceneObject> obj = std::make_shared<SceneObject>(name,s,l);
             mScene->addSceneObject(obj);
