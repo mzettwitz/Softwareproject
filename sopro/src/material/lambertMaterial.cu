@@ -59,26 +59,42 @@ static __device__ void shadowed()
 
 static __device__ void shade()
 {
+
+
+    float3 worldNormal = normalize(rtTransformNormal(RT_OBJECT_TO_WORLD,normal));
+    float3 ffNormal = faceforward(worldNormal,-ray.direction,worldNormal);
+    //payload for shadow Ray
     PerRayData_shadow shadowPrd;
-    shadowPrd.attenuation = make_float3(1.0f);
+    //result color
     float4 result = make_float4(0.0f,0.0f,0.0f,1.0f);
+
+    //iterate over every light source
     for(unsigned int i = 0;i < lights.size();++i)
     {
+
+        shadowPrd.attenuation = make_float3(1.0f);
+
+        //light values
+        //get hitpoint on geometry
         float3 hitPoint = ray.origin + intersectionDistance * ray.direction;
+        //get direction from hitpoint to lightsource
         float3 shadowDirection = lights[i].position - hitPoint;
-        float maxLambda = length(shadowDirection);
+        float maxLambda = length(shadowDirection) + sceneEpsilon;
         shadowDirection = normalize(shadowDirection);
-        hitPoint = hitPoint + sceneEpsilon * shadowDirection;
+
+        //add sceneEpsilon
+        hitPoint = hitPoint + sceneEpsilon * ffNormal;
 
         Ray shadowRay = make_Ray(hitPoint, shadowDirection,
                                  shadowRayType, sceneEpsilon,maxLambda);
 
         //trace new shadow ray
         rtTrace(topShadower, shadowRay, shadowPrd);
+
         if(fmaxf(shadowPrd.attenuation) > 0.0f)
         {
             float4 ret = make_float4(color,1.f) * make_float4(lights[i].color,1.f);
-            ret *= (lights[i].intensity * dot(normal,shadowDirection)) / (maxLambda * maxLambda);
+            ret *= (lights[i].intensity * dot(ffNormal,shadowDirection)) / (maxLambda * maxLambda);
             result += ret;
         }
     }

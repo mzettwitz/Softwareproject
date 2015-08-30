@@ -18,7 +18,7 @@ float               Display::horizontalAngle = 0.0f;
 float               Display::verticalAngle = 0.0f;
 float               Display::initialFOV = 45.0f;
 float               Display::mouseSpeed = 0.002f;
-float               Display::moveSpeed = 2.5f;
+float               Display::moveSpeed = 5.0f;
 float3              Display::cameraPosition = make_float3(7,3,-20);
 float3              Display::cameraDirection = make_float3(0,-1,0);
 float3              Display::cameraRight = make_float3(0,0,1);
@@ -314,6 +314,15 @@ void Display::keyPressed(unsigned char key, int x, int y)
             antTBarInit(sc.get(),bar,"groundPlane");
 
 
+        }
+
+        if(key == 'y')
+        {
+                mScene->setSceneEpsilon(-0.1e-3f);
+        }
+        if(key == 'x')
+        {
+                mScene->setSceneEpsilon(0.1e-3f);
         }
     }
     //needs to be called, to update change

@@ -40,11 +40,9 @@ RT_PROGRAM void pinholeCamera()
     float3 rayOrigin = eye;
     float3 direction;
     optix::Ray ray;
-
-
         direction= normalize((d.x) * U + (d.y) * V + W);
-
         ray = optix::make_Ray(rayOrigin,direction,radianceRayType,sceneEpsilon,RT_DEFAULT_MAX);
+
 
 
     //create ray
@@ -52,12 +50,14 @@ RT_PROGRAM void pinholeCamera()
     //trace radiance 'normal' rays from camera into scene
     PerRayData_radiance prd;
 
+
     prd.importance = 1.f;
     prd.depth = 0;
 
     float4 result = make_float4(0,0,0,0);
 
     rtTrace(topObject, ray, prd);
+
     result += prd.result;
 
 

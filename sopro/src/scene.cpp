@@ -55,22 +55,22 @@ void Scene::initScene(const Scene::Camera &camera,int width, int height)
     mContext["shadowRayType"]->setUint(1u);
   //  mContext["reflectanceRayType"]->setUint(2u);
     mContext["maxDepth"]->setUint(20u);
-    mContext["sceneEpsilon"]->setFloat(0.7e-3f);
+    mContext["sceneEpsilon"]->setFloat(1.5e-3f);
 
     mWidth  = width;
     mHeight = height;
 
-    PointLight light;
+    PointLight lights[] = {
+        {make_float3(10.0f,10.0f,-4.0f),make_float3(1.0f,1.0f,1.0f),250.0f,0},
+        {make_float3(-4.0f,10.0f,5.0f),make_float3(1.0f,1.0f,0.0f),400.0f,0}
+    };
 
-    light.color = optix::make_float3(1.0f,1.0f,1.0f);
-    light.position = optix::make_float3(10.f,10.f,-4.f);
-    light.intensity = 250.0f;
-    light.padding = 0;
-
-    optix::Buffer lightBuffer = mContext->createBuffer(RT_BUFFER_INPUT,RT_FORMAT_USER,mWidth,mHeight);
+    optix::Buffer lightBuffer = mContext->createBuffer(RT_BUFFER_INPUT);
+    lightBuffer->setFormat(RT_FORMAT_USER);
     lightBuffer->setElementSize(sizeof(PointLight));
-    lightBuffer->setSize(1);
-    std::memcpy(lightBuffer->map(),&light,sizeof(light));
+    lightBuffer->setSize(sizeof(lights)/sizeof(lights[0]));
+
+    std::memcpy(lightBuffer->map(),lights,sizeof(lights));
     lightBuffer->unmap();
     mContext["lights"]->set(lightBuffer);
 
@@ -201,7 +201,6 @@ void Scene::updateSceneObjects()
     {
         if(mSceneObjects->at(i)->changed())
         {
-            mGeometryGroup->getChild(i)->getMaterial(0)->destroy();
             mGeometryGroup->getChild(i)->setMaterial(0,mSceneObjects->at(i)->getMaterial()->createMaterial(mContext));
         }
     }
@@ -266,4 +265,9 @@ void Scene::resizeBuffer(int width,int height)
     mWidth = width;
     mHeight = height;
     mContext["outputBuffer"]->getBuffer()->setSize(mWidth,mHeight);
+}
+
+void Scene::setSceneEpsilon(float amount)
+{
+    mContext["sceneEpsilon"]->setFloat(amount + mContext["sceneEpsilon"]->getFloat());
 }

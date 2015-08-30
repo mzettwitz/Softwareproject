@@ -15,6 +15,7 @@ rtDeclareVariable(unsigned int, shadowRayType,,);
 rtDeclareVariable(unsigned int, radianceRayType,,);
 rtDeclareVariable(float, sceneEpsilon,,);
 rtDeclareVariable(rtObject, topShadower,,);
+rtDeclareVariable(rtObject, topObject,,);
 rtDeclareVariable(unsigned int,maxDepth,,);
 rtBuffer<PointLight> lights;
 rtDeclareVariable(float,intersectionDistance,rtIntersectionDistance,);
@@ -84,7 +85,7 @@ static __device__ void shadowed()
 static __device__ void shade()
 {
     PerRayData_shadow shadowPrd;
-    shadowPrd.attenuation = make_float3(1.0f);
+
 
     //color information
     float4 result = make_float4(0.0f,0.0f,0.0f,1.0f);
@@ -93,23 +94,27 @@ static __device__ void shade()
     float3 specularColor = make_float3(0.0f,0.0f,0.0f);
     float3 phong = make_float3(0.0f,0.0f,0.0f);
 
+    float3 worldNormal = normalize(rtTransformNormal(RT_OBJECT_TO_WORLD,normal));
+    float3 ffNormal = faceforward(worldNormal,-ray.direction,worldNormal);
+
     //hitpoint information
     float3 hitPoint = ray.origin + intersectionDistance * ray.direction;
 
     //iterate through lights
     for(unsigned int i = 0;i < lights.size();++i)
     {
+        //must be set here, otherways, only 1! shadow will be interpreted the right way
+        shadowPrd.attenuation = make_float3(1.0f);
         //light values
         float3 lightDirection = lights[i].position - hitPoint;        
-        float maxLambda = length(lightDirection);
+        float maxLambda = length(lightDirection) + sceneEpsilon;
         float radiance = lights[i].intensity / (maxLambda*maxLambda);
         lightDirection = normalize(lightDirection);
-        float3 reflectedLightRay = reflect(lightDirection, normal);
+        float3 reflectedLightRay = reflect(lightDirection, ffNormal);
         reflectedLightRay = normalize(reflectedLightRay);
 
         // hitpoint offset
-        hitPoint = hitPoint + sceneEpsilon * normal;
-
+        hitPoint = sceneEpsilon * ffNormal + hitPoint;
         // trace new shadow ray
         Ray shadowRay = make_Ray(hitPoint,lightDirection,shadowRayType,sceneEpsilon,maxLambda);
         rtTrace(topShadower,shadowRay,shadowPrd);
@@ -129,7 +134,7 @@ static __device__ void shade()
         if(fmaxf(shadowPrd.attenuation) > 0.0f)
         {
             // material color * coeff * (positive)surface angle * lightintensity at hitpoint
-            diffuseColor = color * diffuseCoefficient * fmaxf(dot(normal, lightDirection), 0.0f) * radiance;
+            diffuseColor = lights[i].color * color * diffuseCoefficient * dot(ffNormal, lightDirection) * radiance;
             // lightcolor * coeff * normalized shininess * (positive)angle between eye and reflected light ray ^ shininess * lightintensity at hitpoint
             specularColor = lights[i].color * specularCoefficient * ((shininess + 2.f)/(2.f*M_PIf)) *
                     pow(fmaxf(dot(ray.direction, reflectedLightRay),0.f), shininess) * radiance;
@@ -148,13 +153,13 @@ static __device__ void shade()
     // recursive reflections
     if(specularity > 0.0f && prd_radiance.depth < maxDepth)
     {
-        float4 color4F = make_float4(color, 1.0f);
+
         PerRayData_radiance prd_radiance_reflect;
         prd_radiance_reflect.depth = prd_radiance.depth+1;
         float maxLambda = 10000.0f;
         Ray reflectedRay = make_Ray(hitPoint,reflect(ray.direction,normal),radianceRayType,sceneEpsilon,maxLambda);
-        rtTrace(topShadower, reflectedRay, prd_radiance_reflect);
-        result = (1.0f-specularity) * result + prd_radiance_reflect.result * specularity * (color4F * diffuseCoefficient);
+        rtTrace(topObject, reflectedRay, prd_radiance_reflect);
+        result = (1.0f-specularity) * result + prd_radiance_reflect.result * specularity;
     }
 
     result.w = 1.0f;

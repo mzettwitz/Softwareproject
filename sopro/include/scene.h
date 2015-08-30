@@ -42,6 +42,7 @@ public:
     int                             getSceneObjectCount();   
     optix::Buffer                   getOutputBuffer();
     void                            resizeBuffer(int width, int height);
+    void                            setSceneEpsilon(float amount);
 
 private:
     void                            updateScene(const Scene::Camera &camera);

@@ -9,6 +9,6 @@ Geometry InfinitePlane::createGeometry(Context context) const
     geometry->setPrimitiveCount(1);
     geometry->setBoundingBoxProgram(context->createProgramFromPTXFile(mPTXpath,mBoundingBoxProgram));
     geometry->setIntersectionProgram(context->createProgramFromPTXFile(mPTXpath,mIntersectionProgram));
-    geometry["plane"]->setFloat(std::numeric_limits<float>::min(),mHeight,std::numeric_limits<float>::max());
+    geometry["plane"]->setFloat(0.2f,mHeight,0.2f);
     return geometry;
 }

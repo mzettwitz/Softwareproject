@@ -18,6 +18,7 @@ rtDeclareVariable(unsigned int, shadowRayType,,);
 rtDeclareVariable(unsigned int, radianceRayType,,);
 rtDeclareVariable(float, sceneEpsilon,,);
 rtDeclareVariable(rtObject, topShadower,,);
+rtDeclareVariable(rtObject, topObject,,);
 rtDeclareVariable(unsigned int,maxDepth,,);
 rtBuffer<PointLight> lights;
 rtDeclareVariable(float,intersectionDistance,rtIntersectionDistance,);
@@ -30,7 +31,7 @@ rtDeclareVariable(float3, normal, attribute normal,);
 
 static __device__ void shadowed();
 static __device__ void shade();
-static __device__ float3 refract(const float3 &ray_in, const float3 &normal, float n1, float n2);
+static __device__ bool refract(const float3 &ray_in, const float3 &normal, float n1, float n2,float3 &T);
 
 /*!
  * \brief Determines whether a shadow ray hits any object in the scene or not using \fn shadowed.
@@ -85,8 +86,6 @@ static __device__ void shadowed()
  */
 static __device__ void shade()
 {
-    PerRayData_shadow shadowPrd;
-    shadowPrd.attenuation = make_float3(1.0f);
 
     //color information
     float4 result = make_float4(0.0f,0.0f,0.0f,1.0f);
@@ -97,78 +96,69 @@ static __device__ void shade()
     //hitpoint information
     float3 hitPoint = ray.origin + intersectionDistance * ray.direction;
 
-    //iterate through lights
-    for(unsigned int i = 0;i < lights.size();++i)
+    float3 D = ray.direction;
+    float3 N = normal;
+    float3 R = make_float3(0,0,0);
+    float3 T = make_float3(0,0,0);
+    float  dotD = 0;
+
+    //outside of object
+    if(dot(D,N))
     {
-        //light values
-        float3 lightDirection = lights[i].position - hitPoint;
-        float maxLambda = length(lightDirection);
-        float radiance = lights[i].intensity / (maxLambda*maxLambda);
-        lightDirection = normalize(lightDirection);
-        float3 reflectedLightRay = reflect(lightDirection, normal);
-        reflectedLightRay = normalize(reflectedLightRay);
-
-        // hitpoint offset
-        hitPoint = hitPoint + sceneEpsilon * normal;
-
-        // trace new shadow ray
-        Ray shadowRay = make_Ray(hitPoint,lightDirection,shadowRayType,sceneEpsilon,maxLambda);
-        rtTrace(topShadower,shadowRay,shadowPrd);
-
-        result.x = color.x * color.w;
-        result.y = color.y * color.w;
-        result.z = color.z * color.w;
-
-        // if not in shadow
-        if(fmaxf(shadowPrd.attenuation) > 0.0f)
+        R = reflect(D,N);
+        refract(D,N,1,refractiveIdx,T);
+        dotD = dot(-D,N);
+    }
+    //inside of object
+    else
+    {
+        if(refract(D,-N,refractiveIdx,1,T))
         {
-            // add highlights with phong based light distribution
+            dotD = dot(D,N);
+        }
+        else
+        {
+            R = reflect(D,-N);
 
-            // recursive refraction
-            /* TODO:
 
-            should look like:
-            - compute the refracted direction
-            - put actual material on a stack
-            - trace new refracted ray till it hit's something different from glass material or nothing
-                -> recursion
-            */
-
-            // phong based highlights
-            glassColor += lights[i].color * specularCoeff * ((shininess + 2.f)/(2.f*M_PIf)) *
-                    pow(fmaxf(dot(ray.direction, reflectedLightRay),0.f), shininess) * radiance;
-
+            PerRayData_radiance prd_reflected;
+            prd_reflected.depth = prd_radiance.depth+1;
+            Ray reflectedRay = make_Ray(hitPoint,R,radianceRayType,sceneEpsilon,10000.0f);
+            if(prd_reflected.depth < maxDepth)
+            {
+                rtTrace(topObject,reflectedRay,prd_reflected);
+                result = prd_reflected.result;
+            }
+            prd_radiance.result = result;
+            //rtTerminateRay();
         }
     }
 
-    result.x += glassColor.x;
-    result.y += glassColor.y;
-    result.z += glassColor.z;
+    float r0 = ((1-refractiveIdx)*(1-refractiveIdx))/((1+refractiveIdx)*(1+refractiveIdx));
+    float r1 = r0 + (1-r0) * (1-dotD) * (1-dotD) * (1-dotD) * (1-dotD) * (1-dotD);
 
-    // recursive reflections
-    if(specularity > 0.0f && prd_radiance.depth < maxDepth)
+    Ray reflectedRay = make_Ray(hitPoint,R,radianceRayType,sceneEpsilon,10000.0f);
+    Ray refractedRay = make_Ray(hitPoint,T,radianceRayType,sceneEpsilon,10000.0f);
+
+    PerRayData_radiance prd_reflected;
+    prd_reflected.depth = prd_radiance.depth+1;
+    PerRayData_radiance prd_refracted;
+    prd_refracted.depth = prd_radiance.depth+1;
+
+    if(prd_reflected.depth < maxDepth)
     {
-        prd_radiance.depth++;
-        float maxLambda = 10000.0f;
-        Ray reflectedRay = make_Ray(hitPoint,reflect(ray.direction,normal),radianceRayType,sceneEpsilon,maxLambda);
-        rtTrace(topShadower, reflectedRay, prd_radiance);
-        result = (1.0f-specularity) * result + prd_radiance.result * specularity;
+        rtTrace(topObject,reflectedRay,prd_reflected);
+    }
+    if(prd_refracted.depth < maxDepth)
+    {
+        rtTrace(topObject,refractedRay,prd_refracted);
     }
 
-    // recursive refractions
-    //TODO: IMPLEMENT STACK IN TRACE AND BEER'S LAW
-    if(prd_radiance.depth < maxDepth)
-    {
-        prd_radiance.depth++;
-        float maxLambda = 10000.0f;
-        Ray refractedRay = make_Ray(hitPoint,refract(ray.direction,normal, 1.0f, refractiveIdx),radianceRayType,sceneEpsilon,maxLambda);
-        rtTrace(topShadower, refractedRay, prd_radiance);
-        result = (1.0f-specularity) * result + prd_radiance.result * specularity;
-    }
+    result = r1 * prd_reflected.result + (1-r1) * prd_refracted.result;
 
     result.w = 1.0f;
 
-    prd_radiance.result = result/lights.size();
+    prd_radiance.result = result;
 
 }
 
@@ -183,21 +173,15 @@ static __device__ void shade()
  * \param n2 The refractive index of the object, the ray is entering
  * \return The 3D ray direction that after getting refracted on the surface
  */
-static __device__ float3 refract(const float3 &ray_in, const float3 &normal, float n1, float n2)
+static __device__ bool refract(const float3 &D, const float3 &N, float n1, float n2,float3 &T)
 {
-    float alpha = dot(normal, ray_in);
-    if(alpha > 1)
-        return reflect(ray_in, normal);
-    else
+    float d = (1 - (n1 * n1 * (1- dot(D,N) * dot(D,N)) / (n2 * n2)));
+    if(d >= 0)
     {
-        float n = n1/n2;
-        float cosI = -1.0f * dot(normal, ray_in);
-        float cosT2 = 1.0f - n * n * (1.0f - cosI * cosI);
-        //if(cosT2 > 0.0f)
-        {
-            float3 t = (n * ray_in + (n * cosI - sqrt(cosT2)) * normal);
-            return t;
-        }
-
+        T = D - N * dot(D,N) * (n1/n2) - N * sqrt(d);
+        return true;
     }
+
+
+    return false;
 }
