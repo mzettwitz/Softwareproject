@@ -316,6 +316,10 @@ void antTBar_material(std::shared_ptr<Scene> scene, TwBar *bar)
         std::string grpNameFloat1 = grpName + " min=0 max=1 step=0.025 ";
         const char* grpNameFloat1C = grpNameFloat1.c_str();
 
+        // [0,5]
+        std::string grpNameFloat5 = grpName + " min=0 max=5 step=0.025 ";
+        const char* grpNameFloat5C = grpNameFloat5.c_str();
+
         // [0,)
         std::string grpNameFloat = grpName + " min=0 step=0.05 ";
         const char* grpNameFloatC = grpNameFloat.c_str();
@@ -403,7 +407,7 @@ void antTBar_material(std::shared_ptr<Scene> scene, TwBar *bar)
             TwAddButton(bar, namePButtonC, phongButtonCB, scene->getSceneObject(i).get(), grpNameC);
 
             // ATB Variable for refractiveIndex and specularity
-            TwAddVarCB(bar, nameVar2C, TW_TYPE_FLOAT, setGlassRefractiveIdxCB, getGlassRefractiveIdxCB, scene->getSceneObject(i).get(), grpNameFloatC);
+            TwAddVarCB(bar, nameVar2C, TW_TYPE_FLOAT, setGlassRefractiveIdxCB, getGlassRefractiveIdxCB, scene->getSceneObject(i).get(), grpNameFloat5C);
             TwAddVarCB(bar, nameVar3C, TW_TYPE_FLOAT, setGlassSpecularityCB, getGlassSpecularityCB, scene->getSceneObject(i).get(), grpNameFloat1C);
 
             // ATB Variable for shininess and specularCoefficient
@@ -445,6 +449,10 @@ void antTBarInit_material(SceneObject* scObj, TwBar *bar, std::string objName)
     // [0,1]
     std::string grpNameFloat1 = grpName + " min=0 max=1 step=0.025 ";
     const char* grpNameFloat1C = grpNameFloat1.c_str();
+
+    // [0,5]
+    std::string grpNameFloat5 = grpName + " min=0 max=5 step=0.025 ";
+    const char* grpNameFloat5C = grpNameFloat5.c_str();
 
     // [0,)
     std::string grpNameFloat = grpName + " min=0 step=0.05 ";
@@ -534,7 +542,7 @@ void antTBarInit_material(SceneObject* scObj, TwBar *bar, std::string objName)
         TwAddButton(bar, namePButtonC, phongButtonCB, scObj, grpNameC);
 
         // ATB Variable for refractiveIndex and specularity
-        TwAddVarCB(bar, nameVar2C, TW_TYPE_FLOAT, setGlassRefractiveIdxCB, getGlassRefractiveIdxCB, scObj, grpNameFloatC);
+        TwAddVarCB(bar, nameVar2C, TW_TYPE_FLOAT, setGlassRefractiveIdxCB, getGlassRefractiveIdxCB, scObj, grpNameFloat5C);
         TwAddVarCB(bar, nameVar3C, TW_TYPE_FLOAT, setGlassSpecularityCB, getGlassSpecularityCB, scObj, grpNameFloat1C);
 
         // ATB Variable for shininess and specularCoefficient
@@ -689,6 +697,10 @@ void antTBarReInit_material(std::string oldMat, SceneObject* scObj, TwBar *bar, 
     // [0,1]
     std::string grpNameFloat1 = grpName + " min=0 max=1 step=0.025 ";
     const char* grpNameFloat1C = grpNameFloat1.c_str();
+
+    // [0,5]
+    std::string grpNameFloat5 = grpName + " min=0 max=5 step=0.025 ";
+    const char* grpNameFloat5C = grpNameFloat5.c_str();
 
     // [0,)
     std::string grpNameFloat = grpName + " min=0 step=0.05 ";
@@ -849,7 +861,7 @@ void antTBarReInit_material(std::string oldMat, SceneObject* scObj, TwBar *bar, 
         TwAddButton(bar, namePButtonC, phongButtonCB, scObj, grpNameC);
 
         // ATB Variable for refractiveIndex and specularity
-        TwAddVarCB(bar, nameVar2C, TW_TYPE_FLOAT, setGlassRefractiveIdxCB, getGlassRefractiveIdxCB, scObj, grpNameFloatC);
+        TwAddVarCB(bar, nameVar2C, TW_TYPE_FLOAT, setGlassRefractiveIdxCB, getGlassRefractiveIdxCB, scObj, grpNameFloat5C);
         TwAddVarCB(bar, nameVar3C, TW_TYPE_FLOAT, setGlassSpecularityCB, getGlassSpecularityCB, scObj, grpNameFloat1C);
 
         // ATB Variable for shininess and specularCoefficient
