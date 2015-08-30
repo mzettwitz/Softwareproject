@@ -5,6 +5,7 @@ OPTIX_add_sample_executable(sopro
 	src/program1.cpp
 	src/program2.cpp
 	src/program3.cpp
+	src/sceneHandle.cpp
 	src/scene.cpp
 	src/sceneobject.cpp
 	src/display.cpp	
@@ -51,6 +52,7 @@ OPTIX_add_sample_executable(sopro
 	include/program2.h
 	include/program3.h
 	include/sceneobject.h
+	include/sceneHandle.h
 	include/scene.h
 	include/display.h
 

@@ -27,6 +27,7 @@ rtDeclareVariable(float, shininess,,);
 rtDeclareVariable(float, specularity,,);
 rtDeclareVariable(float3, normal, attribute normal,);
 
+
 static __device__ void shadowed();
 static __device__ void shade();
 
@@ -107,8 +108,7 @@ static __device__ void shade()
         shadowPrd.attenuation = make_float3(1.0f);
         //light values
         float3 lightDirection = lights[i].position - hitPoint;        
-        float maxLambda = length(lightDirection)
-                ;
+        float maxLambda = length(lightDirection);
         float radiance = lights[i].intensity / (maxLambda*maxLambda);
         lightDirection = normalize(lightDirection);
         float3 reflectedLightRay = reflect(lightDirection, ffNormal);

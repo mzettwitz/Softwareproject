@@ -11,8 +11,7 @@
 
 int main(int argc, char* argv[])
 {
-
-  size_t program = 3;
+    int program = 3;
   std::cout << "Starting program " << program << std::endl;
   int res = 0;
 
@@ -22,6 +21,7 @@ int main(int argc, char* argv[])
   case 1 : res = program1(argc,argv);break;
   case 2 : res = program2(argc,argv);break;
   case 3 : res = program3(argc,argv);break;
+  //case 4 : res = program4(argc,argv);break;
   default: res = 0 ;break;
   }
 

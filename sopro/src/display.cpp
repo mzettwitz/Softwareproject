@@ -364,7 +364,7 @@ void Display::mouseButton(int button, int state, int x, int y)
         if(state == GLUT_DOWN)
         {
             Display::mState = mouseState::ROTATE;
-        }
+        }git
     }
     else if(button == GLUT_MIDDLE_BUTTON)
     {
