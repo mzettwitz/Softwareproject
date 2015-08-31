@@ -209,6 +209,7 @@ void Scene::updateSceneObjects()
         {
 
             mGeometryGroup->getChild(i)->setMaterial(0,mSceneObjects->at(i)->getMaterial()->createMaterial(mContext));
+           // mGeometryGroup->getChild(i)->getGeometry(["coordinates"]->);
         }
     }
 }

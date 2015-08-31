@@ -29,3 +29,10 @@ float& Sphere::radius()
 {
     return mRadius;
 }
+
+// Operator overload
+bool operator!=(const Sphere &geom1, const Sphere &geom2)
+{
+    return(geom1.position().x != geom2.position().x || geom1.position().y != geom2.position().y || geom1.position().z != geom2.position().z ||
+            geom1.radius() != geom2.radius());
+}

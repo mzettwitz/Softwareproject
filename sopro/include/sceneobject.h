@@ -22,6 +22,7 @@ public:
     std::string     getName() const;
 
     void            setMaterial(std::shared_ptr<BaseMaterial> material);
+    void            setGeometry(std::shared_ptr<BaseGeometry> geometry);
     //check, if material changed
     bool            changed();
 
