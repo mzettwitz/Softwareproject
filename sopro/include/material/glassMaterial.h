@@ -206,7 +206,7 @@ public :
     // ------------------------Getter & Setter
     // Setter
     void setColor(const float4 &color);
-    void setRefractiveIdx(float idx);
+    void setRefractiveIdx(const float idx);
     void setSpecularity(const float spec);
     void setShininess(const float shine);
     void setSpecularCoeff(const float specC);

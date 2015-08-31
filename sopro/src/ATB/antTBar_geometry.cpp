@@ -3,84 +3,115 @@
 
 
 //--------------------------------- Callback Functions
-//----- Position getter
-static void TW_CALL getPositionCB(void* value, void* clientData)
+//----- Position getter X
+static void TW_CALL getPositionXCB(void* value, void* clientData)
 {
     // get sceneObject
-    SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
+    BaseGeometry* tmpO =  static_cast<BaseGeometry*>(clientData);
     // get position from object
-        *((float3*) value) =  tmpSO->getGeometry()->position();
+        *((float*) value) = tmpO->position().x;
 }
 
-//----- Position setter
-static void TW_CALL setPositionCB(const void* value, void* clientData)
+//----- Position setter X
+static void TW_CALL setPositionXCB(const void* value, void* clientData)
 {
     // save params in temporary pointer
-    SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
-    float3 v = *((float3*)value);
+    BaseGeometry* tmpO =  static_cast<BaseGeometry*>(clientData);
+    float v = *((float*)value);
     // create a new Geometry
-        tmpSO->getGeometry()->setPosition(v);
+    tmpO->setPosition(v, 0);
+}
+//----- Position getter Y
+static void TW_CALL getPositionYCB(void* value, void* clientData)
+{
+    // get sceneObject
+    BaseGeometry* tmpO =  static_cast<BaseGeometry*>(clientData);
+    // get position from object
+        *((float*) value) = tmpO->position().y;
+}
+//----- Position setter Y
+static void TW_CALL setPositionYCB(const void* value, void* clientData)
+{
+    // save params in temporary pointer
+    BaseGeometry* tmpO =  static_cast<BaseGeometry*>(clientData);
+    float v = *((float*)value);
+    // create a new Geometry
+    tmpO->setPosition(v, 1);
+
+}
+//----- Position getter Z
+static void TW_CALL getPositionZCB(void* value, void* clientData)
+{
+    // get sceneObject
+    BaseGeometry* tmpO =  static_cast<BaseGeometry*>(clientData);
+    // get position from object
+        *((float*) value) = tmpO->position().z;
+}
+//----- Position setter Z
+static void TW_CALL setPositionZCB(const void* value, void* clientData)
+{
+    // save params in temporary pointer
+    BaseGeometry* tmpO =  static_cast<BaseGeometry*>(clientData);
+    float v = *((float*)value);
+    // create a new Geometry
+    tmpO->setPosition(v, 2);
 
 }
 
 //----- AreaPlane Dimensions X getter
 static void TW_CALL getAreaDimensionsXCB(void* value, void* clientData)
 {
-    SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
-    *((float*) value) =  static_cast<AreaPlane*>(tmpSO->getGeometry().get())->dimensionsX();
+    AreaPlane* tmpO =  static_cast<AreaPlane*>(clientData);
+    *((float*) value) =  tmpO->dimensionsX();
 }
 //----- AreaPlane Dimensions X setter
 static void TW_CALL setAreaDimensionsXCB(const void* value, void* clientData)
 {
-    SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
+    AreaPlane* tmpO =  static_cast<AreaPlane*>(clientData);
     float v = *((float*)value);
-    std::shared_ptr<AreaPlane> areaPlane = std::make_shared<AreaPlane>(tmpSO->getGeometry(), v, 0);
-    tmpSO->setGeometry(areaPlane);
+    tmpO->setDimensionsX(v);
 }
 
 //----- AreaPlane Dimensions Y getter
 static void TW_CALL getAreaDimensionsYCB(void* value, void* clientData)
 {
-    SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
-    *((float*) value) =  static_cast<AreaPlane*>(tmpSO->getGeometry().get())->dimensionsY();
+    AreaPlane* tmpO =  static_cast<AreaPlane*>(clientData);
+    *((float*) value) =  tmpO->dimensionsY();
 }
 //----- AreaPlane Dimensions Y setter
 static void TW_CALL setAreaDimensionsYCB(const void* value, void* clientData)
 {
-    SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
+    AreaPlane* tmpO =  static_cast<AreaPlane*>(clientData);
     float v = *((float*)value);
-    std::shared_ptr<AreaPlane> areaPlane = std::make_shared<AreaPlane>(tmpSO->getGeometry(), v, 1);
-    tmpSO->setGeometry(areaPlane);
+    tmpO->setDimensionsY(v);
 }
 
 //----- InfPlane Height getter
 static void TW_CALL getInfHeightCB(void* value, void* clientData)
 {
-    SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
-    *((float*) value) =  static_cast<InfinitePlane*>(tmpSO->getGeometry().get())->height();
+    InfinitePlane* tmpO =  static_cast<InfinitePlane*>(clientData);
+    *((float*) value) =  tmpO->height();
 }
 //----- InfPlane Height setter
 static void TW_CALL setInfHeightCB(const void* value, void* clientData)
 {
-    SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
+    InfinitePlane* tmpO =  static_cast<InfinitePlane*>(clientData);
     float v = *((float*)value);
-    std::shared_ptr<InfinitePlane> infPlane = std::make_shared<InfinitePlane>(tmpSO->getGeometry(), v);
-    tmpSO->setGeometry(infPlane);
+    tmpO->setHeight(v);
 }
 
 //----- Sphere Radius getter
 static void TW_CALL getSphereRadiusCB(void* value, void* clientData)
 {
-    SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
-    *((float*) value) =  static_cast<Sphere*>(tmpSO->getGeometry().get())->radius();
+    Sphere* tmpO =  static_cast<Sphere*>(clientData);
+    *((float*) value) =  tmpO->radius();
 }
 //----- Sphere Radius setter
 static void TW_CALL setSphereRadiusCB(const void* value, void* clientData)
 {
-    SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
+    Sphere* tmpO =  static_cast<Sphere*>(clientData);
     float v = *((float*)value);
-    std::shared_ptr<Sphere> sphere = std::make_shared<Sphere>(tmpSO->getGeometry(), v);
-    tmpSO->setGeometry(sphere);
+    tmpO->setRadius(v);
 }
 
 //--------------------------------- Basic variable init
@@ -111,53 +142,66 @@ void antTBar_geometry(std::shared_ptr<Scene> scene, TwBar *bar)
         //----------------- Geometry is AreaPlane
         if(scene->getSceneObject(i)->getGeometry()->getGeometryType() == BaseGeometry::AREAPLANE){
             //---------- set name to specific variable
-            std::string nameVar1 = name + " Position";
+            std::string nameVar1 = name + " X-Position";
             const char* nameVar1C = nameVar1.c_str();
 
-            std::string nameVar2 = name + " DimensionsX";
+            std::string nameVar2 = name + " Y-Position";
             const char* nameVar2C = nameVar2.c_str();
 
-            std::string nameVar3 = name + " DimensionsY";
+            std::string nameVar3 = name + " Z-Position";
             const char* nameVar3C = nameVar3.c_str();
+
+            std::string nameVar4 = name + " X-Dimension";
+            const char* nameVar4C = nameVar4.c_str();
+
+            std::string nameVar5 = name + " Y-Dimension";
+            const char* nameVar5C = nameVar5.c_str();
 
             //---------- ATB variables
             // ATB Variable to set position and dimensions
-            TwAddVarCB(bar, nameVar1C, TW_TYPE_DIR3F, setPositionCB, getPositionCB, scene->getSceneObject(i).get(), grpNameFloatC);
-            TwAddVarCB(bar, nameVar2C, TW_TYPE_FLOAT, setAreaDimensionsXCB, getAreaDimensionsXCB, scene->getSceneObject(i).get(), grpNameC);
-            TwAddVarCB(bar, nameVar3C, TW_TYPE_FLOAT, setAreaDimensionsYCB, getAreaDimensionsYCB, scene->getSceneObject(i).get(), grpNameFloatC);
+            TwAddVarCB(bar, nameVar1C, TW_TYPE_FLOAT, setPositionXCB, getPositionXCB, scene->getSceneObject(i)->getGeometry().get(), grpNameFloatC);
+            TwAddVarCB(bar, nameVar2C, TW_TYPE_FLOAT, setPositionYCB, getPositionYCB, scene->getSceneObject(i)->getGeometry().get(), grpNameFloatC);
+            TwAddVarCB(bar, nameVar3C, TW_TYPE_FLOAT, setPositionZCB, getPositionZCB, scene->getSceneObject(i)->getGeometry().get(), grpNameFloatC);
+            TwAddVarCB(bar, nameVar4C, TW_TYPE_FLOAT, setAreaDimensionsXCB, getAreaDimensionsXCB, scene->getSceneObject(i)->getGeometry().get(), grpNameFloat0C);
+            TwAddVarCB(bar, nameVar5C, TW_TYPE_FLOAT, setAreaDimensionsYCB, getAreaDimensionsYCB, scene->getSceneObject(i)->getGeometry().get(), grpNameFloat0C);
 
         }
         //---------------- Geometry is InfinitePlane
         else if(scene->getSceneObject(i)->getGeometry()->getGeometryType() == BaseGeometry::INFINITEPLANE)
         {
             //---------- set name to specific variable
-            std::string nameVar1 = name + " Position";
+            std::string nameVar1 = name + " Height";
             const char* nameVar1C = nameVar1.c_str();
-
-            std::string nameVar2 = name + " Height";
-            const char* nameVar2C = nameVar2.c_str();
 
             //------------ ATB variables
             // ATB Variable for position and height
-            TwAddVarCB(bar, nameVar1C, TW_TYPE_DIR3F, setPositionCB, getPositionCB, scene->getSceneObject(i).get(), grpNameC);
-            TwAddVarCB(bar, nameVar2C, TW_TYPE_FLOAT, setInfHeightCB, getInfHeightCB, scene->getSceneObject(i).get(), grpNameFloatC);
+
+            TwAddVarCB(bar, nameVar1C, TW_TYPE_FLOAT, setInfHeightCB, getInfHeightCB, scene->getSceneObject(i)->getGeometry().get(), grpNameFloatC);
 
         }
         //---------------- Geometry is Sphere
         else if(scene->getSceneObject(i)->getGeometry()->getGeometryType() == BaseGeometry::SPHERE)
         {
             //---------- set name to specific variable
-            std::string nameVar1 = name + " Position";
+            std::string nameVar1 = name + " X-Position";
             const char* nameVar1C = nameVar1.c_str();
 
-            std::string nameVar2 = name + " Radius";
+            std::string nameVar2 = name + " Y-Position";
             const char* nameVar2C = nameVar2.c_str();
+
+            std::string nameVar3 = name + " Z-Position";
+            const char* nameVar3C = nameVar3.c_str();
+
+            std::string nameVar4 = name + " Radius";
+            const char* nameVar4C = nameVar4.c_str();
 
 
             //------------ ATB variables
             // ATB Variable for position and radius
-            TwAddVarCB(bar, nameVar1C, TW_TYPE_DIR3F, setPositionCB, getPositionCB, scene->getSceneObject(i).get(), grpNameC);
-            TwAddVarCB(bar, nameVar2C, TW_TYPE_FLOAT, setSphereRadiusCB, getSphereRadiusCB, scene->getSceneObject(i).get(), grpNameFloat0C);
+            //TwAddVarCB(bar, nameVar1C, TW_TYPE_FLOAT, setPositionXCB, getPositionXCB, scene->getSceneObject(i)->getGeometry().get(), grpNameFloatC);
+            //TwAddVarCB(bar, nameVar2C, TW_TYPE_FLOAT, setPositionYCB, getPositionYCB, scene->getSceneObject(i)->getGeometry().get(), grpNameFloatC);
+            //TwAddVarCB(bar, nameVar3C, TW_TYPE_FLOAT, setPositionZCB, getPositionZCB, scene->getSceneObject(i)->getGeometry().get(), grpNameFloatC);
+            TwAddVarCB(bar, nameVar4C, TW_TYPE_FLOAT, setSphereRadiusCB, getSphereRadiusCB, scene->getSceneObject(i)->getGeometry().get(), grpNameFloat0C);
         }
 
     }
