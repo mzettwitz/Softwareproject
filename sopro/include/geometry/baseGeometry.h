@@ -44,6 +44,7 @@ public:
 
     // Setter
     void setPosition(const float3 &pos);
+    void setPosition(const float value, const short pos);
 
     // Special getter for ATB
     const float3& position() const;

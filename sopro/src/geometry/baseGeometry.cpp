@@ -7,6 +7,23 @@ void BaseGeometry::setPosition(const float3 &pos)
     changed = true;
 }
 
+void BaseGeometry::setPosition(const float value, const short pos)
+{
+    switch(pos)
+    {
+    case 0:
+        mPos.x = value;
+        break;
+    case 1:
+        mPos.y = value;
+        break;
+    case 2:
+        mPos.z = value;
+    default:
+        break;
+    }
+}
+
 //getter
 const float3& BaseGeometry::position() const
 {
@@ -16,6 +33,7 @@ float3& BaseGeometry::position()
 {
     mPos;
 }
+
 
 void BaseGeometry::setBoundingBoxProgram(const std::string &boundingbox)
 {

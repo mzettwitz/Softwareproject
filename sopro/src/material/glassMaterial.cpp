@@ -40,7 +40,7 @@ float &GlassMaterial::refractiveIdx()
 {
     return mRefractiveIdx;
 }
-void GlassMaterial::setRefractiveIdx(float idx)
+void GlassMaterial::setRefractiveIdx(const float idx)
 {
     mRefractiveIdx = idx;
 }
