@@ -8,6 +8,7 @@
 #include "../include/geometry/sphere.h"
 #include "../include/geometry/infinitePlane.h"
 
+
 using namespace optix;
 
 std::shared_ptr<Scene>        Display::mScene = 0;

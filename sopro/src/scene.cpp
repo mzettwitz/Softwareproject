@@ -7,6 +7,7 @@
 #include <cstring>
 #include "../sutil/sutil.h"
 #include "../include/program2.h"
+#include "../../sutil/OptixMesh.h"
 
 Scene::Scene()
 {
@@ -56,6 +57,7 @@ void Scene::initScene(const Scene::Camera &camera,int width, int height)
   //  mContext["reflectanceRayType"]->setUint(2u);
     mContext["maxDepth"]->setUint(20u);
     mContext["sceneEpsilon"]->setFloat(1.5e-3f);
+    mContext->setStackSize(4096);
 
     mWidth  = width;
     mHeight = height;
@@ -110,6 +112,8 @@ void Scene::initScene(const Scene::Camera &camera,int width, int height)
     std::shared_ptr<SceneObject> dummy = std::make_shared<SceneObject>("dummy",dummyGeom,dummyMat);
     mSceneObjects->push_back(dummy);
 
+
+
     //pass geometry/material to optix
     mGeometryGroup->setChildCount(mSceneObjects->size());
 
@@ -121,6 +125,7 @@ void Scene::initScene(const Scene::Camera &camera,int width, int height)
         gi->setMaterial(0,mSceneObjects->at(i)->getMaterial()->createMaterial(mContext));
         mGeometryGroup->setChild(i,gi);
     }
+
 
     mGeometryGroup->setAcceleration(mContext->createAcceleration("NoAccel","NoAccel"));
 
@@ -202,6 +207,7 @@ void Scene::updateSceneObjects()
     {
         if(mSceneObjects->at(i)->changed())
         {
+
             mGeometryGroup->getChild(i)->setMaterial(0,mSceneObjects->at(i)->getMaterial()->createMaterial(mContext));
         }
     }
