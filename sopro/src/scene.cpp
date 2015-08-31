@@ -150,6 +150,7 @@ void Scene::addSceneObject(std::shared_ptr<SceneObject> object)
     gi->setGeometry(object->getGeometry()->createGeometry(mContext));
     gi->setMaterialCount(1);
     gi->setMaterial(0,object->getMaterial()->createMaterial(mContext));
+
     mGeometryGroup->setChild(mSceneObjects->size()-1,gi);
 
     gi->getGeometry()->markDirty();
@@ -205,11 +206,31 @@ void Scene::updateSceneObjects()
 
     for(int i = 0;i < mSceneObjects->size();++i)
     {
-        if(mSceneObjects->at(i)->changed())
+        if(mSceneObjects->at(i)->isMaterialChanged())
         {
 
             mGeometryGroup->getChild(i)->setMaterial(0,mSceneObjects->at(i)->getMaterial()->createMaterial(mContext));
-           // mGeometryGroup->getChild(i)->getGeometry(["coordinates"]->);
+        }
+        if(mSceneObjects->at(i)->isGeometryChanged())
+        {
+           if(mSceneObjects->at(i)->getGeometry()->getGeometryType() == BaseGeometry::SPHERE)
+           {
+               float3 position = mSceneObjects->at(i)->getGeometry()->position();
+               float radius = std::dynamic_pointer_cast<Sphere>(mSceneObjects->at(i)->getGeometry())->radius();
+               mGeometryGroup->getChild(i)->getGeometry()["coordinates"]->setFloat(position.x,position.y,position.z,radius);
+           }
+           else if(mSceneObjects->at(i)->getGeometry()->getGeometryType() == BaseGeometry::INFINITEPLANE)
+           {
+               mGeometryGroup->getChild(i)->getGeometry()["plane"]->setFloat(10000.0f,std::dynamic_pointer_cast<InfinitePlane>(mSceneObjects->at(i)->getGeometry())->height(),10000.0f);
+           }
+           else if(mSceneObjects->at(i)->getGeometry()->getGeometryType() == BaseGeometry::AREAPLANE)
+           {
+               //do something
+           }
+           else if(mSceneObjects->at(i)->getGeometry()->getGeometryType() == BaseGeometry::MESH)
+           {
+               //do something
+           }
         }
     }
 }

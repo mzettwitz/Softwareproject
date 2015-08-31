@@ -12,10 +12,11 @@ private:
     std::shared_ptr<BaseGeometry>   mGeometry;
     std::shared_ptr<BaseMaterial>   mMaterial;
     std::string     mName;
-    bool            mChanged;
+    bool            mMaterialChanged;
+    bool            mGeometryChanged;
 
 public:
-    SceneObject(const std::string &name,std::shared_ptr<BaseGeometry> geometry,std::shared_ptr<BaseMaterial> mat) : mGeometry(geometry),mMaterial(mat),mName(name),mChanged(false)
+    SceneObject(const std::string &name,std::shared_ptr<BaseGeometry> geometry,std::shared_ptr<BaseMaterial> mat) : mGeometry(geometry),mMaterial(mat),mName(name),mMaterialChanged(false),mGeometryChanged(false)
     {}
     std::shared_ptr<BaseGeometry>  getGeometry() const;
     std::shared_ptr<BaseMaterial>   getMaterial() const;
@@ -24,11 +25,13 @@ public:
     void            setMaterial(std::shared_ptr<BaseMaterial> material);
     void            setGeometry(std::shared_ptr<BaseGeometry> geometry);
     //check, if material changed
-    bool            changed();
+    bool            isMaterialChanged();
+    bool            isGeometryChanged();
 
 private:
     //called, after material has changed
-    void            markAsChanged();
+    void            markMaterialAsChanged();
+    void            markGeometryAsChanged();
 };
 
 #endif //SCENEOBJECT_H

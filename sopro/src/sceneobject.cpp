@@ -32,7 +32,7 @@ void SceneObject::setMaterial(std::shared_ptr<BaseMaterial> material)
     {
         std::cout << mMaterial->getMaterialType() << std::endl;
         mMaterial = material;
-        markAsChanged();
+        markMaterialAsChanged();
         return;
     }
 
@@ -43,7 +43,7 @@ void SceneObject::setMaterial(std::shared_ptr<BaseMaterial> material)
         if(&mat1 != &mat2)
         {
             mMaterial = material;
-            markAsChanged();
+            markMaterialAsChanged();
             return;
         }
     }
@@ -54,7 +54,7 @@ void SceneObject::setMaterial(std::shared_ptr<BaseMaterial> material)
         if(&mat1 != &mat2)
         {
             mMaterial = material;
-            markAsChanged();
+            markMaterialAsChanged();
             return;
         }
     }
@@ -65,7 +65,7 @@ void SceneObject::setMaterial(std::shared_ptr<BaseMaterial> material)
          * if(&mat1 != &mat2)
          * {
          *      mMaterial = material;
-         *      markAsChanged();
+         *      markMaterialAsChanged();
          *      return;
          * }
          */
@@ -78,7 +78,7 @@ void SceneObject::setMaterial(std::shared_ptr<BaseMaterial> material)
         if(&mat1 != &mat2)
         {
             mMaterial = material;
-            markAsChanged();
+            markMaterialAsChanged();
             return;
         }
     }
@@ -90,7 +90,7 @@ void SceneObject::setGeometry(std::shared_ptr<BaseGeometry> geometry)
     {
         std::cout << mGeometry->getGeometryType() << std::endl;
         mGeometry = geometry;
-        markAsChanged();
+        markGeometryAsChanged();
         return;
     }
 
@@ -101,7 +101,7 @@ void SceneObject::setGeometry(std::shared_ptr<BaseGeometry> geometry)
         if(&geom1 != &geom2)
         {
             mGeometry = geometry;
-            markAsChanged();
+            markGeometryAsChanged();
             return;
         }
     }/*
@@ -112,7 +112,7 @@ void SceneObject::setGeometry(std::shared_ptr<BaseGeometry> geometry)
         if(&geom1 != &geom2)
         {
             mGeometry = geometry;
-            markAsChanged();
+            markGeometryAsChanged();
             return;
         }
     }*/
@@ -123,7 +123,7 @@ void SceneObject::setGeometry(std::shared_ptr<BaseGeometry> geometry)
         if(&geom1 != &geom2)
         {
             mGeometry = geometry;
-            markAsChanged();
+            markGeometryAsChanged();
             return;
         }
     }
@@ -134,25 +134,40 @@ void SceneObject::setGeometry(std::shared_ptr<BaseGeometry> geometry)
         if(&geom1 != &geom2)
         {
             mGeometry = geometry;
-            markAsChanged();
+            markGeometryAsChanged();
             return;
         }
     }
 }
 
-bool SceneObject::changed()
+bool SceneObject::isMaterialChanged()
 {
 
-   if(mChanged)
+   if(mMaterialChanged)
    {
-       mChanged = false;
+       mMaterialChanged = false;
        return true;
    }
    return false;
 
 }
 
-void SceneObject::markAsChanged()
+bool SceneObject::isGeometryChanged()
 {
-    mChanged = true;
+    if(mGeometryChanged)
+    {
+        mGeometryChanged = false;
+        return true;
+    }
+    return false;
+}
+
+void SceneObject::markMaterialAsChanged()
+{
+    mMaterialChanged = true;
+}
+
+void SceneObject::markGeometryAsChanged()
+{
+    mGeometryChanged = true;
 }
