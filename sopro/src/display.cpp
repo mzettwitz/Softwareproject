@@ -27,7 +27,8 @@ int                 Display::oldy = 0;
 float               Display::deltaTime = 0.0f;
 int                 Display::mState = Display::mouseState::IDLE;
 // Declare ATB
-TwBar *bar;
+TwBar *matBar;
+TwBar *geomBar;
 
 //dummy purpose
 float               p = 0.0f;
@@ -59,8 +60,11 @@ void Display::init(int &argc, char **argv,const unsigned int width,const unsigne
     TwInit(TW_OPENGL, NULL);
 
     // Create ATB
-    bar = TwNewBar("MatBar");
-    TwDefine(" MatBar size='270 400' color='118 185 0' alpha=160");
+    matBar = TwNewBar("MatBar");
+    TwDefine(" MatBar size='270 300' color='118 185 0' alpha=160 position='10 10'");
+
+    geomBar = TwNewBar("GeomBar");
+    TwDefine(" GeomBar size='270 300' color='118 185 0' alpha=160 position='10 320'");
 
 }
 
@@ -121,7 +125,7 @@ void Display::run(const std::string &title, std::shared_ptr<Scene> scene)
     glutDisplayFunc(display);
     glutKeyboardFunc(keyPressed);
 
-    antTBar(scene, bar);
+    antTBar(scene, matBar, geomBar);
 
     glutMainLoop();
 
@@ -231,31 +235,31 @@ void Display::keyPressed(unsigned char key, int x, int y)
         //space
         if(key == 'w')
         {
-            cameraPosition += moveSpeed * normalize(cross(cameraRight,cameraDirection)) * deltaTime;
+            cameraPosition += moveSpeed * normalize(cross(cameraRight,cameraDirection)) * deltaTime * 0.25f;
         }
         //1
         if(key == 's')
         {
-            cameraPosition -= moveSpeed * normalize(cross(cameraRight,cameraDirection)) * deltaTime;
+            cameraPosition -= moveSpeed * normalize(cross(cameraRight,cameraDirection)) * deltaTime * 0.25f;
         }
         //2
         if(key == 'a')
         {
-            cameraPosition -= moveSpeed * cameraRight * deltaTime;
+            cameraPosition -= moveSpeed * cameraRight * deltaTime * 0.25f;
         }
         //3
         if(key == 'd')
         {
-            cameraPosition += moveSpeed * cameraRight * deltaTime;
+            cameraPosition += moveSpeed * cameraRight * deltaTime * 0.25f;
         }
         //4
         if(key == 'e')
         {
-            cameraPosition += moveSpeed * cameraDirection * deltaTime;
+            cameraPosition += moveSpeed * cameraDirection * deltaTime * 0.25f;
         }
         if(key == 'q')
         {
-            cameraPosition -= moveSpeed * cameraDirection * deltaTime;
+            cameraPosition -= moveSpeed * cameraDirection * deltaTime * 0.25f;
         }
         //5, dummy purpose, add dummy sphere
         if(key == '5')
@@ -271,7 +275,7 @@ void Display::keyPressed(unsigned char key, int x, int y)
 
             // add ATB variable
             // init new variables
-            antTBarInit_material(obj.get(), bar, name);
+            antTBarInit_material(obj.get(), matBar, name);
         }
         //6 dummy purpose, print number of scene objects
         if(key == '6')
@@ -285,7 +289,7 @@ void Display::keyPressed(unsigned char key, int x, int y)
             {
                 // delete ATB variable
                 antTBarRemoveVariable_material(mScene->getSceneObject(mScene->getSceneObjectCount()-1).get(),
-                                      bar, mScene->getSceneObject(mScene->getSceneObjectCount()-1)->getName());
+                                      matBar, mScene->getSceneObject(mScene->getSceneObjectCount()-1)->getName());
 
                 mScene->removeObject(mScene->getSceneObjectCount()-1);
                 p -= 2.5f;
@@ -314,7 +318,7 @@ void Display::keyPressed(unsigned char key, int x, int y)
             std::shared_ptr<InfinitePlane> plane = std::make_shared<InfinitePlane>(-2.0f);
             std::shared_ptr<SceneObject> sc = std::make_shared<SceneObject>("groundPlane",plane,p);
             mScene->addSceneObject(sc);
-            antTBarInit_material(sc.get(),bar,"groundPlane");
+            antTBarInit_material(sc.get(),matBar,"groundPlane");
 
 
         }

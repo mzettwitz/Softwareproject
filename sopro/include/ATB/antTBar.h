@@ -16,7 +16,7 @@
 #include <iostream>
 
 
-void antTBar(std::shared_ptr<Scene> scene, TwBar *matBar);
+void antTBar(std::shared_ptr<Scene> scene, TwBar *matBar, TwBar *geomBar);
 
 
 

@@ -18,6 +18,16 @@ void AreaPlane::setDimensions(float2 &dim)
     mDimensions = dim;
 }
 
+void AreaPlane::setDimensionsX(float x)
+{
+    mDimensions.x = x;
+}
+
+void AreaPlane::setDimensionsY(float y)
+{
+    mDimensions.y = y;
+}
+
 // Special getter for ATB
 const float2& AreaPlane::dimensions() const
 {
@@ -27,3 +37,30 @@ float2& AreaPlane::dimensions()
 {
     return mDimensions;
 }
+
+const float& AreaPlane::dimensionsX() const
+{
+    return mDimensions.x;
+}
+float& AreaPlane::dimensionsX()
+{
+    return mDimensions.x;
+}
+
+const float& AreaPlane::dimensionsY() const
+{
+    return mDimensions.y;
+}
+float& AreaPlane::dimensionsY()
+{
+    return mDimensions.y;
+}
+
+
+// Operator overload
+bool operator!=(const AreaPlane &geom1, const AreaPlane &geom2)
+{
+    return(geom1.position().x != geom2.position().x || geom1.position().y != geom2.position().y || geom1.position().z != geom2.position().z ||
+            geom1.dimensions().x != geom2.dimensions().x || geom1.dimensions().y != geom2.dimensions().y);
+}
+

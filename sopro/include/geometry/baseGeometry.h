@@ -12,6 +12,7 @@
 #include <../cuda/commonStructs.h>
 #include <optixu/optixu_math_namespace.h>
 #include <vector>
+#include <memory>
 
 using namespace optix;
 

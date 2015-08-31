@@ -28,3 +28,9 @@ float& InfinitePlane::height()
 {
     return mHeight;
 }
+
+// Operator overload
+bool operator!=(const InfinitePlane &geom1, const InfinitePlane &geom2)
+{
+    return(geom1.height() != geom2.height());
+}

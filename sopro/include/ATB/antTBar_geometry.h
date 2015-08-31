@@ -20,6 +20,7 @@
 #include <iostream>
 
 void antTBar_geometry(std::shared_ptr<Scene> scene, TwBar *bar);
-void antTBarReInit_geometry(std::string oldMat, SceneObject *scObj, TwBar *bar, std::string objName);
+/*void antTBarReInit_geometry(std::string oldMat, SceneObject *scObj, TwBar *bar, std::string objName);
 void antTBarInit_geometry(SceneObject* scObj, TwBar *bar, std::string objName);
 void antTBarRemoveVariable_geometry(SceneObject* scObj, TwBar *bar, std::string objName);
+*/
