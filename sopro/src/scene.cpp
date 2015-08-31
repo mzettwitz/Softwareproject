@@ -211,6 +211,7 @@ void Scene::updateSceneObjects()
 
             mGeometryGroup->getChild(i)->setMaterial(0,mSceneObjects->at(i)->getMaterial()->createMaterial(mContext));
         }
+        mSceneObjects->at(i)->updateGeometry();
         if(mSceneObjects->at(i)->isGeometryChanged())
         {
            if(mSceneObjects->at(i)->getGeometry()->getGeometryType() == BaseGeometry::SPHERE)
