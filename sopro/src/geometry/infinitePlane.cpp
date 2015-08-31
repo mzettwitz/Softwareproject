@@ -17,6 +17,7 @@ Geometry InfinitePlane::createGeometry(Context context) const
 void InfinitePlane::setHeight(const float h)
 {
     mHeight = h;
+    changed = true;
 }
 
 // Special getter for ATB

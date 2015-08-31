@@ -4,6 +4,7 @@
 void BaseGeometry::setPosition(const float3 &pos)
 {
     mPos = pos;
+    changed = true;
 }
 
 //getter
