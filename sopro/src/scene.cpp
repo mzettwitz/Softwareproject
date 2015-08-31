@@ -212,8 +212,10 @@ void Scene::updateSceneObjects()
             mGeometryGroup->getChild(i)->setMaterial(0,mSceneObjects->at(i)->getMaterial()->createMaterial(mContext));
         }
         mSceneObjects->at(i)->updateGeometry();
+
         if(mSceneObjects->at(i)->isGeometryChanged())
         {
+            std::cout << "updateSceneObjects: changed"  <<std::endl;
            if(mSceneObjects->at(i)->getGeometry()->getGeometryType() == BaseGeometry::SPHERE)
            {
                float3 position = mSceneObjects->at(i)->getGeometry()->position();

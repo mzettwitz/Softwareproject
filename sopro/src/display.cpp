@@ -35,8 +35,6 @@ TwBar *geomBar;
 float               p = 0.0f;
 int                 count = 0;
 
-
-
 void Display::init(int &argc, char **argv,const unsigned int width,const unsigned int height)
 {
 
@@ -152,7 +150,7 @@ void Display::display()
 
     int end = glutGet(GLUT_ELAPSED_TIME);
     deltaTime = float(end-start)/1000.0f;
-    std::cout << int(1.0f/deltaTime) << std::endl;
+   // std::cout << int(1.0f/deltaTime) << std::endl;
 }
 
 void Display::displayFrame()

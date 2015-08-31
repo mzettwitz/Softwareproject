@@ -28,7 +28,6 @@ public:
     Sphere(float3 pos,float r) : mRadius(r),BaseGeometry(pos,"sphereIntersectionProgram","sphereBoundingBoxProgram","sphere.cu")
     {
         mGeometryType = SPHERE;
-        changed = false;
     }
 
     //------------- Copy CTors

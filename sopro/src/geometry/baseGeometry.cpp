@@ -3,8 +3,11 @@
 //setter
 void BaseGeometry::setPosition(const float3 &pos)
 {
-    mPos = pos;
-    changed = true;
+    if(mPos.x != pos.x || mPos.y != mPos.y || mPos.z != mPos.z)
+    {
+        mPos = pos;
+        changed = true;
+    }
 }
 
 void BaseGeometry::setPosition(const float value, const short pos)
@@ -57,10 +60,5 @@ BaseGeometry::GeometryType BaseGeometry::getGeometryType() const
 
 bool BaseGeometry::isChanged()
 {
-    if(changed)
-    {
-        changed = false;
-        return true;
-    }
-    return false;
+    return changed;
 }
