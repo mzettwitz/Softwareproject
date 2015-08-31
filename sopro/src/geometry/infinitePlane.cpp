@@ -9,7 +9,7 @@ Geometry InfinitePlane::createGeometry(Context context) const
     geometry->setPrimitiveCount(1);
     geometry->setBoundingBoxProgram(context->createProgramFromPTXFile(mPTXpath,mBoundingBoxProgram));
     geometry->setIntersectionProgram(context->createProgramFromPTXFile(mPTXpath,mIntersectionProgram));
-    geometry["plane"]->setFloat(1000.0f,mHeight,1000.0f);
+    geometry["plane"]->setFloat(0.2f,mHeight,0.2f);
     return geometry;
 }
 

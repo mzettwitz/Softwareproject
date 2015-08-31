@@ -222,7 +222,7 @@ void Scene::updateSceneObjects()
            }
            else if(mSceneObjects->at(i)->getGeometry()->getGeometryType() == BaseGeometry::INFINITEPLANE)
            {
-               mGeometryGroup->getChild(i)->getGeometry()["plane"]->setFloat(10000.0f,std::dynamic_pointer_cast<InfinitePlane>(mSceneObjects->at(i)->getGeometry())->height(),10000.0f);
+               mGeometryGroup->getChild(i)->getGeometry()["plane"]->setFloat(0.2f,std::dynamic_pointer_cast<InfinitePlane>(mSceneObjects->at(i)->getGeometry())->height(),0.2f);
            }
            else if(mSceneObjects->at(i)->getGeometry()->getGeometryType() == BaseGeometry::AREAPLANE)
            {
