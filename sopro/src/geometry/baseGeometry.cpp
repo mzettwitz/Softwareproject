@@ -35,3 +35,13 @@ BaseGeometry::GeometryType BaseGeometry::getGeometryType() const
 {
     return mGeometryType;
 }
+
+bool BaseGeometry::isChanged()
+{
+    if(changed)
+    {
+        changed = false;
+        return true;
+    }
+    return false;
+}

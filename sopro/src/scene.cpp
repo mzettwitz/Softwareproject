@@ -231,8 +231,12 @@ void Scene::updateSceneObjects()
            {
                //do something
            }
+
+           mGeometryGroup->getChild(i)->getGeometry()->markDirty();
+           mGeometryGroup->getAcceleration()->markDirty();
         }
     }
+
 }
 
 void Scene::updateCamera(const Scene::Camera &camera)

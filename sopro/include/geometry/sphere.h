@@ -6,6 +6,8 @@
 class Sphere : public BaseGeometry
 {
     float mRadius;
+    bool changed;
+
 public:
     // ------------------------CTor
     // ------------ Advanced CTor
@@ -26,6 +28,7 @@ public:
     Sphere(float3 pos,float r) : mRadius(r),BaseGeometry(pos,"sphereIntersectionProgram","sphereBoundingBoxProgram","sphere.cu")
     {
         mGeometryType = SPHERE;
+        changed = false;
     }
 
     //------------- Copy CTors
@@ -72,7 +75,7 @@ public:
 
     // Setter
     void setRadius(float r);
-
+    bool isChanged();
     // Special getter for ATB
     const float& radius() const;
     float& radius();

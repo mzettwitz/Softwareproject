@@ -29,6 +29,7 @@ public:
         BaseGeometry(make_float3(0.0f,0.0f,0.0f),"infinitePlaneIntersectionProgram","infinitePlaneBoundingBoxProgram","infinitePlane.cu")
     {
         mGeometryType = INFINITEPLANE;
+        changed = false;
     }
 
     //------------- Copy CTors

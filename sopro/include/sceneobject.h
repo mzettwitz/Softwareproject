@@ -24,6 +24,7 @@ public:
 
     void            setMaterial(std::shared_ptr<BaseMaterial> material);
     void            setGeometry(std::shared_ptr<BaseGeometry> geometry);
+    void            updateGeometry();
     //check, if material changed
     bool            isMaterialChanged();
     bool            isGeometryChanged();

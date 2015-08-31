@@ -84,59 +84,12 @@ void SceneObject::setMaterial(std::shared_ptr<BaseMaterial> material)
     }
 }
 
-void SceneObject::setGeometry(std::shared_ptr<BaseGeometry> geometry)
+void SceneObject::updateGeometry()
 {
-    if(geometry->getGeometryType() != mGeometry->getGeometryType())
+    if(this->getGeometry()->isChanged())
     {
-        std::cout << mGeometry->getGeometryType() << std::endl;
-        mGeometry = geometry;
         markGeometryAsChanged();
-        return;
-    }
 
-    if(mGeometry->getGeometryType() == BaseGeometry::SPHERE )
-    {
-        std::shared_ptr<Sphere> geom1 = std::dynamic_pointer_cast<Sphere>(mGeometry);
-        std::shared_ptr<Sphere> geom2 = std::dynamic_pointer_cast<Sphere>(geometry);
-        if(&geom1 != &geom2)
-        {
-            mGeometry = geometry;
-            markGeometryAsChanged();
-            return;
-        }
-    }/*
-    else if(mGeometry->getGeometryType() == BaseGeometry::MESH )
-    {
-        std::shared_ptr<Mesh> geom1 = std::dynamic_pointer_cast<Mesh>(mGeometry);
-        std::shared_ptr<Mesh> geom2 = std::dynamic_pointer_cast<Mesh>(geometry);
-        if(&geom1 != &geom2)
-        {
-            mGeometry = geometry;
-            markGeometryAsChanged();
-            return;
-        }
-    }*/
-    else if(mGeometry->getGeometryType() == BaseGeometry::INFINITEPLANE )
-    {
-        std::shared_ptr<InfinitePlane> geom1 = std::dynamic_pointer_cast<InfinitePlane>(mGeometry);
-        std::shared_ptr<InfinitePlane> geom2 = std::dynamic_pointer_cast<InfinitePlane>(geometry);
-        if(&geom1 != &geom2)
-        {
-            mGeometry = geometry;
-            markGeometryAsChanged();
-            return;
-        }
-    }
-    else if(mGeometry->getGeometryType() == BaseGeometry::AREAPLANE )
-    {
-        std::shared_ptr<AreaPlane> geom1 = std::dynamic_pointer_cast<AreaPlane>(mGeometry);
-        std::shared_ptr<AreaPlane> geom2 = std::dynamic_pointer_cast<AreaPlane>(geometry);
-        if(&geom1 != &geom2)
-        {
-            mGeometry = geometry;
-            markGeometryAsChanged();
-            return;
-        }
     }
 }
 

@@ -28,6 +28,7 @@ public:
     } GeometryType;
 protected:
     float3 mPos;
+    bool changed;
     std::string mIntersectionProgram;
     std::string mBoundingBoxProgram;
     std::string mPTXpath;
@@ -39,6 +40,7 @@ public:
     void setBoundingBoxProgram(const std::string &boundingbox);
     void setPTXpath(const std::string &p);
     GeometryType getGeometryType() const;
+    bool isChanged();
 
     // Setter
     void setPosition(const float3 &pos);
@@ -49,7 +51,7 @@ public:
 
 
 protected:
-    BaseGeometry(float3 pos, std::string intersect, std::string boundingbox,std::string path) : mPos(pos),mIntersectionProgram(intersect),mBoundingBoxProgram(boundingbox)
+    BaseGeometry(float3 pos, std::string intersect, std::string boundingbox,std::string path) : mPos(pos),mIntersectionProgram(intersect),mBoundingBoxProgram(boundingbox),changed(false)
     {
         setPTXpath(path);
     }
