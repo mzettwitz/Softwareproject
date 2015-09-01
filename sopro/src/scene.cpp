@@ -208,8 +208,11 @@ void Scene::updateSceneObjects()
     {
         if(mSceneObjects->at(i)->isMaterialChanged())
         {
-
+          //  BaseMaterial::MaterialType t = mSceneObjects->at(i)->getMaterial()->getMaterialType();
+           // if(t == BaseMaterial::LAMBERT)
             mGeometryGroup->getChild(i)->setMaterial(0,mSceneObjects->at(i)->getMaterial()->createMaterial(mContext));
+
+
         }
         mSceneObjects->at(i)->updateGeometry();
 
