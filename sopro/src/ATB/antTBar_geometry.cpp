@@ -9,7 +9,7 @@ static void TW_CALL getPositionXCB(void* value, void* clientData)
     // get sceneObject
     BaseGeometry* tmpO =  static_cast<BaseGeometry*>(clientData);
     // get position from object
-    *((float*) value) = tmpO->position(0);
+    *((float*) value) = tmpO->position().x;
 }
 
 //----- Position setter X
@@ -27,7 +27,7 @@ static void TW_CALL getPositionYCB(void* value, void* clientData)
     // get sceneObject
     BaseGeometry* tmpO =  static_cast<BaseGeometry*>(clientData);
     // get position from object
-    *((float*) value) = tmpO->position(1);
+    *((float*) value) = tmpO->position().y;
 }
 //----- Position setter Y
 static void TW_CALL setPositionYCB(const void* value, void* clientData)
@@ -45,7 +45,7 @@ static void TW_CALL getPositionZCB(void* value, void* clientData)
     // get sceneObject
     BaseGeometry* tmpO =  static_cast<BaseGeometry*>(clientData);
     // get position from object
-    *((float*) value) = tmpO->position(2);
+    *((float*) value) = tmpO->position().z;
 }
 //----- Position setter Z
 static void TW_CALL setPositionZCB(const void* value, void* clientData)
