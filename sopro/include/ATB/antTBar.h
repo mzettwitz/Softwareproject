@@ -11,6 +11,7 @@
 
 #include "../AntTweakBar/include/AntTweakBar.h"
 #include "../ATB/antTBar_material.h"
+#include "../ATB/antTBar_geometry.h"
 #include "../sopro/include/scene.h"
 #include <memory>
 #include <iostream>

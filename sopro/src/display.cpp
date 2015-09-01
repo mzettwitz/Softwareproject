@@ -275,6 +275,8 @@ void Display::keyPressed(unsigned char key, int x, int y)
             // add ATB variable
             // init new variables
             antTBarInit_material(obj.get(), matBar, name);
+            antTBarInit_geometry(obj.get(), geomBar, name);
+
         }
         //6 dummy purpose, print number of scene objects
         if(key == '6')
@@ -289,6 +291,8 @@ void Display::keyPressed(unsigned char key, int x, int y)
                 // delete ATB variable
                 antTBarRemoveVariable_material(mScene->getSceneObject(mScene->getSceneObjectCount()-1).get(),
                                       matBar, mScene->getSceneObject(mScene->getSceneObjectCount()-1)->getName());
+                antTBarRemoveVariable_geometry(mScene->getSceneObject(mScene->getSceneObjectCount()-1).get(),
+                                      geomBar, mScene->getSceneObject(mScene->getSceneObjectCount()-1)->getName());
 
                 mScene->removeObject(mScene->getSceneObjectCount()-1);
                 p -= 2.5f;
@@ -318,8 +322,7 @@ void Display::keyPressed(unsigned char key, int x, int y)
             std::shared_ptr<SceneObject> sc = std::make_shared<SceneObject>("groundPlane",plane,p);
             mScene->addSceneObject(sc);
             antTBarInit_material(sc.get(),matBar,"groundPlane");
-
-
+            antTBarInit_geometry(sc.get(),geomBar,"groundPlane");
         }
 
         if(key == 'y')
