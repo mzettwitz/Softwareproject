@@ -9,7 +9,7 @@ static void TW_CALL getPositionXCB(void* value, void* clientData)
     // get sceneObject
     BaseGeometry* tmpO =  static_cast<BaseGeometry*>(clientData);
     // get position from object
-        *((float*) value) = tmpO->position().x;
+        *((float*) value) = tmpO->position(0);
 }
 
 //----- Position setter X
@@ -27,7 +27,7 @@ static void TW_CALL getPositionYCB(void* value, void* clientData)
     // get sceneObject
     BaseGeometry* tmpO =  static_cast<BaseGeometry*>(clientData);
     // get position from object
-        *((float*) value) = tmpO->position().y;
+        *((float*) value) = tmpO->position(1);
 }
 //----- Position setter Y
 static void TW_CALL setPositionYCB(const void* value, void* clientData)
@@ -45,7 +45,7 @@ static void TW_CALL getPositionZCB(void* value, void* clientData)
     // get sceneObject
     BaseGeometry* tmpO =  static_cast<BaseGeometry*>(clientData);
     // get position from object
-        *((float*) value) = tmpO->position().z;
+        *((float*) value) = tmpO->position(2);
 }
 //----- Position setter Z
 static void TW_CALL setPositionZCB(const void* value, void* clientData)
@@ -198,9 +198,9 @@ void antTBar_geometry(std::shared_ptr<Scene> scene, TwBar *bar)
 
             //------------ ATB variables
             // ATB Variable for position and radius
-            //TwAddVarCB(bar, nameVar1C, TW_TYPE_FLOAT, setPositionXCB, getPositionXCB, scene->getSceneObject(i)->getGeometry().get(), grpNameFloatC);
-            //TwAddVarCB(bar, nameVar2C, TW_TYPE_FLOAT, setPositionYCB, getPositionYCB, scene->getSceneObject(i)->getGeometry().get(), grpNameFloatC);
-            //TwAddVarCB(bar, nameVar3C, TW_TYPE_FLOAT, setPositionZCB, getPositionZCB, scene->getSceneObject(i)->getGeometry().get(), grpNameFloatC);
+            TwAddVarCB(bar, nameVar1C, TW_TYPE_FLOAT, setPositionXCB, getPositionXCB, scene->getSceneObject(i)->getGeometry().get(), grpNameFloatC);
+            TwAddVarCB(bar, nameVar2C, TW_TYPE_FLOAT, setPositionYCB, getPositionYCB, scene->getSceneObject(i)->getGeometry().get(), grpNameFloatC);
+            TwAddVarCB(bar, nameVar3C, TW_TYPE_FLOAT, setPositionZCB, getPositionZCB, scene->getSceneObject(i)->getGeometry().get(), grpNameFloatC);
             TwAddVarCB(bar, nameVar4C, TW_TYPE_FLOAT, setSphereRadiusCB, getSphereRadiusCB, scene->getSceneObject(i)->getGeometry().get(), grpNameFloat0C);
         }
 

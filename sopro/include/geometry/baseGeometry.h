@@ -49,6 +49,9 @@ public:
     // Special getter for ATB
     const float3& position() const;
     float3& position();
+    // getter addicted to the axis (x = 0,y = 1,z = 2)
+    const float& position(short pos) const;
+    float& position(short pos);
 
 
 protected:

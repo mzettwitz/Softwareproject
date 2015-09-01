@@ -36,6 +36,37 @@ float3& BaseGeometry::position()
 {
     mPos;
 }
+//getter addicted to the axis you want to return (x,y,z)
+const float& BaseGeometry::position(short pos) const
+{
+    switch(pos)
+    {
+    case 0:
+        return mPos.x;
+        break;
+    case 1:
+        return mPos.y;
+        break;
+    case 2:
+        return mPos.z;
+        break;
+    }
+}
+float& BaseGeometry::position(short pos)
+{
+    switch(pos)
+    {
+    case 0:
+        return mPos.x;
+        break;
+    case 1:
+        return mPos.y;
+        break;
+    case 2:
+        return mPos.z;
+        break;
+    }
+}
 
 
 void BaseGeometry::setBoundingBoxProgram(const std::string &boundingbox)
