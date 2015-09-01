@@ -90,7 +90,10 @@ void SceneObject::setMaterial(std::shared_ptr<BaseMaterial> material)
 
 void SceneObject::updateGeometry()
 {
+    if(mGeometry->isChanged())
+    {
         markGeometryAsChanged();
+    }
 
 }
 

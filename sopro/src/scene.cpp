@@ -10,6 +10,7 @@
 #include "../../sutil/OptixMesh.h"
 #include "../include/material/phongMaterial.h"
 #include "../include/material/glassMaterial.h"
+#include "../include/geometry/sphere.h"
 
 Scene::Scene()
 {
@@ -268,8 +269,8 @@ void Scene::updateSceneObjects()
            if(mSceneObjects->at(i)->getGeometry()->getGeometryType() == BaseGeometry::SPHERE)
            {
                float3 position = mSceneObjects->at(i)->getGeometry()->position();
-               float radius = std::dynamic_pointer_cast<Sphere>(mSceneObjects->at(i)->getGeometry())->radius();
-               mGeometryGroup->getChild(i)->getGeometry()["coordinates"]->setFloat(position.x,position.y,position.z,radius);
+               mGeometryGroup->getChild(i)->getGeometry()["coordinates"]->setFloat(position.x,position.y,position.z);
+               mGeometryGroup->getChild(i)->getGeometry()["radius"]->setFloat(std::dynamic_pointer_cast<Sphere>(mSceneObjects->at(i)->getGeometry())->radius());
            }
            else if(mSceneObjects->at(i)->getGeometry()->getGeometryType() == BaseGeometry::INFINITEPLANE)
            {

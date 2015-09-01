@@ -8,7 +8,8 @@ Geometry Sphere::createGeometry(Context context) const
     geometry->setPrimitiveCount(1);
     geometry->setBoundingBoxProgram(context->createProgramFromPTXFile(mPTXpath,mBoundingBoxProgram));
     geometry->setIntersectionProgram(context->createProgramFromPTXFile(mPTXpath,mIntersectionProgram));
-    geometry["coordinates"]->setFloat(mPos.x,mPos.y,mPos.z,mRadius);
+    geometry["coordinates"]->setFloat(mPos.x,mPos.y,mPos.z);
+    geometry["radius"]->setFloat(mRadius);
 
     return geometry;
 }
@@ -17,12 +18,8 @@ Geometry Sphere::createGeometry(Context context) const
 
 void Sphere::setRadius(float r)
 {
-    if(r != mRadius)
-    {
         mRadius = r;
-        changed = true;
-    }
-
+        setPosition(mPos);
 }
 
 // Special getter for ATB
