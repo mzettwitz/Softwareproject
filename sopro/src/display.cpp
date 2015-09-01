@@ -150,7 +150,7 @@ void Display::display()
 
     int end = glutGet(GLUT_ELAPSED_TIME);
     deltaTime = float(end-start)/1000.0f;
-   // std::cout << int(1.0f/deltaTime) << std::endl;
+    std::cout << int(1.0f/deltaTime) << std::endl;
 }
 
 void Display::displayFrame()

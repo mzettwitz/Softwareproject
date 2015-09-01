@@ -44,6 +44,7 @@ void SceneObject::setMaterial(std::shared_ptr<BaseMaterial> material)
         {
             mMaterial = material;
             markMaterialAsChanged();
+            mMaterial->markTypeAsChanged();
             return;
         }
     }
@@ -55,6 +56,7 @@ void SceneObject::setMaterial(std::shared_ptr<BaseMaterial> material)
         {
             mMaterial = material;
             markMaterialAsChanged();
+            mMaterial->markTypeAsChanged();
             return;
         }
     }
@@ -66,6 +68,7 @@ void SceneObject::setMaterial(std::shared_ptr<BaseMaterial> material)
          * {
          *      mMaterial = material;
          *      markMaterialAsChanged();
+         *      mMaterial->markTypeAsChanged();
          *      return;
          * }
          */
@@ -79,6 +82,7 @@ void SceneObject::setMaterial(std::shared_ptr<BaseMaterial> material)
         {
             mMaterial = material;
             markMaterialAsChanged();
+            mMaterial->markTypeAsChanged();
             return;
         }
     }

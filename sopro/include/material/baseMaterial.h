@@ -29,14 +29,18 @@ public:
         DISNEY = 3,
         GLASS = 4
     } MaterialType;
-    MaterialType mMaterialType;
+
 protected:
     std::string mPTXpath;
+    bool mTypeChanged;
+    MaterialType mMaterialType;
 
 public :
     virtual Material createMaterial(Context context) const = 0;
     void setPTXPath(const std::string &path);
     MaterialType getMaterialType() const;
+    bool isTypeChanged();
+    void markTypeAsChanged();
 };
 
 

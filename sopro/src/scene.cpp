@@ -8,6 +8,8 @@
 #include "../sutil/sutil.h"
 #include "../include/program2.h"
 #include "../../sutil/OptixMesh.h"
+#include "../include/material/phongMaterial.h"
+#include "../include/material/glassMaterial.h"
 
 Scene::Scene()
 {
@@ -208,17 +210,61 @@ void Scene::updateSceneObjects()
     {
         if(mSceneObjects->at(i)->isMaterialChanged())
         {
-          //  BaseMaterial::MaterialType t = mSceneObjects->at(i)->getMaterial()->getMaterialType();
-           // if(t == BaseMaterial::LAMBERT)
-            mGeometryGroup->getChild(i)->setMaterial(0,mSceneObjects->at(i)->getMaterial()->createMaterial(mContext));
+            bool t = mSceneObjects->at(i)->getMaterial()->isTypeChanged();
+            if(!t)
+            {
+                switch(mSceneObjects->at(i)->getMaterial()->getMaterialType())
+                {
+                case BaseMaterial::LAMBERT :
+                {
+                    float3 c = std::dynamic_pointer_cast<LambertMaterial>(mSceneObjects->at(i)->getMaterial())->color();
+                    mGeometryGroup->getChild(i)->getMaterial(0)["color"]->setFloat(c.x,c.y,c.z);
+                    break;
+                }
+                case BaseMaterial::PHONG :
+                {
+                    std::shared_ptr<PhongMaterial> phong = std::dynamic_pointer_cast<PhongMaterial>(mSceneObjects->at(i)->getMaterial());
+                    float3 c = phong->color();
+                    float ambientCoeff = phong->ambientCoeff();
+                    float diffuseCoeff = phong->diffuseCoeff();
+                    float specularCoeff = phong->specularCoeff();
+                    float shininess = phong->shininess();
+                    float specularity = phong->specularity();
 
+                    mGeometryGroup->getChild(i)->getMaterial(0)["color"]->setFloat(c.x,c.y,c.z);
+                    mGeometryGroup->getChild(i)->getMaterial(0)["ambientCoefficient"]->setFloat(ambientCoeff);
+                    mGeometryGroup->getChild(i)->getMaterial(0)["diffuseCoefficient"]->setFloat(diffuseCoeff);
+                    mGeometryGroup->getChild(i)->getMaterial(0)["specularCoefficient"]->setFloat(specularCoeff);
+                    mGeometryGroup->getChild(i)->getMaterial(0)["specularity"]->setFloat(specularity);
+                    mGeometryGroup->getChild(i)->getMaterial(0)["shininess"]->setFloat(shininess);
+                    break;
+                }
+                case BaseMaterial::GLASS : ;break;
+                {
+                    std::shared_ptr<GlassMaterial> glass = std::dynamic_pointer_cast<GlassMaterial>(mSceneObjects->at(i)->getMaterial());
+                    float4 c = glass->color();
+                    float specularity = glass->specularity();
+                    float shininess = glass->shininess();
+                    float specularCoeff = glass->specularCoeff();
 
+                    mGeometryGroup->getChild(i)->getMaterial(0)["color"]->setFloat(c.x,c.y,c.z,c.w);
+                    mGeometryGroup->getChild(i)->getMaterial(0)["specularity"]->setFloat(specularity);
+                    mGeometryGroup->getChild(i)->getMaterial(0)["shininess"]->setFloat(shininess);
+                    mGeometryGroup->getChild(i)->getMaterial(0)["specularCoeff"]->setFloat(specularCoeff);
+                    break;
+                }
+                }
+            }
+            else
+            {
+                mGeometryGroup->getChild(i)->setMaterial(0,mSceneObjects->at(i)->getMaterial()->createMaterial(mContext));
+
+            }
         }
         mSceneObjects->at(i)->updateGeometry();
 
         if(mSceneObjects->at(i)->isGeometryChanged())
         {
-            std::cout << "updateSceneObjects: changed"  <<std::endl;
            if(mSceneObjects->at(i)->getGeometry()->getGeometryType() == BaseGeometry::SPHERE)
            {
                float3 position = mSceneObjects->at(i)->getGeometry()->position();
