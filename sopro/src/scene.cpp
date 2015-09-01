@@ -254,6 +254,7 @@ void Scene::updateSceneObjects()
                     mGeometryGroup->getChild(i)->getMaterial(0)["specularCoeff"]->setFloat(specularCoeff);
                     break;
                 }
+                case BaseMaterial::DISNEY : ;break;
                 }
             }
             else

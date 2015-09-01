@@ -32,7 +32,6 @@ TwBar *matBar;
 TwBar *geomBar;
 
 //dummy purpose
-float               p = 0.0f;
 int                 count = 0;
 
 void Display::init(int &argc, char **argv,const unsigned int width,const unsigned int height)
@@ -261,16 +260,14 @@ void Display::keyPressed(unsigned char key, int x, int y)
             cameraPosition -= moveSpeed * cameraDirection * deltaTime * 0.25f;
         }
         //5, dummy purpose, add dummy sphere
-        if(key == '5')
+        if(key == '+')
         {
 
-            std::shared_ptr<LambertMaterial> l = std::make_shared<LambertMaterial>(make_float3(0.05f * p,0.5f,0.3f));
-            std::shared_ptr<Sphere> s = std::make_shared<Sphere>(make_float3(p*2,0.0f,0.0f),1.0f);
-            std::string name = "sphere_" + std::to_string(mScene->getSceneObjectCount());
+            std::shared_ptr<LambertMaterial> l = std::make_shared<LambertMaterial>(make_float3(0.3f,0.5f,0.9f));
+            std::shared_ptr<Sphere> s = std::make_shared<Sphere>(make_float3(0.0f,0.0f,0.0f),1.0f);
+            std::string name = "Sphere_" + std::to_string(mScene->getSceneObjectCount());
             std::shared_ptr<SceneObject> obj = std::make_shared<SceneObject>(name,s,l);
             mScene->addSceneObject(obj);
-            p += 2.5f;
-            std::cout << p << std::endl;
 
             // add ATB variable
             // init new variables
@@ -278,13 +275,8 @@ void Display::keyPressed(unsigned char key, int x, int y)
             antTBarInit_geometry(obj.get(), geomBar, name);
 
         }
-        //6 dummy purpose, print number of scene objects
-        if(key == '6')
-        {
-            std::cout << mScene->getSceneObjectCount() << std::endl;
-        }
         //7 dummy purpose, delete dummy sphere
-        if(key == '7')
+        if(key == '-')
         {
             if(mScene->getSceneObjectCount() > 0)
             {
@@ -295,24 +287,8 @@ void Display::keyPressed(unsigned char key, int x, int y)
                                       geomBar, mScene->getSceneObject(mScene->getSceneObjectCount()-1)->getName());
 
                 mScene->removeObject(mScene->getSceneObjectCount()-1);
-                p -= 2.5f;
 
             }
-        }
-        //8 dummy purpose, change color of dummy
-        if(key == '8')
-        {
-            if(count < mScene->getSceneObjectCount())
-            {
-                if(mScene->getSceneObject(count)->getGeometry()->getGeometryType() == BaseGeometry::INFINITEPLANE){
-                    count++;
-                }
-                std::shared_ptr<LambertMaterial> l1 = std::make_shared<LambertMaterial>(make_float3(1.0f,0.5f,0.1f * count));
-                mScene->getSceneObject(count)->setMaterial(l1);
-
-                ++count;
-            }
-
         }
         // 9 dummy purpose, add infinity plane
         if(key == '9')
