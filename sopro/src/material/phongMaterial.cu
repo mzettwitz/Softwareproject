@@ -87,16 +87,15 @@ static __device__ void shade()
 {
     PerRayData_shadow shadowPrd;
 
+    float3 worldNormal = normalize(rtTransformNormal(RT_OBJECT_TO_WORLD,normal));
+    float3 N = faceforward(worldNormal,-ray.direction,worldNormal);
 
     //color information
-    float4 result = make_float4(0.0f,0.0f,0.0f,1.0f);
-    float3 diffuseColor = make_float3(0.0f,0.0f,0.0f);
-    float3 ambientColor = make_float3(0.0f,0.0f,0.0f);
-    float3 specularColor = make_float3(0.0f,0.0f,0.0f);
-    float3 phong = make_float3(0.0f,0.0f,0.0f);
-
-    float3 worldNormal = normalize(rtTransformNormal(RT_OBJECT_TO_WORLD,normal));
-    float3 ffNormal = faceforward(worldNormal,-ray.direction,worldNormal);
+    float3 fr = make_float3(0.0f,0.0f,0.0f);
+    float3 Kd = make_float3(0.0f,0.0f,0.0f);
+    float3 Ka = make_float3(0.0f,0.0f,0.0f);
+    float3 Ks = make_float3(0.0f,0.0f,0.0f);
+    float3 irradiance = make_float3(0.0f,0.0f,0.0f);
 
     //hitpoint information
     float3 hitPoint = ray.origin + intersectionDistance * ray.direction;
@@ -107,50 +106,47 @@ static __device__ void shade()
         //must be set here, otherways, only 1! shadow will be interpreted the right way
         shadowPrd.attenuation = make_float3(1.0f);
         //light values
-        float3 lightDirection = lights[i].position - hitPoint;        
-        float maxLambda = length(lightDirection);
+        float3 L = lights[i].position - hitPoint;
+        float maxLambda = length(L);
+        L = normalize(L);
+
+        //incoming light
         float radiance = lights[i].intensity / (maxLambda*maxLambda);
-        lightDirection = normalize(lightDirection);
-        float3 reflectedLightRay = reflect(lightDirection, ffNormal);
-        reflectedLightRay = normalize(reflectedLightRay);
+
+        //reflected Ray
+        float3 R = reflect(L, N);
+        R = normalize(R);
 
         // hitpoint offset
-        hitPoint = sceneEpsilon * ffNormal + hitPoint;
+        hitPoint = sceneEpsilon * N + hitPoint;
         // trace new shadow ray
-        Ray shadowRay = make_Ray(hitPoint,lightDirection,shadowRayType,sceneEpsilon,maxLambda);
+        Ray shadowRay = make_Ray(hitPoint,L,shadowRayType,sceneEpsilon,maxLambda);
         rtTrace(topShadower,shadowRay,shadowPrd);
 
-        //phong = Ka + Kd + Ks
-        //radiance = lights[i].intensity /dist²
-        //Ka = ambientCoeff * ambientLightIntensity
-        //Kd = diffuseCoeff * diffuseColor * distributionAngle(surfaceNormal, light) * radiance(localLightIntensity)
-        //Ks = specularCoff * (shininess+2)/(2*PI)* distributionAngle(ReflectedLight, eyeVector)^shininess * radiance
 
 
         // ambient outside to lighten shadowed parts
-        ambientColor = lights[i].color * color *  ambientCoefficient * radiance;
-        phong = ambientColor;
+        Ka = color *  ambientCoefficient;
+        fr = Ka;
 
         // if not in shadow
         if(fmaxf(shadowPrd.attenuation) > 0.0f)
         {
             // material color * coeff * (positive)surface angle * lightintensity at hitpoint
-            diffuseColor = lights[i].color * color * diffuseCoefficient * dot(ffNormal, lightDirection) * radiance;
+            Kd = color * diffuseCoefficient / M_PIf;
             // lightcolor * coeff * normalized shininess * (positive)angle between eye and reflected light ray ^ shininess * lightintensity at hitpoint
-            specularColor = lights[i].color * specularCoefficient * ((shininess + 2.f)/(2.f*M_PIf)) *
-                    pow(fmaxf(dot(ray.direction, reflectedLightRay),0.f), shininess) * radiance;
+            Ks = make_float3(specularCoefficient * ((shininess + 2.f)/(2.f*M_PIf)) *
+                    pow(fmaxf(dot(ray.direction, R),0.f), shininess));
 
-            phong += diffuseColor + specularColor;
+            fr += Kd + Ks;
 
         }
 
-
-        result.x += phong.x;
-        result.y += phong.y;
-        result.z += phong.z;
+        irradiance += fr * dot(N,L) * radiance * lights[i].color;
     }
 
-
+    irradiance = irradiance/lights.size();
+    float4 result = make_float4(irradiance,1);
     // recursive reflections
     if(specularity > 0.0f && prd_radiance.depth < maxDepth)
     {
@@ -159,14 +155,14 @@ static __device__ void shade()
         prd_radiance_reflect.depth = prd_radiance.depth+1;
 
         float maxLambda = 10000.0f;
-        Ray reflectedRay = make_Ray(hitPoint,reflect(ray.direction,normal),radianceRayType,sceneEpsilon,maxLambda);
+        Ray reflectedRay = make_Ray(hitPoint,reflect(ray.direction,N),radianceRayType,sceneEpsilon,maxLambda);
         rtTrace(topObject, reflectedRay, prd_radiance_reflect);
         result = (1.0f-specularity) * result + prd_radiance_reflect.result * specularity;
     }
 
-    result.w = 1.0f;
 
-    prd_radiance.result = result/lights.size();
+
+    prd_radiance.result = result;
 
 
 }

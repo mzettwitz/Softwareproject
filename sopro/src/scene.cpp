@@ -256,6 +256,7 @@ void Scene::updateSceneObjects()
                 }
                 case BaseMaterial::DISNEY : ;break;
                 }
+
             }
             else
             {
