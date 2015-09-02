@@ -142,7 +142,7 @@ static __device__ void shade()
 
         }
 
-        irradiance += fr * dot(N,L) * radiance * lights[i].color;
+        irradiance += fr * fmaxf(dot(N,L),0) * radiance * lights[i].color;
     }
 
     irradiance = irradiance/lights.size();
