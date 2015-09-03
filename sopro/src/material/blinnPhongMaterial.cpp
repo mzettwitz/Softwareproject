@@ -41,7 +41,7 @@ float &BlinnPhongMaterial::ambientCoeff()
 {
     return mAmbientCoeff;
 }
-void BlinnPhongMaterial::setAmbientCoeff(float ambientCoeff)
+void BlinnPhongMaterial::setAmbientCoeff(const float &ambientCoeff)
 {
     mAmbientCoeff = ambientCoeff;
 }
@@ -55,7 +55,7 @@ float &BlinnPhongMaterial::diffuseCoeff()
 {
     return mDiffuseCoeff;
 }
-void BlinnPhongMaterial::setDiffuseCoeff(float diffuseCoeff)
+void BlinnPhongMaterial::setDiffuseCoeff(const float &diffuseCoeff)
 {
     mDiffuseCoeff = diffuseCoeff;
 }
@@ -69,7 +69,7 @@ float &BlinnPhongMaterial::specularCoeff()
 {
     return mSpecularCoeff;
 }
-void BlinnPhongMaterial::setSpecularCoeff(float specularCoeff)
+void BlinnPhongMaterial::setSpecularCoeff(const float &specularCoeff)
 {
     mSpecularCoeff = specularCoeff;
 }
@@ -83,7 +83,7 @@ float &BlinnPhongMaterial::shininess()
 {
     return mShininess;
 }
-void BlinnPhongMaterial::setShininess(float shininess)
+void BlinnPhongMaterial::setShininess(const float &shininess)
 {
     mShininess = shininess;
 }
@@ -97,7 +97,7 @@ float &BlinnPhongMaterial::specularity()
 {
     return mSpecularity;
 }
-void BlinnPhongMaterial::setSpecularity(float specularity)
+void BlinnPhongMaterial::setSpecularity(const float &specularity)
 {
     mSpecularity = specularity;
 }

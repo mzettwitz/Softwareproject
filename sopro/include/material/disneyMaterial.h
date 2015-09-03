@@ -53,4 +53,6 @@ public:
         mMaterialType = DISNEY;
         setPTXPath("disneyMaterial.cu");
     }
+
+
 };

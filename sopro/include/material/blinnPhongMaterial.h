@@ -28,7 +28,7 @@ public:
 
     BlinnPhongMaterial(const std::shared_ptr<BaseMaterial> in1)
     {
-        std::shared_ptr<BlinnPhongMaterial> in = std::dynamic_pointer_cast<BlinnPhongMaterial(in1);
+        std::shared_ptr<BlinnPhongMaterial> in = std::dynamic_pointer_cast<BlinnPhongMaterial>(in1);
         mColor = in->color();
         mAmbientCoeff = in->ambientCoeff();
         mDiffuseCoeff = in->diffuseCoeff();
@@ -41,7 +41,7 @@ public:
 
     BlinnPhongMaterial(const std::shared_ptr<BaseMaterial> in1,float3 &newColor) : mColor(newColor)
     {
-        std::shared_ptr<BlinnPhongMaterial> in = std::dynamic_pointer_cast<BlinnPhongMaterial(in1);
+        std::shared_ptr<BlinnPhongMaterial> in = std::dynamic_pointer_cast<BlinnPhongMaterial>(in1);
         mAmbientCoeff = in->ambientCoeff();
         mDiffuseCoeff = in->diffuseCoeff();
         mSpecularCoeff = in->specularCoeff();
@@ -53,7 +53,7 @@ public:
 
     BlinnPhongMaterial(const std::shared_ptr<BaseMaterial> in1,float value, short pos)
     {
-        std::shared_ptr<BlinnPhongMaterial> in = std::dynamic_pointer_cast<BlinnPhongMaterial(in1);
+        std::shared_ptr<BlinnPhongMaterial> in = std::dynamic_pointer_cast<BlinnPhongMaterial>(in1);
         switch(pos)
         {
         case 1: // ambient coeff

@@ -1,3 +1,9 @@
+/*! \file ashikhminShirleyMaterial.h
+ *
+ *
+ *
+ */
+
 #ifndef ASHIKHMINSHIRLEYMATERIAL_H
 #define ASHIKHMINSHIRLEYMATERIAL_H
 
@@ -76,7 +82,7 @@ public:
             break;
         case 3: //Rs
             mColor = in->color();
-            mAnisotropicFactorU = in->anistropicFactorU();
+            mAnisotropicFactorU = in->anisotropicFactorU();
             mAnisotropicFactorV = in->anisotropicFactorV();
             mRs = value;
             mRd = in->rd();
@@ -85,7 +91,7 @@ public:
             break;
         case 4: //Rd
             mColor = in->color();
-            mAnisotropicFactorU = in->anistropicFactorU();
+            mAnisotropicFactorU = in->anisotropicFactorU();
             mAnisotropicFactorV = in->anisotropicFactorV();
             mRs = in->rs();
             mRd = value;
@@ -94,7 +100,7 @@ public:
             break;
         default: //pass through
             mColor = in->color();
-            mAnisotropicFactorU = in->anistropicFactorU();
+            mAnisotropicFactorU = in->anisotropicFactorU();
             mAnisotropicFactorV = in->anisotropicFactorV();
             mRs = in->rs();
             mRd = in->rd();

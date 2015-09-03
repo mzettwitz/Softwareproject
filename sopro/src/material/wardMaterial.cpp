@@ -61,7 +61,7 @@ const float& WardMaterial::y() const
     return mY;
 }
 
-float WardMaterial::y()
+float& WardMaterial::y()
 {
     return mY;
 }

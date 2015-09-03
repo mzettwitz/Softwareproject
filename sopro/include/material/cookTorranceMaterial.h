@@ -119,7 +119,7 @@ public:
     void setRoughness(const float &roughness);
 
     const float& reflectance() const;
-    float reflectance();
+    float& reflectance();
     void setReflectance(const float &reflectance);
 
 
