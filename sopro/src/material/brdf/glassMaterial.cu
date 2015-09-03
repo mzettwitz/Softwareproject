@@ -3,7 +3,7 @@
 // - trace with stack
 // - Beer's law
 
-#include "../../include/structs.h"
+#include "../../../include/structs.h"
 
 #include <optix.h>
 #include <optixu/optixu_math_namespace.h>

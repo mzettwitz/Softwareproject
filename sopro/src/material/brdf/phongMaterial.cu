@@ -1,6 +1,6 @@
 //TODO: fix the shading to the brdf
 
-#include "../../include/structs.h"
+#include "../../../include/structs.h"
 
 #include <optix.h>
 #include <optixu/optixu_math_namespace.h>

@@ -6,7 +6,6 @@
 class Sphere : public BaseGeometry
 {
     float mRadius;
-    bool changed;
 
 public:
     // ------------------------CTor
@@ -74,7 +73,6 @@ public:
 
     // Setter
     void setRadius(float r);
-    bool isChanged();
     // Special getter for ATB
     const float& radius() const;
     float& radius();

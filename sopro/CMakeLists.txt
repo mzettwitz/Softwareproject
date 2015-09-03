@@ -22,15 +22,23 @@ OPTIX_add_sample_executable(sopro
 	src/material/phongMaterial.cpp
 	src/material/glassMaterial.cpp
 	src/material/disneyMaterial.cpp
+	src/material/blinnPhongMaterial.cpp
+	src/material/wardMaterial.cpp
+	src/material/cookTorranceMaterial.cpp
+	src/material/ashikhminShirleyMaterial.cpp
 
 	#Material Cuda/Raytracing
 	src/pinholeCamera.cu
 	src/miss.cu
 	src/entrypoint.cu
-	src/material/lambertMaterial.cu
-	src/material/phongMaterial.cu
-	src/material/glassMaterial.cu
-	src/material/disneyMaterial.cu
+	src/material/brdf/lambertMaterial.cu
+	src/material/brdf/phongMaterial.cu
+	src/material/brdf/glassMaterial.cu
+	src/material/brdf/disneyMaterial.cu
+	src/material/brdf/blinnPhongMaterial.cu
+	src/material/brdf/wardMaterial.cu
+	src/material/brdf/ashikhminShirleyMaterial.cu
+	src/material/brdf/cookTorranceMaterial.cu
 
 	#Geometry
 	src/geometry/baseGeometry.cpp
@@ -38,12 +46,14 @@ OPTIX_add_sample_executable(sopro
 	src/geometry/areaPlane.cpp
 	src/geometry/infinitePlane.cpp
 	src/geometry/mesh.cpp
+	src/geometry/meshLoader.cpp
 	src/geometry/sphere.cpp
 
 	#Geometry Cuda/Raytracing
 	src/geometry/infinitePlane.cu
 	src/geometry/areaPlane.cu
 	src/geometry/sphere.cu
+	src/geometry/mesh.cu
 
 	#####Include Directories
 	#Scene
@@ -71,6 +81,10 @@ OPTIX_add_sample_executable(sopro
 	include/material/phongMaterial.h
 	include/material/glassMaterial.h
 	include/material/disneyMaterial.h
+	include/material/blinnPhongMaterial.h
+	include/material/wardMaterial.h
+	include/material/cookTorranceMaterial.h
+	include/material/ashikhminShirleyMaterial.h
 
 	#Geometry
 	include/geometry/baseGeometry.h
@@ -78,5 +92,6 @@ OPTIX_add_sample_executable(sopro
 	include/geometry/areaPlane.h
 	include/geometry/infinitePlane.h
 	include/geometry/mesh.h
-	include/geometry/sphere.h 
+	include/geometry/sphere.h
+	include/geometry/meshLoader.h 
 )

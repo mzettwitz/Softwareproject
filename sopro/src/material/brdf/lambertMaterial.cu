@@ -1,5 +1,5 @@
 
-#include "../../include/structs.h"
+#include "../../../include/structs.h"
 
 #include <optix.h>
 #include <optixu/optixu_math_namespace.h>
@@ -67,12 +67,13 @@ static __device__ void shade()
     PerRayData_shadow shadowPrd;
     //result color
     float4 result = make_float4(0.0f,0.0f,0.0f,1.0f);
+    float3 irradiance = make_float3(0,0,0);
     float3 fr = make_float3(0.0f,0.0f,0.0f);
 
     //iterate over every light source
     for(unsigned int i = 0;i < lights.size();++i)
     {
-
+        fr = make_float3(0,0,0);
         shadowPrd.attenuation = make_float3(1.0f);
 
         //light values
@@ -98,9 +99,9 @@ static __device__ void shade()
             fr = color / M_PIf;
         }
 
-        result += make_float4(fmaxf(dot(N,L),0) * fr * lights[i].color * radiance,1);
+        irradiance += fmaxf(dot(N,L),0) * fr * lights[i].color * radiance;
 
     }
-    result.w = 1.0f;
+    result = make_float4(irradiance,1);
     prd_radiance.result = result/lights.size();
 }

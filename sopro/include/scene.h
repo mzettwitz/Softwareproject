@@ -39,7 +39,7 @@ public:
     std::shared_ptr<std::vector<std::shared_ptr<SceneObject>>>   getSceneObjects();
     std::shared_ptr<SceneObject>    getSceneObject(const std::string &name);
     std::shared_ptr<SceneObject>    getSceneObject(const unsigned int index);
-    int                             getSceneObjectCount();   
+    int                             getSceneObjectCount();
     optix::Buffer                   getOutputBuffer();
     void                            resizeBuffer(int width, int height);
     void                            setSceneEpsilon(float amount);

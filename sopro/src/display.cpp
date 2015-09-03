@@ -7,6 +7,7 @@
 #include "../sopro/include/ATB/antTBar.h"
 #include "../include/geometry/sphere.h"
 #include "../include/geometry/infinitePlane.h"
+#include "../include/geometry/mesh.h"
 
 
 using namespace optix;
@@ -308,6 +309,17 @@ void Display::keyPressed(unsigned char key, int x, int y)
         if(key == 'x')
         {
                 mScene->setSceneEpsilon(0.1e-3f);
+        }
+        if(key == '5')
+        {
+           std::shared_ptr<Mesh> m = std::make_shared<Mesh>("dragonBlender.obj",make_float3(0,0,0));
+           std::shared_ptr<LambertMaterial> p = std::make_shared<LambertMaterial>(make_float3(1.0f,1.0f,1.0f));
+           std::shared_ptr<SceneObject> sc = std::make_shared<SceneObject>("mesh",m,p);
+
+           mScene->addSceneObject(sc);
+           //antTBarInit_material(sc.get(),matBar,"mesh");
+           //antTBarInit_geometry(sc.get(),geombar,"mesh");
+
         }
     }
     //needs to be called, to update change

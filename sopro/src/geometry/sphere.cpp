@@ -19,7 +19,8 @@ Geometry Sphere::createGeometry(Context context) const
 void Sphere::setRadius(float r)
 {
         mRadius = r;
-        setPosition(mPos);
+        //setPosition(mPos);
+        changed = true;
 }
 
 // Special getter for ATB
