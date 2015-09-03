@@ -243,13 +243,11 @@ void Scene::updateSceneObjects()
                 case BaseMaterial::GLASS : ;break;
                 {
                     std::shared_ptr<GlassMaterial> glass = std::dynamic_pointer_cast<GlassMaterial>(mSceneObjects->at(i)->getMaterial());
-                    float4 c = glass->color();
-                    float specularity = glass->specularity();
+                    float3 c = glass->color();
                     float shininess = glass->shininess();
                     float specularCoeff = glass->specularCoeff();
 
-                    mGeometryGroup->getChild(i)->getMaterial(0)["color"]->setFloat(c.x,c.y,c.z,c.w);
-                    mGeometryGroup->getChild(i)->getMaterial(0)["specularity"]->setFloat(specularity);
+                    mGeometryGroup->getChild(i)->getMaterial(0)["color"]->setFloat(c.x,c.y,c.z);
                     mGeometryGroup->getChild(i)->getMaterial(0)["shininess"]->setFloat(shininess);
                     mGeometryGroup->getChild(i)->getMaterial(0)["specularCoeff"]->setFloat(specularCoeff);
                     break;

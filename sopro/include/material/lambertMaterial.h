@@ -44,22 +44,6 @@ public :
         setPTXPath("lambertMaterial.cu");
     }
 
-    //--------------- CTor for material conversion
-    // Glass
-    /*!
-     * \brief CTor to generate a \class LambertMaterial object based on a given color.
-     *
-     * \note Useful for conversion from \class GlassMaterial.
-     *
-     * \param col RGBA color information for mColor.
-     */
-    LambertMaterial(const float4 &col)
-    {
-        mColor = make_float3(col.x, col.y, col.z);
-        mMaterialType = LAMBERT;
-        setPTXPath("lambertMaterial.cu");
-    }
-
     Material createMaterial(Context context) const override;
 
     // Setter

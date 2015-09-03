@@ -192,7 +192,7 @@ public:
     PhongMaterial(const float3 &col) :
         mColor(col)
     {
-        mAmbientCoeff = 1.f;
+        mAmbientCoeff = 0.f;
         mDiffuseCoeff = 1.f;
         mSpecularCoeff = 1.f;
         mShininess = 1.f;
@@ -211,14 +211,14 @@ public:
      * \param shine Float value for \var mShininess
      * \param spec Float value for \var mSpecularity
      */
-    PhongMaterial(const float3 &col, float specC, float shine, float spec)
+    PhongMaterial(const float3 &col, float specC, float shine)
     {
         mColor = make_float3(col.x, col.y, col.z);
-        mAmbientCoeff = 1.f;
+        mAmbientCoeff = 0.f;
         mDiffuseCoeff = 1.f;
         mSpecularCoeff = specC;
         mShininess = shine;
-        mSpecularity = spec;
+        mSpecularity = 0.5f;
         mMaterialType = PHONG;
         setPTXPath("phongMaterial.cu");
     }

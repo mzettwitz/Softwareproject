@@ -19,27 +19,19 @@ static void TW_CALL getColorCB(void* value, void* clientData)
     case BaseMaterial::PHONG:
         *((float3*) value) =  static_cast<PhongMaterial*>(tmpSO->getMaterial().get())->color();
         break;
-    }
-}
-static void TW_CALL getColor4CB(void* value, void* clientData)
-{
-    // get sceneObject
-    SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
-    // get color from specific sceneObject material
-    switch(tmpSO->getMaterial()->getMaterialType())
-    {
     case BaseMaterial::GLASS:
-        *((float4*) value) =  static_cast<GlassMaterial*>(tmpSO->getMaterial().get())->color();
+        *((float3*) value) =  static_cast<GlassMaterial*>(tmpSO->getMaterial().get())->color();
         break;
     }
 }
+
 //----- Color setter
 static void TW_CALL setColorCB(const void* value, void* clientData)
 {
     // save params in temporary pointer
     SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
     float3 v = *((float3*)value);
-    // create a new LambertMaterial
+    // create a new Material
     if(tmpSO->getMaterial()->getMaterialType() == BaseMaterial::LAMBERT)
     {
         std::shared_ptr<LambertMaterial> lamMat = std::make_shared<LambertMaterial>(make_float3(v.x, v.y, v.z));
@@ -51,21 +43,12 @@ static void TW_CALL setColorCB(const void* value, void* clientData)
         std::shared_ptr<PhongMaterial> phongMat = std::make_shared<PhongMaterial>(tmpSO->getMaterial(), make_float3(v.x, v.y, v.z));
         tmpSO->setMaterial(phongMat);
     }
-}
-static void TW_CALL setColor4CB(const void* value, void* clientData)
-{
-    // save params in temporary pointer
-    SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
-    float4 v = *((float4*)value);
-    // create a new LambertMaterial
-    if(tmpSO->getMaterial()->getMaterialType() == BaseMaterial::GLASS)
+    else if(tmpSO->getMaterial()->getMaterialType() == BaseMaterial::GLASS)
     {
-        std::shared_ptr<GlassMaterial> glassMat = std::make_shared<GlassMaterial>(tmpSO->getMaterial(), make_float4(v.x, v.y, v.z, v.w));
-        // overwrite the old material with the new One
+        std::shared_ptr<GlassMaterial> glassMat = std::make_shared<GlassMaterial>(tmpSO->getMaterial(), make_float3(v.x, v.y, v.z));
         tmpSO->setMaterial(glassMat);
     }
 }
-
 
 //------------------------- Lambert
 //----- Button to convert into Lambert
@@ -79,7 +62,7 @@ static void TW_CALL lambertButtonCB(void* clientData)
         oldMat = "Phong";
         PhongMaterial* p = (PhongMaterial*)tmpSO->getMaterial().get();
         std::shared_ptr<LambertMaterial> lamMat = std::make_shared<LambertMaterial>
-                (make_float3(p->color().x, p->color().y, p->color().z));
+                (p->color());
         // overwrite the old Material with the new one
         tmpSO->setMaterial(lamMat);
     }
@@ -89,7 +72,7 @@ static void TW_CALL lambertButtonCB(void* clientData)
         oldMat = "Glass";
         GlassMaterial* p = (GlassMaterial*)tmpSO->getMaterial().get();
         std::shared_ptr<LambertMaterial> lamMat = std::make_shared<LambertMaterial>
-                (make_float3(p->color().x, p->color().y, p->color().z));
+                (p->color());
         // overwrite the old Material with the new one
         tmpSO->setMaterial(lamMat);
     }
@@ -110,7 +93,7 @@ static void TW_CALL phongButtonCB(void* clientData)
         oldMat = "Lambert";
         LambertMaterial* p = (LambertMaterial*)tmpSO->getMaterial().get();
         std::shared_ptr<PhongMaterial> phongMat = std::make_shared<PhongMaterial>
-                (make_float3(p->color().x, p->color().y, p->color().z));
+                (p->color());
         tmpSO->setMaterial(phongMat);
     }
     else if(tmpSO->getMaterial()->getMaterialType() == BaseMaterial::GLASS)
@@ -119,7 +102,7 @@ static void TW_CALL phongButtonCB(void* clientData)
         oldMat = "Glass";
         GlassMaterial* p = (GlassMaterial*)tmpSO->getMaterial().get();
         std::shared_ptr<PhongMaterial> phongMat = std::make_shared<PhongMaterial>
-                (make_float3(p->color().x, p->color().y, p->color().z), p->specularCoeff(), p->shininess(), p->specularity());
+                (p->color(), p->specularCoeff(), p->shininess());
         tmpSO->setMaterial(phongMat);
     }
     // re-init new variables
@@ -208,7 +191,7 @@ static void TW_CALL glassButtonCB(void* clientData)
         oldMat = "Lambert";
         LambertMaterial* p = (LambertMaterial*)tmpSO->getMaterial().get();
         std::shared_ptr<GlassMaterial> glassMat = std::make_shared<GlassMaterial>
-                (make_float3(p->color().x, p->color().y, p->color().z));
+                (p->color());
         tmpSO->setMaterial(glassMat);
     }
     else if(tmpSO->getMaterial()->getMaterialType() == BaseMaterial::PHONG)
@@ -217,7 +200,7 @@ static void TW_CALL glassButtonCB(void* clientData)
         oldMat = "Phong";
         PhongMaterial* p = (PhongMaterial*)tmpSO->getMaterial().get();
         std::shared_ptr<GlassMaterial> glassMat = std::make_shared<GlassMaterial>
-                (make_float3(p->color().x, p->color().y, p->color().z), p->specularity(), p->shininess(), p->specularCoeff());
+                (p->color(), p->shininess(), p->specularCoeff());
         tmpSO->setMaterial(glassMat);
     }
     // re-init new variables
@@ -235,20 +218,6 @@ static void TW_CALL setGlassRefractiveIdxCB(const void* value, void* clientData)
     SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
     float v = *((float*)value);
     std::shared_ptr<GlassMaterial> glassMat = std::make_shared<GlassMaterial>(tmpSO->getMaterial(), v, 1);
-    tmpSO->setMaterial(glassMat);
-}
-//----- Specularity getter
-static void TW_CALL getGlassSpecularityCB(void* value, void* clientData)
-{
-    SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
-    *((float*) value) =  static_cast<GlassMaterial*>(tmpSO->getMaterial().get())->specularity();
-}
-//----- Specularity setter
-static void TW_CALL setGlassSpecularityCB(const void* value, void* clientData)
-{
-    SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
-    float v = *((float*)value);
-    std::shared_ptr<GlassMaterial> glassMat = std::make_shared<GlassMaterial>(tmpSO->getMaterial(), v, 2);
     tmpSO->setMaterial(glassMat);
 }
 //----- Shininess getter
@@ -382,14 +351,11 @@ void antTBar_material(std::shared_ptr<Scene> scene, TwBar *bar)
         else if(scene->getSceneObject(i)->getMaterial()->getMaterialType() == BaseMaterial::GLASS)
         {
             //---------- set name to specific variable
-            std::string nameVarC = name + " Color4";
-            const char* nameVarCC = nameVarC.c_str();
+            std::string nameVar1 = name + " Color";
+            const char* nameVar1C = nameVar1.c_str();
 
             std::string nameVar2 = name + " Refractive Index";
             const char* nameVar2C = nameVar2.c_str();
-
-            std::string nameVar3 = name + " Specularity";
-            const char* nameVar3C = nameVar3.c_str();
 
             std::string nameVar4 = name + " Shininess";
             const char* nameVar4C = nameVar4.c_str();
@@ -397,24 +363,21 @@ void antTBar_material(std::shared_ptr<Scene> scene, TwBar *bar)
             std::string nameVar5 = name + " Specular Coeff";
             const char* nameVar5C = nameVar5.c_str();
 
-
             //------------ ATB variables
             // ATB Variable for color props
-            TwAddVarCB(bar, nameVarCC, TW_TYPE_COLOR4F, setColor4CB, getColor4CB, scene->getSceneObject(i).get(), grpNameC);
+            TwAddVarCB(bar, nameVar1C, TW_TYPE_COLOR3F, setColorCB, getColorCB, scene->getSceneObject(i).get(), grpNameC);
 
             // ATB Buttons to convert into another Material Type
             TwAddButton(bar, nameLButtonC, lambertButtonCB, scene->getSceneObject(i).get(), grpNameC);
             TwAddButton(bar, namePButtonC, phongButtonCB, scene->getSceneObject(i).get(), grpNameC);
 
-            // ATB Variable for refractiveIndex and specularity
+            // ATB Variable for refractiveIndex
             TwAddVarCB(bar, nameVar2C, TW_TYPE_FLOAT, setGlassRefractiveIdxCB, getGlassRefractiveIdxCB, scene->getSceneObject(i).get(), grpNameFloat5C);
-            TwAddVarCB(bar, nameVar3C, TW_TYPE_FLOAT, setGlassSpecularityCB, getGlassSpecularityCB, scene->getSceneObject(i).get(), grpNameFloat1C);
 
             // ATB Variable for shininess and specularCoefficient
             TwAddVarCB(bar, nameVar4C, TW_TYPE_FLOAT, setGlassShininessCB, getGlassShininessCB, scene->getSceneObject(i).get(), grpNameFloatC);
             TwAddVarCB(bar, nameVar5C, TW_TYPE_FLOAT, setGlassSpecularCoeffCB, getGlassSpecularCoeffCB, scene->getSceneObject(i).get(), grpNameFloat1C);
         }
-
     }
 
 }
@@ -523,9 +486,6 @@ void antTBarInit_material(SceneObject* scObj, TwBar *bar, std::string objName)
         std::string nameVar2 = objName + " Refractive Index";
         const char* nameVar2C = nameVar2.c_str();
 
-        std::string nameVar3 = objName + " Specularity";
-        const char* nameVar3C = nameVar3.c_str();
-
         std::string nameVar4 = objName + " Shininess";
         const char* nameVar4C = nameVar4.c_str();
 
@@ -535,15 +495,14 @@ void antTBarInit_material(SceneObject* scObj, TwBar *bar, std::string objName)
 
         //------------ ATB variables
         // ATB Variable for color props
-        TwAddVarCB(bar, nameVar1C, TW_TYPE_COLOR4F, setColor4CB, getColor4CB, scObj, grpNameC);
+        TwAddVarCB(bar, nameVar1C, TW_TYPE_COLOR3F, setColorCB, getColorCB, scObj, grpNameC);
 
         // ATB Buttons to convert into another Material Type
         TwAddButton(bar, nameLButtonC, lambertButtonCB, scObj, grpNameC);
         TwAddButton(bar, namePButtonC, phongButtonCB, scObj, grpNameC);
 
-        // ATB Variable for refractiveIndex and specularity
+        // ATB Variable for refractiveIndex
         TwAddVarCB(bar, nameVar2C, TW_TYPE_FLOAT, setGlassRefractiveIdxCB, getGlassRefractiveIdxCB, scObj, grpNameFloat5C);
-        TwAddVarCB(bar, nameVar3C, TW_TYPE_FLOAT, setGlassSpecularityCB, getGlassSpecularityCB, scObj, grpNameFloat1C);
 
         // ATB Variable for shininess and specularCoefficient
         TwAddVarCB(bar, nameVar4C, TW_TYPE_FLOAT, setGlassShininessCB, getGlassShininessCB, scObj, grpNameFloatC);
@@ -638,9 +597,6 @@ void antTBarRemoveVariable_material(SceneObject *scObj, TwBar *bar, std::string 
         std::string nameVar2 = objName + " Refractive Index";
         const char* nameVar2C = nameVar2.c_str();
 
-        std::string nameVar3 = objName + " Specularity";
-        const char* nameVar3C = nameVar3.c_str();
-
         std::string nameVar4 = objName + " Shininess";
         const char* nameVar4C = nameVar4.c_str();
 
@@ -656,9 +612,8 @@ void antTBarRemoveVariable_material(SceneObject *scObj, TwBar *bar, std::string 
         TwRemoveVar(bar, nameLButtonC);
         TwRemoveVar(bar, namePButtonC);
 
-        // ATB Variable for refractiveIndex and specularity
+        // ATB Variable for refractiveIndex
         TwRemoveVar(bar, nameVar2C);
-        TwRemoveVar(bar, nameVar3C);
 
         // ATB Variable for shininess and specularCoefficient
         TwRemoveVar(bar, nameVar4C);
@@ -753,17 +708,8 @@ void antTBarReInit_material(std::string oldMat, SceneObject* scObj, TwBar *bar, 
     else if(oldMat == "Glass")
     {
         //---------- set name to specific variable
-        std::string nameVar1 = objName + " Color";
-        const char* nameVar1C = nameVar1.c_str();
-
-        std::string nameVarC = objName + " Color4";
-        const char* nameVarCC = nameVarC.c_str();
-
         std::string nameVar2 = objName + " Refractive Index";
         const char* nameVar2C = nameVar2.c_str();
-
-        std::string nameVar3 = objName + " Specularity";
-        const char* nameVar3C = nameVar3.c_str();
 
         std::string nameVar4 = objName + " Shininess";
         const char* nameVar4C = nameVar4.c_str();
@@ -773,16 +719,11 @@ void antTBarReInit_material(std::string oldMat, SceneObject* scObj, TwBar *bar, 
 
         //------------ ATB variables
         // ATB Buttons to convert into another Material Type
-        //Color
-        TwAddVarCB(bar, nameVar1C, TW_TYPE_COLOR3F, setColorCB, getColorCB, scObj, grpNameC);
-        TwRemoveVar(bar, nameVarCC);
-
         TwRemoveVar(bar, nameLButtonC);
         TwRemoveVar(bar, namePButtonC);
 
-        // ATB Variable for refractiveIndex and specularity
+        // ATB Variable for refractiveIndex
         TwRemoveVar(bar, nameVar2C);
-        TwRemoveVar(bar, nameVar3C);
 
         // ATB Variable for shininess and specularCoefficient
         TwRemoveVar(bar, nameVar4C);
@@ -836,14 +777,8 @@ void antTBarReInit_material(std::string oldMat, SceneObject* scObj, TwBar *bar, 
         std::string nameVar1 = objName + " Color";
         const char* nameVar1C = nameVar1.c_str();
 
-        std::string nameVarC = objName + " Color4";
-        const char* nameVarCC = nameVarC.c_str();
-
         std::string nameVar2 = objName + " Refractive Index";
         const char* nameVar2C = nameVar2.c_str();
-
-        std::string nameVar3 = objName + " Specularity";
-        const char* nameVar3C = nameVar3.c_str();
 
         std::string nameVar4 = objName + " Shininess";
         const char* nameVar4C = nameVar4.c_str();
@@ -852,17 +787,12 @@ void antTBarReInit_material(std::string oldMat, SceneObject* scObj, TwBar *bar, 
         const char* nameVar5C = nameVar5.c_str();
 
         //------------ ATB variables
-        // ATB Color Variables
-        TwAddVarCB(bar, nameVarCC, TW_TYPE_COLOR4F, setColor4CB, getColor4CB, scObj, grpNameC);
-        TwRemoveVar(bar, nameVar1C);
-
         // ATB Buttons to convert into another Material Type
         TwAddButton(bar, nameLButtonC, lambertButtonCB, scObj, grpNameC);
         TwAddButton(bar, namePButtonC, phongButtonCB, scObj, grpNameC);
 
-        // ATB Variable for refractiveIndex and specularity
+        // ATB Variable for refractiveIndex
         TwAddVarCB(bar, nameVar2C, TW_TYPE_FLOAT, setGlassRefractiveIdxCB, getGlassRefractiveIdxCB, scObj, grpNameFloat5C);
-        TwAddVarCB(bar, nameVar3C, TW_TYPE_FLOAT, setGlassSpecularityCB, getGlassSpecularityCB, scObj, grpNameFloat1C);
 
         // ATB Variable for shininess and specularCoefficient
         TwAddVarCB(bar, nameVar4C, TW_TYPE_FLOAT, setGlassShininessCB, getGlassShininessCB, scObj, grpNameFloatC);

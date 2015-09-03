@@ -1,6 +1,4 @@
 // TODO:
-// - refraction method correct?
-// - trace with stack
 // - Beer's law
 
 #include "../../../include/structs.h"
@@ -22,9 +20,8 @@ rtDeclareVariable(rtObject, topObject,,);
 rtDeclareVariable(unsigned int,maxDepth,,);
 rtBuffer<PointLight> lights;
 rtDeclareVariable(float,intersectionDistance,rtIntersectionDistance,);
-rtDeclareVariable(float4, color,,);
+rtDeclareVariable(float3, color,,);
 rtDeclareVariable(float, refractiveIdx,,);
-rtDeclareVariable(float, specularity,,);
 rtDeclareVariable(float, shininess,,);
 rtDeclareVariable(float, specularCoeff,,);
 rtDeclareVariable(float3, normal, attribute normal,);
@@ -143,10 +140,6 @@ static __device__ void shade()
             lightDirection = normalize(lightDirection);
             float3 reflectedLightRay = normalize(reflect(lightDirection,normal));
 
-            float3 offset3 = hitPoint + sceneEpsilon * N;
-
-            //Ray shadowRay = make_Ray(offset3,lightDirection,shadowRayType,sceneEpsilon,maxLambda);
-           // rtTrace(topShadower,shadowRay,shadowprd);
             if(fmaxf(shadowprd.attenuation) > 0.0f)
             {
                 specularColor = make_float4(lights[i].color * specularCoeff * ((shininess + 2.f)/(2.f*M_PIf)) *
@@ -184,8 +177,8 @@ static __device__ void shade()
         }
     }
 
-    float r0 = ((1-refractiveIdx)*(1-refractiveIdx))/((1+refractiveIdx)*(1+refractiveIdx));
-    float r1 = r0 + (1-r0) * powGPU(1-dotD,5);
+    float r0 = ((1.f-refractiveIdx)*(1.f-refractiveIdx))/((1.f+refractiveIdx)*(1.f+refractiveIdx));
+    float r1 = r0 + (1.f-r0) * powGPU(1.f-dotD,5.f);
 
     Ray reflectedRay = make_Ray(offset1,R,radianceRayType,sceneEpsilon,10000.0f);
     Ray refractedRay = make_Ray(offset2,T,radianceRayType,sceneEpsilon,10000.0f);
@@ -204,7 +197,7 @@ static __device__ void shade()
         rtTrace(topObject,refractedRay,prd_refracted);
     }
     result = result / lights.size();
-    result +=color * ( r1 * prd_reflected.result + (1-r1) * prd_refracted.result);
+    result += make_float4(color,1.f) * ( r1 * prd_reflected.result + (1-r1) * prd_refracted.result);
 
 
 

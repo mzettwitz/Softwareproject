@@ -70,10 +70,7 @@ static __device__ void shadowed()
  *
  * \var shadowPrd The ray information for the shadow ray.
  * \var result RGBA color for the resulting color in the hitpoint.
- * \var diffuseColor RGB color for the diffuse part of the \class PhongMaterial
- * \var ambientColor RGB color for the ambient light color of the \class PhongMaterial
- * \var specularColor Float value to add highlights to \class PhongMaterial
- * \var phong RGB color to sum up the three parts of the \class PhongMaterial
+ * \var p RGB color to sum up the three parts of the \class PhongMaterial
  * \var hitPoint 3D float vector for the intersection between camera ray and object
  * \var lightDirection 3D float vector for the direction of the actual lightsource
  * \var maxLambda Float value describing the distance between actual lightsource and hitpoint
