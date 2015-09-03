@@ -24,7 +24,8 @@ rtDeclareVariable(float3, color,,);
 rtDeclareVariable(float, refractiveIdx,,);
 rtDeclareVariable(float, shininess,,);
 rtDeclareVariable(float, specularCoeff,,);
-rtDeclareVariable(float3, normal, attribute normal,);
+rtDeclareVariable(float3, geometricNormal, attribute geometricNormal,);
+rtDeclareVariable(float3, shadingNormal, attribute shadingNormal,);
 
 static __device__ void shadowed();
 static __device__ void shade();
@@ -104,6 +105,10 @@ static __device__ void shade()
 
     //hitpoint information
     float3 hitPoint = ray.origin + intersectionDistance * ray.direction;
+
+    float3 geometricWorldNormal = normalize(rtTransformNormal(RT_OBJECT_TO_WORLD,geometricNormal));
+    float3 shadingWorldNormal = normalize(rtTransformNormal(RT_OBJECT_TO_WORLD,shadingNormal));
+    float3 normal = faceforward(shadingWorldNormal,-ray.direction,geometricWorldNormal);
 
     float3 D = ray.direction;
     float3 N = normal;

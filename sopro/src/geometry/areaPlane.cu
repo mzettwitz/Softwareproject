@@ -8,7 +8,9 @@ rtDeclareVariable(float3, position,,);
 rtDeclareVariable(float3,dimensions,,);
 rtDeclareVariable(Ray,ray,rtCurrentRay,);
 rtDeclareVariable(float,sceneEpsilon,,);
-rtDeclareVariable(float4, normal, attribute normal,);
+rtDeclareVariable(float3, geometricNormal, attribute geometricNormal,);
+rtDeclareVariable(float3, shadingNormal, attribute shadingNormal,);
+
 
 RT_PROGRAM void areaPlaneIntersectionProgram(int primIdx)
 {

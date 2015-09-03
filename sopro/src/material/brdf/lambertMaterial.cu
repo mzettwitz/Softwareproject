@@ -17,7 +17,8 @@ rtDeclareVariable(rtObject, topShadower,,);
 rtBuffer<PointLight> lights;
 rtDeclareVariable(float, intersectionDistance, rtIntersectionDistance,);
 rtDeclareVariable(float3,color,,);
-rtDeclareVariable(float3, normal, attribute normal,);
+rtDeclareVariable(float3, geometricNormal, attribute geometricNormal,);
+rtDeclareVariable(float3, shadingNormal, attribute shadingNormal,);
 
 static __device__ void shadowed();
 static __device__ void shade();
@@ -61,8 +62,9 @@ static __device__ void shade()
 {
 
 
-    float3 worldNormal = normalize(rtTransformNormal(RT_OBJECT_TO_WORLD,normal));
-    float3 N = faceforward(worldNormal,-ray.direction,worldNormal);
+    float3 geometricWorldNormal = normalize(rtTransformNormal(RT_OBJECT_TO_WORLD,geometricNormal));
+    float3 shadingWorldNormal = normalize(rtTransformNormal(RT_OBJECT_TO_WORLD,shadingNormal));
+    float3 N = faceforward(shadingWorldNormal,-ray.direction,geometricWorldNormal);
     //payload for shadow Ray
     PerRayData_shadow shadowPrd;
     //result color

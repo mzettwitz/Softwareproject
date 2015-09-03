@@ -7,8 +7,8 @@ using namespace optix;
 rtDeclareVariable(float3,plane,,);
 rtDeclareVariable(Ray,ray,rtCurrentRay,);
 rtDeclareVariable(float,sceneEpsilon,,);
-rtDeclareVariable(float3,normal, attribute normal,);
-
+rtDeclareVariable(float3, geometricNormal, attribute geometricNormal,);
+rtDeclareVariable(float3, shadingNormal, attribute shadingNormal,);
 RT_PROGRAM void infinitePlaneIntersectionProgram(int primIdx)
 {
     float t = 0;
@@ -16,7 +16,8 @@ RT_PROGRAM void infinitePlaneIntersectionProgram(int primIdx)
     {
         if(rtPotentialIntersection(t))
         {
-            normal = make_float3(0.0f,1.0f,0.0f);
+            geometricNormal = make_float3(0.0f,1.0f,0.0f);
+            shadingNormal = make_float3(0.0f,1.0f,0.0f);
             rtReportIntersection(0);
         }
     }

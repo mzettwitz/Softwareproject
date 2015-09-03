@@ -25,7 +25,8 @@ rtDeclareVariable(float, diffuseCoefficient,,);
 rtDeclareVariable(float, specularCoefficient,,);
 rtDeclareVariable(float, shininess,,);
 rtDeclareVariable(float, specularity,,);
-rtDeclareVariable(float3, normal, attribute normal,);
+rtDeclareVariable(float3, geometricNormal, attribute geometricNormal,);
+rtDeclareVariable(float3, shadingNormal, attribute shadingNormal,);
 
 
 static __device__ void shadowed();
@@ -84,8 +85,9 @@ static __device__ void shade()
 {
     PerRayData_shadow shadowPrd;
 
-    float3 worldNormal = normalize(rtTransformNormal(RT_OBJECT_TO_WORLD,normal));
-    float3 N = faceforward(worldNormal,-ray.direction,worldNormal);
+    float3 geometricWorldNormal = normalize(rtTransformNormal(RT_OBJECT_TO_WORLD,geometricNormal));
+    float3 shadingWorldNormal = normalize(rtTransformNormal(RT_OBJECT_TO_WORLD,shadingNormal));
+    float3 N = faceforward(shadingWorldNormal,-ray.direction,geometricWorldNormal);
 
     //color information
     float3 fr = make_float3(0.0f,0.0f,0.0f);
