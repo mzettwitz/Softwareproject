@@ -20,10 +20,10 @@
 #pragma once
 
 #include "baseMaterial.h"
-/*
+
 using namespace optix;
 
-class DisneyMaterial : public DisneyMaterial
+class DisneyMaterial : public BaseMaterial
 {
 private:
     float3  mColor;
@@ -38,7 +38,7 @@ private:
     float   mClearcoat;
     float   mClearcoatGloss;
 
-public:*/
+public:
     //---------------------CTor
     //------------Advanced CTor
     /*! \brief CTor to generate \class DisneyMaterial object based on given attributes.
@@ -46,7 +46,11 @@ public:*/
      *  \param
      *
      *
+     *
      */
-
- //   DisneyMaterial() : mColor(make_float3(0.5f,0.5f,0.5f))
-//};
+    DisneyMaterial(float3 color,float metallic,float specular,float specularTint, float subsurface,float roughness, float anisotropic, float sheen, float sheenTint, float clearcoat, float clearcoatGloss) : mColor(color),mMetallic(metallic),mSpecular(specular),mSpecularTint(specularTint),mSubsurface(subsurface),mRoughness(roughness),mAnisotropic(anisotropic),mSheen(sheen),mSheenTint(sheenTint),mClearcoat(clearcoat),mClearcoatGloss(clearcoatGloss)
+    {
+        mMaterialType = DISNEY;
+        setPTXPath("disneyMaterial.cu");
+    }
+};

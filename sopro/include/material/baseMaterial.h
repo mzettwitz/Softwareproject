@@ -27,7 +27,12 @@ public:
         LAMBERT = 1,
         PHONG = 2,
         DISNEY = 3,
-        GLASS = 4
+        GLASS = 4,
+        BLINNPHONG = 5,
+        COOKTORRANCE = 6,
+        WARD = 7,
+        ASHIKHMINSHIRLEY = 8,
+
     } MaterialType;
 
 protected:
