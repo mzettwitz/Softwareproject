@@ -4,7 +4,7 @@ Material AshikhminShirleyMaterial::createMaterial(Context context) const
 {
     Material material = context->createMaterial();
     material->setAnyHitProgram(1,context->createProgramFromPTXFile(mPTXpath,"anyhit_shadow"));
-    material->setClosestHitProgram(1,context->createProgramFromPTXFile(mPTXpath,"closesthit_radiancee"));
+    material->setClosestHitProgram(0,context->createProgramFromPTXFile(mPTXpath,"closesthit_radiancee"));
     material["color"]->setFloat(mColor.x,mColor.y,mColor.z);
     material["au"]->setFloat(mAnisotropicFactorU);
     material["av"]->setFloat(mAnisotropicFactorV);
