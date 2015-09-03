@@ -26,6 +26,8 @@ public:
 
     Material createMaterial(Context context) const override;
 
+
+    //Copy CTor, pass through
     BlinnPhongMaterial(const std::shared_ptr<BaseMaterial> in1)
     {
         std::shared_ptr<BlinnPhongMaterial> in = std::dynamic_pointer_cast<BlinnPhongMaterial>(in1);
@@ -39,6 +41,8 @@ public:
         setPTXPath("blinnPhongMaterial.cu");
     }
 
+
+    //Copy CTor, change color
     BlinnPhongMaterial(const std::shared_ptr<BaseMaterial> in1,float3 &newColor) : mColor(newColor)
     {
         std::shared_ptr<BlinnPhongMaterial> in = std::dynamic_pointer_cast<BlinnPhongMaterial>(in1);
@@ -51,6 +55,7 @@ public:
         setPTXPath("blinnPhongMaterial.cu");
     }
 
+    //Copy CTor, change attributes
     BlinnPhongMaterial(const std::shared_ptr<BaseMaterial> in1,float value, short pos)
     {
         std::shared_ptr<BlinnPhongMaterial> in = std::dynamic_pointer_cast<BlinnPhongMaterial>(in1);
@@ -119,6 +124,7 @@ public:
         }
     }
 
+    //Getter & Setter
     const float3& color() const;
     float3& color();
     void setColor(const float3 &color);

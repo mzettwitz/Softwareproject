@@ -16,6 +16,7 @@ private:
 
 public:
 
+    //Advanced CTor
     WardMaterial(float3 color, float diffuseCoeff, float x, float y) : mColor(color),mDiffuseCoeff(diffuseCoeff), mX(x), mY(y)
     {
         mMaterialType = WARD;
@@ -24,6 +25,8 @@ public:
 
     Material createMaterial(Context context) const override;
 
+
+    //Copy CTor, pass through
     WardMaterial(const std::shared_ptr<BaseMaterial> in1)
     {
         std::shared_ptr<WardMaterial> in = std::dynamic_pointer_cast<WardMaterial>(in1);
@@ -35,7 +38,7 @@ public:
         setPTXPath("wardMaterial.cu");
     }
 
-    //change color
+    //Copy CTor, change color
     WardMaterial(const std::shared_ptr<BaseMaterial> in1, const float3 &newColor) : mColor(newColor)
     {
         std::shared_ptr<WardMaterial> in = std::dynamic_pointer_cast<WardMaterial>(in1);
@@ -46,7 +49,7 @@ public:
         setPTXPath("wardMaterial.cu");
     }
 
-    //change coeffs
+    //Copy CTor, change attrributes
 
     WardMaterial(const std::shared_ptr<BaseMaterial> in1, float value, short pos)
     {
@@ -87,6 +90,7 @@ public:
         }
     }
 
+    //Getter & Setter
     const float3& color() const;
     float3& color();
     void setColor(const float3 &color);

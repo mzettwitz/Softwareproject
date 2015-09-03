@@ -1,5 +1,6 @@
 /*! \file ashikhminShirleyMaterial.h
- *
+ *  \brief a Ashikhmin-Shirley Material header file.
+ *  \author Martin Zettwitz, Michael Größler, 2015
  *
  *
  */
@@ -23,6 +24,7 @@ private:
 
 public:
 
+    //Advanced CTor
     AshikhminShirleyMaterial(float3 color, float anisotropicFactorU, float anisotropicFactorV,float rs,float rd) : mColor(color),mAnisotropicFactorU(anisotropicFactorU), mAnisotropicFactorV(anisotropicFactorV), mRs(rs),mRd(rd)
     {
         mMaterialType = ASHIKHMINSHIRLEY;
@@ -31,6 +33,7 @@ public:
 
     Material createMaterial(Context context) const override;
 
+    //Copy CTor
     AshikhminShirleyMaterial(const std::shared_ptr<BaseMaterial> in1)
     {
         std::shared_ptr<AshikhminShirleyMaterial> in = std::dynamic_pointer_cast<AshikhminShirleyMaterial>(in1);
@@ -43,7 +46,7 @@ public:
         setPTXPath("ashikhminShirleyMaterial.cu");
     }
 
-    //change color
+    //Copy CTor, change color
     AshikhminShirleyMaterial(const std::shared_ptr<BaseMaterial> in1, const float3 &newColor) :mColor(newColor)
     {
         std::shared_ptr<AshikhminShirleyMaterial> in = std::dynamic_pointer_cast<AshikhminShirleyMaterial>(in1);
@@ -55,7 +58,7 @@ public:
         setPTXPath("ashikhminShirleyMaterial.cu");
     }
 
-    //change coeffs
+    //Copy CTor, change attributes
 
     AshikhminShirleyMaterial(const std::shared_ptr<BaseMaterial> in1, float value, short pos)
     {
@@ -110,7 +113,7 @@ public:
         }
 
     }
-
+    //Getter & Setter
     const float3& color() const;
     float3& color();
     void setColor(const float3 &color);

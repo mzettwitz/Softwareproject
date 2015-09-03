@@ -9,15 +9,16 @@ using namespace optix;
 class CookTorranceMaterial : public BaseMaterial
 {
 private:
+
     float3 mColor;
     float mDiffuseCoeff;
     float mFresnelFactor;
     float mRoughness;
     float mReflectance;
 
-
 public:
 
+    //Advanced CTor
     CookTorranceMaterial(float3 color, float diffuseCoeff, float fresnelFactor, float roughness, float reflectance) : mColor(color),mDiffuseCoeff(diffuseCoeff), mFresnelFactor(fresnelFactor), mRoughness(roughness), mReflectance(reflectance)
     {
         mMaterialType = COOKTORRANCE;
@@ -26,6 +27,8 @@ public:
 
     Material createMaterial(Context context) const override;
 
+
+    //Copy CTor, pass through
     CookTorranceMaterial(const std::shared_ptr<BaseMaterial> in1)
     {
         std::shared_ptr<CookTorranceMaterial> in = std::dynamic_pointer_cast<CookTorranceMaterial>(in1);
@@ -38,6 +41,7 @@ public:
         setPTXPath("cookTorranceMaterial.cu");
     }
 
+    //Copy CTor, change color
     CookTorranceMaterial(const std::shared_ptr<BaseMaterial> in1,float3 &newColor) : mColor(newColor)
     {
         std::shared_ptr<CookTorranceMaterial> in = std::dynamic_pointer_cast<CookTorranceMaterial>(in1);
@@ -49,12 +53,13 @@ public:
         setPTXPath("cookTorranceMaterial.cu");
     }
 
+    //Copy CTor, change attributes
     CookTorranceMaterial(const std::shared_ptr<BaseMaterial> in1, float value, short pos)
     {
         std::shared_ptr<CookTorranceMaterial> in = std::dynamic_pointer_cast<CookTorranceMaterial>(in1);
         switch(pos)
         {
-        case 1:
+        case 1: //diffuse Coefficient
             mColor = in->color();
             mDiffuseCoeff = value;
             mFresnelFactor = in->fresnelFactor();
@@ -63,7 +68,7 @@ public:
             mMaterialType = COOKTORRANCE;
             setPTXPath("cookTorranceMaterial.cu");
             break;
-        case 2:
+        case 2: //fresnel factor
             mColor = in->color();
             mDiffuseCoeff = in->diffuseCoeff();
             mFresnelFactor = value;
@@ -72,7 +77,7 @@ public:
             mMaterialType = COOKTORRANCE;
             setPTXPath("cookTorranceMaterial.cu");
             break;
-        case 3:
+        case 3: //roughness
             mColor = in->color();
             mDiffuseCoeff = in->diffuseCoeff();
             mFresnelFactor = in->fresnelFactor();
@@ -81,7 +86,7 @@ public:
             mMaterialType = COOKTORRANCE;
             setPTXPath("cookTorranceMaterial.cu");
             break;
-        case 4:
+        case 4: //reflectance
             mColor = in->color();
             mDiffuseCoeff = in->diffuseCoeff();
             mFresnelFactor = in->fresnelFactor();
@@ -90,7 +95,7 @@ public:
             mMaterialType = COOKTORRANCE;
             setPTXPath("cookTorranceMaterial.cu");
             break;
-        default:
+        default:    //pass through
             mColor = in->color();
             mDiffuseCoeff = in->diffuseCoeff();
             mFresnelFactor = in->fresnelFactor();
@@ -101,7 +106,7 @@ public:
             break;
         }
     }
-
+    //Getter & Setter
     const float3& color() const;
     float3& color();
     void setColor(const float3 &color);
