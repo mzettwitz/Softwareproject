@@ -24,7 +24,6 @@ rtDeclareVariable(float3, color,,);
 rtDeclareVariable(float, refractiveIdx,,);
 rtDeclareVariable(float, shininess,,);
 rtDeclareVariable(float, specularCoeff,,);
-rtDeclareVariable(float3, geometricNormal, attribute geometricNormal,);
 rtDeclareVariable(float3, shadingNormal, attribute shadingNormal,);
 
 static __device__ void shadowed();
@@ -106,12 +105,10 @@ static __device__ void shade()
     //hitpoint information
     float3 hitPoint = ray.origin + intersectionDistance * ray.direction;
 
-    float3 geometricWorldNormal = normalize(rtTransformNormal(RT_OBJECT_TO_WORLD,geometricNormal));
     float3 shadingWorldNormal = normalize(rtTransformNormal(RT_OBJECT_TO_WORLD,shadingNormal));
-    float3 normal = faceforward(shadingWorldNormal,-ray.direction,geometricWorldNormal);
 
     float3 D = ray.direction;
-    float3 N = normal;
+    float3 N = shadingWorldNormal;
     float3 R = make_float3(0,0,0);
     float3 T = make_float3(0,0,0);
     float3 offset1 = make_float3(1,1,1);
@@ -143,7 +140,7 @@ static __device__ void shade()
             float radiance = lights[i].intensity / (maxLambda * maxLambda);
 
             lightDirection = normalize(lightDirection);
-            float3 reflectedLightRay = normalize(reflect(lightDirection,normal));
+            float3 reflectedLightRay = normalize(reflect(lightDirection,N));
 
             if(fmaxf(shadowprd.attenuation) > 0.0f)
             {
