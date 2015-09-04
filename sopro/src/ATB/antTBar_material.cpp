@@ -1,6 +1,11 @@
 #include "../sopro/include/ATB/antTBar.h"
 #include "../sopro/include/ATB/antTBar_material.h"
 
+// typdefs for shorter code
+typedef AshikhminShirleyMaterial ASM;
+typedef CookTorranceMaterial CTM;
+typedef BlinnPhongMaterial BPM;
+
 //--------------------------------- Global variables to recall the init function
 TwBar *gBar;
 
@@ -23,13 +28,13 @@ static void TW_CALL getColorCB(void* value, void* clientData)
         *((float3*) value) =  static_cast<GlassMaterial*>(tmpSO->getMaterial().get())->color();
         break;
     case BaseMaterial::BLINNPHONG:
-        *((float3*) value) =  static_cast<BlinnPhongMaterial*>(tmpSO->getMaterial().get())->color();
+        *((float3*) value) =  static_cast<BPM*>(tmpSO->getMaterial().get())->color();
         break;
     case BaseMaterial::ASHIKHMINSHIRLEY:
-        *((float3*) value) =  static_cast<AshikhminShirleyMaterial*>(tmpSO->getMaterial().get())->color();
+        *((float3*) value) =  static_cast<ASM*>(tmpSO->getMaterial().get())->color();
         break;
     case BaseMaterial::COOKTORRANCE:
-        *((float3*) value) =  static_cast<CookTorranceMaterial*>(tmpSO->getMaterial().get())->color();
+        *((float3*) value) =  static_cast<CTM*>(tmpSO->getMaterial().get())->color();
         break;
     case BaseMaterial::WARD:
         *((float3*) value) =  static_cast<WardMaterial*>(tmpSO->getMaterial().get())->color();
@@ -42,37 +47,37 @@ static void TW_CALL setColorCB(const void* value, void* clientData)
 {
     // save params in temporary pointer
     SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
-    float3 v = *((float3*)value);
+    float3 col = *((float3*)value);
     // create a new Material
     if(tmpSO->getMaterial()->getMaterialType() == BaseMaterial::LAMBERT)
     {
-        std::shared_ptr<LambertMaterial> lamMat = std::make_shared<LambertMaterial>(v);
+        std::shared_ptr<LambertMaterial> lamMat = std::make_shared<LambertMaterial>(col);
         // overwrite the old material with the new One
         tmpSO->setMaterial(lamMat);
     }
     else if (tmpSO->getMaterial()->getMaterialType() == BaseMaterial::PHONG)
     {
-        std::shared_ptr<PhongMaterial> phongMat = std::make_shared<PhongMaterial>(tmpSO->getMaterial(), v);
+        std::shared_ptr<PhongMaterial> phongMat = std::make_shared<PhongMaterial>(tmpSO->getMaterial(), col);
         tmpSO->setMaterial(phongMat);
     }
     else if(tmpSO->getMaterial()->getMaterialType() == BaseMaterial::GLASS)
     {
-        std::shared_ptr<GlassMaterial> glassMat = std::make_shared<GlassMaterial>(tmpSO->getMaterial(), v);
+        std::shared_ptr<GlassMaterial> glassMat = std::make_shared<GlassMaterial>(tmpSO->getMaterial(), col);
         tmpSO->setMaterial(glassMat);
     }
     else if(tmpSO->getMaterial()->getMaterialType() == BaseMaterial::BLINNPHONG)
     {
-        std::shared_ptr<BlinnPhongMaterial> blinnMat = std::make_shared<BlinnPhongMaterial>(tmpSO->getMaterial(), v);
+        std::shared_ptr<BPM> blinnMat = std::make_shared<BPM>(tmpSO->getMaterial(), col);
         tmpSO->setMaterial(blinnMat);
     }
     else if(tmpSO->getMaterial()->getMaterialType() == BaseMaterial::ASHIKHMINSHIRLEY)
     {
-        std::shared_ptr<AshikhminShirleyMaterial> AshiMat = std::make_shared<AshikhminShirleyMaterial>(tmpSO->getMaterial(), v);
+        std::shared_ptr<ASM> AshiMat = std::make_shared<ASM>(tmpSO->getMaterial(), col);
         tmpSO->setMaterial(AshiMat);
     }
     else if(tmpSO->getMaterial()->getMaterialType() == BaseMaterial::COOKTORRANCE)
     {
-        std::shared_ptr<CookTorranceMaterial> cookMat = std::make_shared<CookTorranceMaterial>(tmpSO->getMaterial(), v);
+        std::shared_ptr<CTM> cookMat = std::make_shared<CTM>(tmpSO->getMaterial(), col);
         tmpSO->setMaterial(cookMat);
     }
 }
@@ -95,12 +100,42 @@ static void TW_CALL lambertButtonCB(void* clientData)
     }
     else if(tmpSO->getMaterial()->getMaterialType() == BaseMaterial::GLASS)
     {
-        // save old material properties
         oldMat = "Glass";
         GlassMaterial* p = (GlassMaterial*)tmpSO->getMaterial().get();
         std::shared_ptr<LambertMaterial> lamMat = std::make_shared<LambertMaterial>
                 (p->color());
-        // overwrite the old Material with the new one
+        tmpSO->setMaterial(lamMat);
+    }
+    else if(tmpSO->getMaterial()->getMaterialType() == BaseMaterial::BLINNPHONG)
+    {
+        oldMat = "BlinnPhong";
+        BPM* p = (BPM*)tmpSO->getMaterial().get();
+        std::shared_ptr<LambertMaterial> lamMat = std::make_shared<LambertMaterial>
+                (p->color());
+        tmpSO->setMaterial(lamMat);
+    }
+    else if(tmpSO->getMaterial()->getMaterialType() == BaseMaterial::ASHIKHMINSHIRLEY)
+    {
+        oldMat = "AshikhminShirley";
+        ASM* p = (ASM*)tmpSO->getMaterial().get();
+        std::shared_ptr<LambertMaterial> lamMat = std::make_shared<LambertMaterial>
+                (p->color());
+        tmpSO->setMaterial(lamMat);
+    }
+    else if(tmpSO->getMaterial()->getMaterialType() == BaseMaterial::COOKTORRANCE)
+    {
+        oldMat = "CookTorrance";
+        CTM* p = (CTM*)tmpSO->getMaterial().get();
+        std::shared_ptr<LambertMaterial> lamMat = std::make_shared<LambertMaterial>
+                (p->color());
+        tmpSO->setMaterial(lamMat);
+    }
+    else if(tmpSO->getMaterial()->getMaterialType() == BaseMaterial::WARD)
+    {
+        oldMat = "Ward";
+        WardMaterial* p = (WardMaterial*)tmpSO->getMaterial().get();
+        std::shared_ptr<LambertMaterial> lamMat = std::make_shared<LambertMaterial>
+                (p->color());
         tmpSO->setMaterial(lamMat);
     }
     // re-init new variables
@@ -125,7 +160,6 @@ static void TW_CALL phongButtonCB(void* clientData)
     }
     else if(tmpSO->getMaterial()->getMaterialType() == BaseMaterial::GLASS)
     {
-        // save old material properties
         oldMat = "Glass";
         GlassMaterial* p = (GlassMaterial*)tmpSO->getMaterial().get();
         std::shared_ptr<PhongMaterial> phongMat = std::make_shared<PhongMaterial>
@@ -134,10 +168,33 @@ static void TW_CALL phongButtonCB(void* clientData)
     }
     else if(tmpSO->getMaterial()->getMaterialType() == BaseMaterial::BLINNPHONG)
     {
-        // save old material properties
         oldMat = "BlinnPhong";
-        BlinnPhongMaterial* p = (BlinnPhongMaterial*)tmpSO->getMaterial().get();
-        std::shared_ptr<PhongMaterial> phongMat = std::make_shared<PhongMaterial>(p);
+        BPM* p = (BPM*)tmpSO->getMaterial().get();
+        std::shared_ptr<PhongMaterial> phongMat = std::make_shared<PhongMaterial>
+                (p->color(), p->ambientCoeff(), p->diffuseCoeff(), p->specularCoeff(), p->shininess(), p->specularity());
+        tmpSO->setMaterial(phongMat);
+    }
+    else if(tmpSO->getMaterial()->getMaterialType() == BaseMaterial::ASHIKHMINSHIRLEY)
+    {
+        oldMat = "AshikhminShirley";
+        ASM* p = (ASM*)tmpSO->getMaterial().get();
+        std::shared_ptr<PhongMaterial> phongMat = std::make_shared<PhongMaterial>
+                (p->color(), p->rd(), p->rs(), 3);
+        tmpSO->setMaterial(phongMat);
+    }
+    else if(tmpSO->getMaterial()->getMaterialType() == BaseMaterial::COOKTORRANCE)
+    {
+        oldMat = "CookTorrance";
+        CTM* p = (CTM*)tmpSO->getMaterial().get();
+        std::shared_ptr<PhongMaterial> phongMat = std::make_shared<PhongMaterial>
+                (p->color(), p->diffuseCoeff(), p->reflectance(), 2);
+        tmpSO->setMaterial(phongMat);
+    }
+    else if(tmpSO->getMaterial()->getMaterialType() == BaseMaterial::WARD)
+    {
+        oldMat = "WARD";
+        WardMaterial* p = (WardMaterial*)tmpSO->getMaterial().get();
+        std::shared_ptr<PhongMaterial> phongMat = std::make_shared<PhongMaterial>(p->color(), p->diffuseCoeff());
         tmpSO->setMaterial(phongMat);
     }
     // re-init new variables
@@ -231,11 +288,42 @@ static void TW_CALL glassButtonCB(void* clientData)
     }
     else if(tmpSO->getMaterial()->getMaterialType() == BaseMaterial::PHONG)
     {
-        // save old material properties
         oldMat = "Phong";
         PhongMaterial* p = (PhongMaterial*)tmpSO->getMaterial().get();
         std::shared_ptr<GlassMaterial> glassMat = std::make_shared<GlassMaterial>
                 (p->color(), p->shininess(), p->specularCoeff());
+        tmpSO->setMaterial(glassMat);
+    }
+    else if(tmpSO->getMaterial()->getMaterialType() == BaseMaterial::BLINNPHONG)
+    {
+        oldMat = "BlinnPhong";
+        BPM* p = (BPM*)tmpSO->getMaterial().get();
+        std::shared_ptr<GlassMaterial> glassMat = std::make_shared<GlassMaterial>
+                (p->color(), p->shininess(), p->specularCoeff());
+        tmpSO->setMaterial(glassMat);
+    }
+    else if(tmpSO->getMaterial()->getMaterialType() == BaseMaterial::ASHIKHMINSHIRLEY)
+    {
+        oldMat = "AshikhminShirley";
+        ASM* p = (ASM*)tmpSO->getMaterial().get();
+        std::shared_ptr<GlassMaterial> glassMat = std::make_shared<GlassMaterial>
+                (p->color(), p->rs());
+        tmpSO->setMaterial(glassMat);
+    }
+    else if(tmpSO->getMaterial()->getMaterialType() == BaseMaterial::COOKTORRANCE)
+    {
+        oldMat = "CookTorrance";
+        CTM* p = (CTM*)tmpSO->getMaterial().get();
+        std::shared_ptr<GlassMaterial> glassMat = std::make_shared<GlassMaterial>
+                (p->color());
+        tmpSO->setMaterial(glassMat);
+    }
+    else if(tmpSO->getMaterial()->getMaterialType() == BaseMaterial::WARD)
+    {
+        oldMat = "Ward";
+        WardMaterial* p = (WardMaterial*)tmpSO->getMaterial().get();
+        std::shared_ptr<GlassMaterial> glassMat = std::make_shared<GlassMaterial>
+                (p->color());
         tmpSO->setMaterial(glassMat);
     }
     // re-init new variables
@@ -283,6 +371,250 @@ static void TW_CALL setGlassSpecularCoeffCB(const void* value, void* clientData)
     std::shared_ptr<GlassMaterial> glassMat = std::make_shared<GlassMaterial>(tmpSO->getMaterial(), v, 4);
     tmpSO->setMaterial(glassMat);
 }
+
+//------------------------- BlinnPhong
+//----- Button to convert into BlinnPhong
+static void TW_CALL BPButtonCB(void* clientData)
+{
+    SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
+    std::string oldMat;
+    if(tmpSO->getMaterial()->getMaterialType() == BaseMaterial::LAMBERT)
+    {
+        // save old material properties
+        oldMat = "Lambert";
+        LambertMaterial* p = (LambertMaterial*)tmpSO->getMaterial().get();
+        std::shared_ptr<BPM> blinnPhongMat = std::make_shared<BPM>
+                (p->color());
+        tmpSO->setMaterial(blinnPhongMat);
+    }
+    else if(tmpSO->getMaterial()->getMaterialType() == BaseMaterial::GLASS)
+    {
+        oldMat = "Glass";
+        GlassMaterial* p = (GlassMaterial*)tmpSO->getMaterial().get();
+        std::shared_ptr<BPM> blinnPhongMat = std::make_shared<BPM>
+                (p->color(), p->specularCoeff(), p->shininess(), 1);
+        tmpSO->setMaterial(blinnPhongMat);
+    }
+    else if(tmpSO->getMaterial()->getMaterialType() == BaseMaterial::PHONG)
+    {
+        oldMat = "Phong";
+        PhongMaterial* p = (PhongMaterial*)tmpSO->getMaterial().get();
+        std::shared_ptr<BPM> blinnPhongMat = std::make_shared<BPM>
+                (p->color(), p->ambientCoeff(), p->diffuseCoeff(), p->specularCoeff(), p->shininess(), p->specularity());
+        tmpSO->setMaterial(blinnPhongMat);
+    }
+    else if(tmpSO->getMaterial()->getMaterialType() == BaseMaterial::ASHIKHMINSHIRLEY)
+    {
+        oldMat = "AshikhminShirley";
+        ASM* p = (ASM*)tmpSO->getMaterial().get();
+        std::shared_ptr<BPM> blinnPhongMat = std::make_shared<BPM>
+                (p->color(), p->rd(), p->rs(), 3);
+        tmpSO->setMaterial(blinnPhongMat);
+    }
+    else if(tmpSO->getMaterial()->getMaterialType() == BaseMaterial::COOKTORRANCE)
+    {
+        oldMat = "CookTorrance";
+        CTM* p = (CTM*)tmpSO->getMaterial().get();
+        std::shared_ptr<BPM> blinnPhongMat = std::make_shared<BPM>
+                (p->color(), p->diffuseCoeff(), p->reflectance(), 2);
+        tmpSO->setMaterial(blinnPhongMat);
+    }
+    else if(tmpSO->getMaterial()->getMaterialType() == BaseMaterial::WARD)
+    {
+        oldMat = "WARD";
+        WardMaterial* p = (WardMaterial*)tmpSO->getMaterial().get();
+        std::shared_ptr<BPM> blinnPhongMat = std::make_shared<BPM>(p->color(), p->diffuseCoeff());
+        tmpSO->setMaterial(blinnPhongMat);
+    }
+    // re-init new variables
+    antTBarReInit_material(oldMat, tmpSO, gBar, tmpSO->getName());
+}
+//----- AmbientCoeff getter
+static void TW_CALL getBPAmbientCoeffCB(void* value, void* clientData)
+{
+    SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
+    *((float*) value) =  static_cast<BPM*>(tmpSO->getMaterial().get())->ambientCoeff();
+}
+//----- AmbientCoeff setter
+static void TW_CALL setBPAmbientCoeffCB(const void* value, void* clientData)
+{
+    SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
+    float v = *((float*)value);
+    std::shared_ptr<BPM> blinnPhongMat = std::make_shared<BPM>(tmpSO->getMaterial(), v, 1);
+    tmpSO->setMaterial(blinnPhongMat);
+}
+//----- DiffuseCoeff getter
+static void TW_CALL getBPDiffuseCoeffCB(void* value, void* clientData)
+{
+    SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
+    *((float*) value) =  static_cast<BPM*>(tmpSO->getMaterial().get())->diffuseCoeff();
+}
+//----- DiffuseCoeff setter
+static void TW_CALL setBPDiffuseCoeffCB(const void* value, void* clientData)
+{
+    SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
+    float v = *((float*)value);
+    std::shared_ptr<BPM> blinnPhongMat = std::make_shared<BPM>(tmpSO->getMaterial(), v, 2);
+    tmpSO->setMaterial(blinnPhongMat);
+}
+//----- SpecularCoeff getter
+static void TW_CALL getBPSpecularCoeffCB(void* value, void* clientData)
+{
+    SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
+    *((float*) value) =  static_cast<BPM*>(tmpSO->getMaterial().get())->specularCoeff();
+}
+//----- SpecularCoeff setter
+static void TW_CALL setBPSpecularCoeffCB(const void* value, void* clientData)
+{
+    SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
+    float v = *((float*)value);
+    std::shared_ptr<BPM> blinnPhongMat = std::make_shared<BPM>(tmpSO->getMaterial(), v, 3);
+    tmpSO->setMaterial(blinnPhongMat);
+}
+//----- Shininess getter
+static void TW_CALL getBPShininessCB(void* value, void* clientData)
+{
+    SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
+    *((float*) value) =  static_cast<BPM*>(tmpSO->getMaterial().get())->shininess();
+}
+//----- Shininess setter
+static void TW_CALL setBPShininessCB(const void* value, void* clientData)
+{
+    SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
+    float v = *((float*)value);
+    std::shared_ptr<BPM> blinnPhongMat = std::make_shared<BPM>(tmpSO->getMaterial(), v, 4);
+    tmpSO->setMaterial(blinnPhongMat);
+}
+//----- Specularity getter
+static void TW_CALL getBPSpecularityCB(void* value, void* clientData)
+{
+    SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
+    *((float*) value) =  static_cast<BPM*>(tmpSO->getMaterial().get())->specularity();
+}
+//----- Specularity setter
+static void TW_CALL setBPSpecularityCB(const void* value, void* clientData)
+{
+    SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
+    float v = *((float*)value);
+    std::shared_ptr<BPM> blinnPhongMat = std::make_shared<BPM>(tmpSO->getMaterial(), v, 5);
+    tmpSO->setMaterial(blinnPhongMat);
+}
+
+//------------------------- Ashikhmin-Shirley
+//----- Button to convert into AshikhminShirley
+static void TW_CALL ASButtonCB(void* clientData)
+{
+    SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
+    std::string oldMat;
+    if(tmpSO->getMaterial()->getMaterialType() == BaseMaterial::LAMBERT)
+    {
+        // save old material properties
+        oldMat = "Lambert";
+        LambertMaterial* p = (LambertMaterial*)tmpSO->getMaterial().get();
+        std::shared_ptr<ASM> ashikhminShirleyMat = std::make_shared<ASM>
+                (p->color());
+        tmpSO->setMaterial(ashikhminShirleyMat);
+    }
+    if(tmpSO->getMaterial()->getMaterialType() == BaseMaterial::PHONG)
+    {
+        oldMat = "Phong";
+        PhongMaterial* p = (PhongMaterial*)tmpSO->getMaterial().get();
+        std::shared_ptr<ASM> ashikhminShirleyMat = std::make_shared<ASM>
+                (p->color(), p->diffuseCoeff(), p->specularCoeff());
+        tmpSO->setMaterial(ashikhminShirleyMat);
+    }
+    if(tmpSO->getMaterial()->getMaterialType() == BaseMaterial::BLINNPHONG)
+    {
+        oldMat = "BlinnPhong";
+        BPM* p = (BPM*)tmpSO->getMaterial().get();
+        std::shared_ptr<ASM> ashikhminShirleyMat = std::make_shared<ASM>
+                (p->color(), p->diffuseCoeff(), p->specularCoeff());
+        tmpSO->setMaterial(ashikhminShirleyMat);
+    }
+    if(tmpSO->getMaterial()->getMaterialType() == BaseMaterial::GLASS)
+    {
+        oldMat = "Glass";
+        GlassMaterial* p = (GlassMaterial*)tmpSO->getMaterial().get();
+        std::shared_ptr<ASM> ashikhminShirleyMat = std::make_shared<ASM>
+                (p->color(), p->specularCoeff(), (short)2);
+        tmpSO->setMaterial(ashikhminShirleyMat);
+    }
+    if(tmpSO->getMaterial()->getMaterialType() == BaseMaterial::WARD)
+    {
+        oldMat = "Ward";
+        WardMaterial* p = (WardMaterial*)tmpSO->getMaterial().get();
+        std::shared_ptr<ASM> ashikhminShirleyMat = std::make_shared<ASM>
+                (p->color(), p->diffuseCoeff(), (short)1);
+        tmpSO->setMaterial(ashikhminShirleyMat);
+    }
+    if(tmpSO->getMaterial()->getMaterialType() == BaseMaterial::COOKTORRANCE)
+    {
+        oldMat = "CookTorrance";
+        CTM* p = (CTM*)tmpSO->getMaterial().get();
+        std::shared_ptr<ASM> ashikhminShirleyMat = std::make_shared<ASM>
+                (p->color(), p->diffuseCoeff());
+        tmpSO->setMaterial(ashikhminShirleyMat);
+    }
+    // re-init new variables
+    antTBarReInit_material(oldMat, tmpSO, gBar, tmpSO->getName());
+}
+//----- Anisotropic U getter
+static void TW_CALL getASAnisotropicUCB(void* value, void* clientData)
+{
+    SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
+    *((float*) value) =  static_cast<ASM*>(tmpSO->getMaterial().get())->anisotropicFactorU();
+}
+//----- Anisotropic U setter
+static void TW_CALL setASAnisotropicUCB(const void* value, void* clientData)
+{
+    SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
+    float v = *((float*)value);
+    std::shared_ptr<ASM> ashikhminShirleyMat = std::make_shared<ASM>(tmpSO->getMaterial(), v, 1);
+    tmpSO->setMaterial(ashikhminShirleyMat);
+}
+//----- Anisotropic V getter
+static void TW_CALL getASAnisotropicVCB(void* value, void* clientData)
+{
+    SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
+    *((float*) value) =  static_cast<ASM*>(tmpSO->getMaterial().get())->anisotropicFactorV();
+}
+//----- Anisotropic V setter
+static void TW_CALL setASAnisotropicVCB(const void* value, void* clientData)
+{
+    SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
+    float v = *((float*)value);
+    std::shared_ptr<ASM> ashikhminShirleyMat = std::make_shared<ASM>(tmpSO->getMaterial(), v, 2);
+    tmpSO->setMaterial(ashikhminShirleyMat);
+}
+//----- Rs getter
+static void TW_CALL getASRsCB(void* value, void* clientData)
+{
+    SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
+    *((float*) value) =  static_cast<ASM*>(tmpSO->getMaterial().get())->rs();
+}
+//----- Rs setter
+static void TW_CALL setASRsCB(const void* value, void* clientData)
+{
+    SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
+    float v = *((float*)value);
+    std::shared_ptr<ASM> ashikhminShirleyMat = std::make_shared<ASM>(tmpSO->getMaterial(), v, 3);
+    tmpSO->setMaterial(ashikhminShirleyMat);
+}
+//----- Rd getter
+static void TW_CALL getASRdCB(void* value, void* clientData)
+{
+    SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
+    *((float*) value) =  static_cast<ASM*>(tmpSO->getMaterial().get())->rd();
+}
+//----- Rd setter
+static void TW_CALL setASRdCB(const void* value, void* clientData)
+{
+    SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
+    float v = *((float*)value);
+    std::shared_ptr<ASM> ashikhminShirleyMat = std::make_shared<ASM>(tmpSO->getMaterial(), v, 4);
+    tmpSO->setMaterial(ashikhminShirleyMat);
+}
+
 
 //--------------------------------- Basic variable init
 void antTBar_material(std::shared_ptr<Scene> scene, TwBar *bar)

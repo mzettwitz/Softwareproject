@@ -201,25 +201,6 @@ public:
             break;
         }
     }
-    // Blinn-Phong
-    /*!
-     * \brief CTor to generate a \class BlinnPhongMaterial object based on a given attributes.
-     *
-     * \note Useful for conversion from \class BlinnPhongMaterial.
-     *
-     * \param in BlinnPhong object to copy.
-     */
-    BlinnPhongMaterial(const std::shared_ptr<BlinnPhongMaterial> in)
-    {
-        mColor = in->color();
-        mAmbientCoeff = in->ambientCoeff();
-        mDiffuseCoeff = in->diffuseCoeff();
-        mSpecularCoeff = in->specularCoeff();
-        mShininess = in->shininess();
-        mSpecularity = in->specularity();
-        mMaterialType = BLINNPHONG;
-        setPTXPath("blinnPhongMaterial.cu");
-    }
     // Ward
     /*!
      * \brief CTor to generate a \class BlinnPhongMaterial object based on a given attributes.

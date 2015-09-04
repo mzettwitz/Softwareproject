@@ -140,11 +140,11 @@ public :
     }
 
     //-------------CTor for material conversion
-    // Lambert
+    // Lambert, Ward and Cook-Torrance
     /*!
      * \brief CTor to generate a \class GlassMaterial object based on a given color.
      *
-     * \note Useful for conversion from \class LambertMaterial.
+     * \note Useful for conversion from \class LambertMaterial, \class WardMaterial or \class CookTorranceMaterial.
      *
      * \param col RGB color information for mColor.
      */
