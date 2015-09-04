@@ -14,6 +14,10 @@
 #include "../sopro/include/material/phongMaterial.h"
 #include "../sopro/include/material/glassMaterial.h"
 #include "../sopro/include/material/disneyMaterial.h"
+#include "../sopro/include/material/blinnPhongMaterial.h"
+#include "../sopro/include/material/ashikhminShirleyMaterial.h"
+#include "../sopro/include/material/cookTorranceMaterial.h"
+#include "../sopro/include/material/wardMaterial.h"
 #include "../sopro/include/scene.h"
 #include <memory>
 #include <iostream>

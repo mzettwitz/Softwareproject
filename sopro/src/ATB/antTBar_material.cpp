@@ -22,6 +22,18 @@ static void TW_CALL getColorCB(void* value, void* clientData)
     case BaseMaterial::GLASS:
         *((float3*) value) =  static_cast<GlassMaterial*>(tmpSO->getMaterial().get())->color();
         break;
+    case BaseMaterial::BLINNPHONG:
+        *((float3*) value) =  static_cast<BlinnPhongMaterial*>(tmpSO->getMaterial().get())->color();
+        break;
+    case BaseMaterial::ASHIKHMINSHIRLEY:
+        *((float3*) value) =  static_cast<AshikhminShirleyMaterial*>(tmpSO->getMaterial().get())->color();
+        break;
+    case BaseMaterial::COOKTORRANCE:
+        *((float3*) value) =  static_cast<CookTorranceMaterial*>(tmpSO->getMaterial().get())->color();
+        break;
+    case BaseMaterial::WARD:
+        *((float3*) value) =  static_cast<WardMaterial*>(tmpSO->getMaterial().get())->color();
+        break;
     }
 }
 
@@ -34,19 +46,34 @@ static void TW_CALL setColorCB(const void* value, void* clientData)
     // create a new Material
     if(tmpSO->getMaterial()->getMaterialType() == BaseMaterial::LAMBERT)
     {
-        std::shared_ptr<LambertMaterial> lamMat = std::make_shared<LambertMaterial>(make_float3(v.x, v.y, v.z));
+        std::shared_ptr<LambertMaterial> lamMat = std::make_shared<LambertMaterial>(v);
         // overwrite the old material with the new One
         tmpSO->setMaterial(lamMat);
     }
     else if (tmpSO->getMaterial()->getMaterialType() == BaseMaterial::PHONG)
     {
-        std::shared_ptr<PhongMaterial> phongMat = std::make_shared<PhongMaterial>(tmpSO->getMaterial(), make_float3(v.x, v.y, v.z));
+        std::shared_ptr<PhongMaterial> phongMat = std::make_shared<PhongMaterial>(tmpSO->getMaterial(), v);
         tmpSO->setMaterial(phongMat);
     }
     else if(tmpSO->getMaterial()->getMaterialType() == BaseMaterial::GLASS)
     {
-        std::shared_ptr<GlassMaterial> glassMat = std::make_shared<GlassMaterial>(tmpSO->getMaterial(), make_float3(v.x, v.y, v.z));
+        std::shared_ptr<GlassMaterial> glassMat = std::make_shared<GlassMaterial>(tmpSO->getMaterial(), v);
         tmpSO->setMaterial(glassMat);
+    }
+    else if(tmpSO->getMaterial()->getMaterialType() == BaseMaterial::BLINNPHONG)
+    {
+        std::shared_ptr<BlinnPhongMaterial> blinnMat = std::make_shared<BlinnPhongMaterial>(tmpSO->getMaterial(), v);
+        tmpSO->setMaterial(blinnMat);
+    }
+    else if(tmpSO->getMaterial()->getMaterialType() == BaseMaterial::ASHIKHMINSHIRLEY)
+    {
+        std::shared_ptr<AshikhminShirleyMaterial> AshiMat = std::make_shared<AshikhminShirleyMaterial>(tmpSO->getMaterial(), v);
+        tmpSO->setMaterial(AshiMat);
+    }
+    else if(tmpSO->getMaterial()->getMaterialType() == BaseMaterial::COOKTORRANCE)
+    {
+        std::shared_ptr<CookTorranceMaterial> cookMat = std::make_shared<CookTorranceMaterial>(tmpSO->getMaterial(), v);
+        tmpSO->setMaterial(cookMat);
     }
 }
 
@@ -102,7 +129,15 @@ static void TW_CALL phongButtonCB(void* clientData)
         oldMat = "Glass";
         GlassMaterial* p = (GlassMaterial*)tmpSO->getMaterial().get();
         std::shared_ptr<PhongMaterial> phongMat = std::make_shared<PhongMaterial>
-                (p->color(), p->specularCoeff(), p->shininess());
+                (p->color(), p->specularCoeff(), p->shininess(), 1);
+        tmpSO->setMaterial(phongMat);
+    }
+    else if(tmpSO->getMaterial()->getMaterialType() == BaseMaterial::BLINNPHONG)
+    {
+        // save old material properties
+        oldMat = "BlinnPhong";
+        BlinnPhongMaterial* p = (BlinnPhongMaterial*)tmpSO->getMaterial().get();
+        std::shared_ptr<PhongMaterial> phongMat = std::make_shared<PhongMaterial>(p);
         tmpSO->setMaterial(phongMat);
     }
     // re-init new variables

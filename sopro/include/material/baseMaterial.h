@@ -14,7 +14,6 @@
 #include <iostream>
 #include "../cuda/commonStructs.h"
 #include <vector>
-#include "../AntTweakBar/include/AntTweakBar.h"
 #include <memory>
 
 using namespace optix;

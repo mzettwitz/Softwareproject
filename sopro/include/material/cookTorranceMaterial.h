@@ -18,17 +18,16 @@ private:
 
 public:
 
-    //Advanced CTor
+    // ------------------------CTor
+    // ------------ Advanced CTor
     CookTorranceMaterial(float3 color, float diffuseCoeff, float fresnelFactor, float roughness, float reflectance) : mColor(color),mDiffuseCoeff(diffuseCoeff), mFresnelFactor(fresnelFactor), mRoughness(roughness), mReflectance(reflectance)
     {
         mMaterialType = COOKTORRANCE;
         setPTXPath("cookTorranceMaterial.cu");
     }
 
-    Material createMaterial(Context context) const override;
-
-
-    //Copy CTor, pass through
+    //------------- Copy CTors
+    // pass through
     CookTorranceMaterial(const std::shared_ptr<BaseMaterial> in1)
     {
         std::shared_ptr<CookTorranceMaterial> in = std::dynamic_pointer_cast<CookTorranceMaterial>(in1);
@@ -42,7 +41,7 @@ public:
     }
 
     //Copy CTor, change color
-    CookTorranceMaterial(const std::shared_ptr<BaseMaterial> in1,float3 &newColor) : mColor(newColor)
+    CookTorranceMaterial(const std::shared_ptr<BaseMaterial> in1, const float3 &newColor) : mColor(newColor)
     {
         std::shared_ptr<CookTorranceMaterial> in = std::dynamic_pointer_cast<CookTorranceMaterial>(in1);
         mDiffuseCoeff = in->diffuseCoeff();
@@ -106,6 +105,68 @@ public:
             break;
         }
     }
+
+    //-------------CTor for material conversion
+    // Lambert, Glass
+    /*!
+     * \brief CTor to generate a \class CookTorranceMaterial object based on a given color.
+     *
+     * \note Useful for conversion from \class LambertMaterial or \class GlassMaterial.
+     *
+     * \param col RGB color information for mColor.
+     */
+    CookTorranceMaterial(const float3 &col) :
+        mColor(col)
+    {
+        mDiffuseCoeff = 1.f;
+        mFresnelFactor = 0.5f;
+        mRoughness = 0.5f;
+        mReflectance = 0.5f;
+        mMaterialType = COOKTORRANCE;
+        setPTXPath("cookTorranceMaterial.cu");
+    }
+    // Ward, Ashikhmin-Shirley
+    /*!
+     * \brief CTor to generate a \class PhongMaterial object based on a given attributes.
+     *
+     * \note Useful for conversion from \class WardMaterial , \class AshkikhminShirleyMaterial .
+     *
+     * \param col RGBA color information for mColor.
+     * \param diffuseC Float value for mDiffuseCoeff.
+     */
+    CookTorranceMaterial(const float3 &col, float diffuseC) : mColor(col)
+    {
+            mDiffuseCoeff = diffuseC;
+            mFresnelFactor = 0.5f;
+            mRoughness = 0.5f;
+            mReflectance = 0.5f;
+            mMaterialType = COOKTORRANCE;
+            setPTXPath("cookTorranceMaterial.cu");
+    }
+    // (Blinn)-Phong
+    /*!
+     * \brief CTor to generate a \class CookTorrance object based on a given attributes.
+     *
+     * \note Useful for conversion from \class BlinnPhongMaterial or \class PhongMaterial.
+     *
+     * \param col RGBA color information for \var mColor.
+     * \param diffuseC Float value for \var mDiffuseCoeff
+     * \param spec Float value for \param mReflectance
+     */
+    CookTorranceMaterial(const float3 &col, float diffuseC, float spec) : mColor(col)
+    {
+        mDiffuseCoeff = diffuseC;
+        mFresnelFactor = 0.5f;
+        mRoughness = 0.5f;
+        mReflectance = spec;
+        mMaterialType = COOKTORRANCE;
+        setPTXPath("cookTorranceMaterial.cu");
+    }
+
+
+    Material createMaterial(Context context) const override;
+
+
     //Getter & Setter
     const float3& color() const;
     float3& color();

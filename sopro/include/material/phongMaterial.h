@@ -26,6 +26,7 @@
 #pragma once
 
 #include "baseMaterial.h"
+#include "blinnPhongMaterial.h"
 
 using namespace optix;
 
@@ -200,24 +201,91 @@ public:
         mMaterialType = PHONG;
         setPTXPath("phongMaterial.cu");
     }
-    // Glass
+    // Glass, Cook-Torrance, Ashikhmin-Shirley
     /*!
      * \brief CTor to generate a \class PhongMaterial object based on a given attributes.
      *
-     * \note Useful for conversion from \class GlassMaterial.
+     * \note Useful for conversion from \class GlassMaterial \class CookTorranceMaterial , \class AshkikhminShirleyMaterial .
      *
      * \param col RGBA color information for mColor.
-     * \param specC Float value for \var mSpecularCoeff
-     * \param shine Float value for \var mShininess
-     * \param spec Float value for \var mSpecularity
+     * \param mat Switch between different materials:
+     * 1 = glass
+     * 2 = Cook-Torrance
+     * 3 = Ashikhmin-Shirley
      */
-    PhongMaterial(const float3 &col, float specC, float shine)
+    PhongMaterial(const float3 &col, float param1, float param2, short mat)
     {
-        mColor = make_float3(col.x, col.y, col.z);
+        switch(mat)
+        {
+        case 1: // glass
+            mColor = col;
+            mAmbientCoeff = 0.f;
+            mDiffuseCoeff = 1.f;
+            mSpecularCoeff = param1;
+            mShininess = param2;
+            mSpecularity = 0.5f;
+            mMaterialType = PHONG;
+            setPTXPath("phongMaterial.cu");
+            break;
+        case 2: // Cookr-Torrance
+            mColor = col;
+            mAmbientCoeff = 0.f;
+            mDiffuseCoeff = param1;
+            mSpecularCoeff = 0.5f;
+            mShininess = 1.f;
+            mSpecularity = param2;
+            mMaterialType = PHONG;
+            setPTXPath("phongMaterial.cu");
+            break;
+        case 3: // Ashikhmin-Shirley
+            mColor = col;
+            mAmbientCoeff = 0.f;
+            mDiffuseCoeff = param1;
+            mSpecularCoeff = param2;
+            mShininess = 1.f;
+            mSpecularity = 0.5f;
+            mMaterialType = PHONG;
+            setPTXPath("phongMaterial.cu");
+            break;
+        }
+
+
+    }
+    // Blinn-Phong
+    /*!
+     * \brief CTor to generate a \class PhongMaterial object based on a given attributes.
+     *
+     * \note Useful for conversion from \class BlinnPhongMaterial.
+     *
+     * \param in BlinnPhong object to copy.
+     */
+    PhongMaterial(const BlinnPhongMaterial* in)
+    {
+        mColor = in->color();
+        mAmbientCoeff = in->ambientCoeff();
+        mDiffuseCoeff = in->diffuseCoeff();
+        mSpecularCoeff = in->specularCoeff();
+        mShininess = in->shininess();
+        mSpecularity = in->specularity();
+        mMaterialType = PHONG;
+        setPTXPath("phongMaterial.cu");
+    }
+    // Ward
+    /*!
+     * \brief CTor to generate a \class PhongMaterial object based on a given attributes.
+     *
+     * \note Useful for conversion from \class WardMaterial.
+     *
+     * \param col RGBA color information for \var mColor.
+     * \param diffuseC Float value for \var mDiffuseCoeff
+     */
+    PhongMaterial(const float3 &col, float diffuseC)
+    {
+        mColor = col;
         mAmbientCoeff = 0.f;
-        mDiffuseCoeff = 1.f;
-        mSpecularCoeff = specC;
-        mShininess = shine;
+        mDiffuseCoeff = diffuseC;
+        mSpecularCoeff = 0.5f;
+        mShininess = 1.f;
         mSpecularity = 0.5f;
         mMaterialType = PHONG;
         setPTXPath("phongMaterial.cu");

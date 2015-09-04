@@ -15,18 +15,16 @@ private:
     float   mY;
 
 public:
-
-    //Advanced CTor
+    // ------------------------CTor
+    // ------------ Advanced CTor
     WardMaterial(float3 color, float diffuseCoeff, float x, float y) : mColor(color),mDiffuseCoeff(diffuseCoeff), mX(x), mY(y)
     {
         mMaterialType = WARD;
         setPTXPath("wardMaterial.cu");
     }
 
-    Material createMaterial(Context context) const override;
-
-
-    //Copy CTor, pass through
+    //------------- Copy CTors
+    // pass through
     WardMaterial(const std::shared_ptr<BaseMaterial> in1)
     {
         std::shared_ptr<WardMaterial> in = std::dynamic_pointer_cast<WardMaterial>(in1);
@@ -50,7 +48,6 @@ public:
     }
 
     //Copy CTor, change attrributes
-
     WardMaterial(const std::shared_ptr<BaseMaterial> in1, float value, short pos)
     {
         std::shared_ptr<WardMaterial> in = std::dynamic_pointer_cast<WardMaterial>(in1);
@@ -89,6 +86,63 @@ public:
             break;
         }
     }
+
+    //-------------CTor for material conversion
+    // Lambert, Glass
+    /*!
+     * \brief CTor to generate a \class WardMaterial object based on a given color.
+     *
+     * \note Useful for conversion from \class LambertMaterial, \class GlassMaterial.
+     *
+     * \param col RGB color information for mColor.
+     */
+    WardMaterial(const float3 &col) : mColor(col)
+    {
+        mDiffuseCoeff = 1.0f;
+        mX = 0.5f;
+        mY = 0.5f;
+        mMaterialType = WARD;
+        setPTXPath("wardMaterial.cu");
+    }
+    // (Blinn-)Phong, Cook-Torrance
+    /*!
+     * \brief CTor to generate a \class WardMaterial object based on given attributes.
+     *
+     * \note Useful for conversion from \class PhongMaterial, \class BlinnPhongMaterial or \class CookTorranceMaterial.
+     *
+     * \param col RGB color information for mColor.
+     * \param diffuseC Float vaule for mDiffuseCoeff.
+     */
+    WardMaterial(const float3 &col, float diffuseC) : mColor(col)
+    {
+        mDiffuseCoeff = diffuseC;
+        mX = 0.5f;
+        mY = 0.5f;
+        mMaterialType = WARD;
+        setPTXPath("wardMaterial.cu");
+    }
+    // Ashikhmin-Shirley
+    /*!
+     * \brief CTor to generate a \class WardMaterial object based on given attributes.
+     *
+     * \note Useful for conversion from \class AshikhminShirleyMaterial.
+     *
+     * \param col RGB color information for mColor.
+     * \param diffuseC FLoat value for mDiffuseCoeff.
+     * \param u Float value for mX;
+     * \param v Float value for mY;
+     */
+    WardMaterial(const float3 &col, float diffuseC, float u, float v) : mColor(col)
+    {
+        mDiffuseCoeff = diffuseC;
+        mX = u / fmaxf(u,v);
+        mY = v / fmaxf(u,v);
+        mMaterialType = WARD;
+        setPTXPath("wardMaterial.cu");
+    }
+
+
+    Material createMaterial(Context context) const override;
 
     //Getter & Setter
     const float3& color() const;

@@ -157,11 +157,11 @@ public :
         mMaterialType = GLASS;
         setPTXPath("glassMaterial.cu");
     }
-    // Phong
+    // (Blinn-)Phong
     /*!
      * \brief CTor to generate a \class GlassMaterial object based on given attributes.
      *
-     * \note Useful for conversion from \class PhongMaterial.
+     * \note Useful for conversion from \class PhongMaterial or \class BlinnPhongMaterial.
      *
      * \param col RGB color information for mColor.
      * \param spec Float vaule for mSpecularity.
@@ -173,6 +173,24 @@ public :
         mColor = col;
         mRefractiveIdx = 1.0f;
         mShininess = shine;
+        mSpecularCoeff = specC;
+        mMaterialType = GLASS;
+        setPTXPath("glassMaterial.cu");
+    }
+    // Ashikhmin-Shirley
+    /*!
+     * \brief CTor to generate a \class GlassMaterial object based on given attributes.
+     *
+     * \note Useful for conversion from \class AshikhminShirleyMaterial.
+     *
+     * \param col RGB color information for mColor.
+     * \param specC Float value for mSpecularCoeff.
+     */
+    GlassMaterial(const float3 &col, float specC)
+    {
+        mColor = col;
+        mRefractiveIdx = 1.0f;
+        mShininess = 1.0f;
         mSpecularCoeff = specC;
         mMaterialType = GLASS;
         setPTXPath("glassMaterial.cu");

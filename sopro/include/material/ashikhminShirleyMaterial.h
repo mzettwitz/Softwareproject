@@ -24,16 +24,17 @@ private:
 
 public:
 
-    //Advanced CTor
+    // ------------------------CTor
+    // ------------ Advanced CTor
     AshikhminShirleyMaterial(float3 color, float anisotropicFactorU, float anisotropicFactorV,float rs,float rd) : mColor(color),mAnisotropicFactorU(anisotropicFactorU), mAnisotropicFactorV(anisotropicFactorV), mRs(rs),mRd(rd)
     {
         mMaterialType = ASHIKHMINSHIRLEY;
         setPTXPath("ashikhminShirleyMaterial.cu");
     }
 
-    Material createMaterial(Context context) const override;
 
-    //Copy CTor
+    //------------- Copy CTors
+    // pass through
     AshikhminShirleyMaterial(const std::shared_ptr<BaseMaterial> in1)
     {
         std::shared_ptr<AshikhminShirleyMaterial> in = std::dynamic_pointer_cast<AshikhminShirleyMaterial>(in1);
@@ -59,7 +60,6 @@ public:
     }
 
     //Copy CTor, change attributes
-
     AshikhminShirleyMaterial(const std::shared_ptr<BaseMaterial> in1, float value, short pos)
     {
         std::shared_ptr<AshikhminShirleyMaterial> in = std::dynamic_pointer_cast<AshikhminShirleyMaterial>(in1);
@@ -111,8 +111,107 @@ public:
             setPTXPath("ashikhminShirleyMaterial.cu");
             break;
         }
-
     }
+
+    //-------------CTor for material conversion
+    // Lambert
+    /*!
+     * \brief CTor to generate a \class AshikhminShirleyMaterial object based on a given color.
+     *
+     * \note Useful for conversion from \class LambertMaterial.
+     *
+     * \param col RGB color information for mColor.
+     */
+    AshikhminShirleyMaterial(const float3 &col) : mColor(col)
+    {
+        mAnisotropicFactorU = 1.f;
+        mAnisotropicFactorV = 1.f;
+        mRs = 0.5f;
+        mRd = 0.5f;
+        mMaterialType = ASHIKHMINSHIRLEY;
+        setPTXPath("ashikhminShirleyMaterial.cu");
+    }
+    // Cook-Torrance
+    /*!
+     * \brief CTor to generate a \class WardMaterial object based on given attributes.
+     *
+     * \note Useful for conversion from \class CookTorranceMaterial.
+     *
+     * \param col RGB color information for \var mColor.
+     * \param diffuseC Float vaule for \var mRd.
+     */
+    AshikhminShirleyMaterial(const float3 &col, float diffuseC) : mColor(col)
+    {
+        mAnisotropicFactorU = 1.f;
+        mAnisotropicFactorV = 1.f;
+        mRs = 0.5f;
+        mRd = 0.5f;
+        mMaterialType = ASHIKHMINSHIRLEY;
+        setPTXPath("ashikhminShirleyMaterial.cu");
+    }
+    // Ward, Glass
+    /*!
+     * \brief CTor to generate a \class WardMaterial object based on given attributes.
+     *
+     * \note Useful for conversion from \class GlassMaterial or \class WardMaterial.
+     *
+     * \param col RGB color information for mColor.
+     * \param param FLoat value for \var mRs or \var mRd.
+     * \param mat Short value to pick to materialType
+     */
+    AshikhminShirleyMaterial(const float3 &col, float param, short mat) : mColor(col)
+    {
+        switch(mat)
+        {
+        case 1: // ward
+            mAnisotropicFactorU = 1.f;
+            mAnisotropicFactorV = 1.f;
+            mRs = 0.5f;
+            mRd = param;
+            mMaterialType = ASHIKHMINSHIRLEY;
+            setPTXPath("ashikhminShirleyMaterial.cu");
+            break;
+        case 2: //glass
+            mAnisotropicFactorU = 1.f;
+            mAnisotropicFactorV = 1.f;
+            mRs = param;
+            mRd = 0.5f;
+            mMaterialType = ASHIKHMINSHIRLEY;
+            setPTXPath("ashikhminShirleyMaterial.cu");
+        default:
+            mAnisotropicFactorU = 1.f;
+            mAnisotropicFactorV = 1.f;
+            mRs = 0.5f;
+            mRd = 0.5f;
+            mMaterialType = ASHIKHMINSHIRLEY;
+            setPTXPath("ashikhminShirleyMaterial.cu");
+        }
+    }
+
+
+// (Blinn-)Phong
+/*!
+ * \brief CTor to generate a \class WardMaterial object based on given attributes.
+ *
+ * \note Useful for conversion from \class BlinnPhongMaterial or \class PhongMaterial.
+ *
+ * \param col RGB color information for \var mColor.
+ * \param diffuseC Float value for \var mRd.
+ * \param specC Flaot value for \var mRs
+ */
+AshikhminShirleyMaterial(const float3 &col, float diffuseC, float specC) : mColor(col)
+{
+    mAnisotropicFactorU = 1.f;
+    mAnisotropicFactorV = 1.f;
+    mRs = specC;
+    mRd = diffuseC;
+    mMaterialType = ASHIKHMINSHIRLEY;
+    setPTXPath("ashikhminShirleyMaterial.cu");
+}
+
+
+    Material createMaterial(Context context) const override;
+
     //Getter & Setter
     const float3& color() const;
     float3& color();
