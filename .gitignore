@@ -4,3 +4,11 @@
 *.ptx
 *.cubin
 *.fatbin
+CMakeLists.txt.user.*
+CMakeLists.txt.user
+simpleAnimation/
+nvcommon/
+sutil/
+cuda/
+assets/
+
