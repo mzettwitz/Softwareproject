@@ -1,6 +1,11 @@
 #include "../sopro/include/ATB/antTBar.h"
 #include "../sopro/include/ATB/antTBar_material.h"
 
+/*
+ * TwDefine(" mybar/Blue   group=Color     \n"    // Blue is moved into group Color
+         " mybar/Color  group=Properties  ");  // group Color is moved into group Properties
+ */
+
 // typdefs for shorter code
 typedef AshikhminShirleyMaterial ASM;
 typedef CookTorranceMaterial CTM;
@@ -274,7 +279,7 @@ static void TW_CALL setPhongSpecularityCB(const void* value, void* clientData)
 
 //------------------------- BlinnPhong
 //----- Button to convert into BlinnPhong
-static void TW_CALL BPButtonCB(void* clientData)
+static void TW_CALL bPButtonCB(void* clientData)
 {
     SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
     std::string oldMat;
@@ -505,7 +510,7 @@ static void TW_CALL setGlassSpecularCoeffCB(const void* value, void* clientData)
 
 //------------------------- Ashikhmin-Shirley
 //----- Button to convert into AshikhminShirley
-static void TW_CALL ASButtonCB(void* clientData)
+static void TW_CALL aSButtonCB(void* clientData)
 {
     SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
     std::string oldMat;
@@ -621,7 +626,7 @@ static void TW_CALL setASRdCB(const void* value, void* clientData)
 
 //------------------------- CookTorrance
 //----- Button to convert into CookTorrance
-static void TW_CALL CTButtonCB(void* clientData)
+static void TW_CALL cTButtonCB(void* clientData)
 {
     SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
     std::string oldMat;
@@ -736,7 +741,7 @@ static void TW_CALL setCTReflectanceCB(const void* value, void* clientData)
 
 //------------------------- Ward
 //----- Button to convert into Ward
-static void TW_CALL WardButtonCB(void* clientData)
+static void TW_CALL wardButtonCB(void* clientData)
 {
     SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
     std::string oldMat;
@@ -857,9 +862,25 @@ void antTBar_material(std::shared_ptr<Scene> scene, TwBar *bar)
         namePButton += " into Phong";
         const char* namePButtonC = namePButton.c_str();
 
+        std::string nameBPButton = name;
+        nameBPButton += " into BlinnPhong";
+        const char* nameBPButtonC = nameBPButton.c_str();
+
         std::string nameGButton = name;
         nameGButton += " into Glass";
         const char* nameGButtonC = nameGButton.c_str();
+
+        std::string nameASButton = name;
+        nameASButton += " into AshikhminShirley";
+        const char* nameASButtonC = nameASButton.c_str();
+
+        std::string nameCTButton = name;
+        nameCTButton += " into CookTorrance";
+        const char* nameCTButtonC = nameCTButton.c_str();
+
+        std::string nameWButton = name;
+        nameWButton += " into Ward";
+        const char* nameWButtonC = nameWButton.c_str();
 
         //----- name for object group
         std::string grpName = " group=' ";
@@ -892,7 +913,11 @@ void antTBar_material(std::shared_ptr<Scene> scene, TwBar *bar)
 
             // ATB Buttons to convert into another Material Type
             TwAddButton(bar, namePButtonC, phongButtonCB, scene->getSceneObject(i).get(), grpNameC);
+            TwAddButton(bar, nameBPButtonC, bPButtonCB, scene->getSceneObject(i).get(), grpNameC);
             TwAddButton(bar, nameGButtonC, glassButtonCB, scene->getSceneObject(i).get(), grpNameC);
+            TwAddButton(bar, nameASButtonC, aSButtonCB, scene->getSceneObject(i).get(), grpNameC);
+            TwAddButton(bar, nameCTButtonC, cTButtonCB, scene->getSceneObject(i).get(), grpNameC);
+            TwAddButton(bar, nameWButtonC, wardButtonCB, scene->getSceneObject(i).get(), grpNameC);
 
         }
         //---------------- Material is Phong
@@ -923,7 +948,11 @@ void antTBar_material(std::shared_ptr<Scene> scene, TwBar *bar)
 
             // ATB Buttons to convert into another Material Type
             TwAddButton(bar, nameLButtonC, lambertButtonCB, scene->getSceneObject(i).get(), grpNameC);
+            TwAddButton(bar, nameBPButtonC, bPButtonCB, scene->getSceneObject(i).get(), grpNameC);
             TwAddButton(bar, nameGButtonC, glassButtonCB, scene->getSceneObject(i).get(), grpNameC);
+            TwAddButton(bar, nameASButtonC, aSButtonCB, scene->getSceneObject(i).get(), grpNameC);
+            TwAddButton(bar, nameCTButtonC, cTButtonCB, scene->getSceneObject(i).get(), grpNameC);
+            TwAddButton(bar, nameWButtonC, wardButtonCB, scene->getSceneObject(i).get(), grpNameC);
 
             // ATB Variable for coeff props
             TwAddVarCB(bar, nameVar2C, TW_TYPE_FLOAT, setPhongAmbientCoeffCB, getPhongAmbientCoeffCB, scene->getSceneObject(i).get(), grpNameFloat1C);
@@ -933,6 +962,49 @@ void antTBar_material(std::shared_ptr<Scene> scene, TwBar *bar)
             // ATB Variable for shininess and specularity
             TwAddVarCB(bar, nameVar5C, TW_TYPE_FLOAT, setPhongShininessCB, getPhongShininessCB, scene->getSceneObject(i).get(), grpNameFloatC);
             TwAddVarCB(bar, nameVar6C, TW_TYPE_FLOAT, setPhongSpecularityCB, getPhongSpecularityCB, scene->getSceneObject(i).get(), grpNameFloat1C);
+        }
+        //---------------- Material is BlinnPhong
+        else if(scene->getSceneObject(i)->getMaterial()->getMaterialType() == BaseMaterial::BLINNPHONG)
+        {
+            //---------- set name to specific variable
+            std::string nameVar1 = name + " Color";
+            const char* nameVar1C = nameVar1.c_str();
+
+            std::string nameVar2 = name + " Ambient Coeff";
+            const char* nameVar2C = nameVar2.c_str();
+
+            std::string nameVar3 = name + " Diffuse Coeff";
+            const char* nameVar3C = nameVar3.c_str();
+
+            std::string nameVar4 = name + " Specular Coeff";
+            const char* nameVar4C = nameVar4.c_str();
+
+            std::string nameVar5 = name + " Shininess";
+            const char* nameVar5C = nameVar5.c_str();
+
+            std::string nameVar6 = name + " Specularity";
+            const char* nameVar6C = nameVar6.c_str();
+
+            //------------ ATB variables
+            // ATB Variable for color props
+            TwAddVarCB(bar, nameVar1C, TW_TYPE_COLOR3F, setColorCB, getColorCB, scene->getSceneObject(i).get(), grpNameC);
+
+            // ATB Buttons to convert into another Material Type
+            TwAddButton(bar, nameLButtonC, lambertButtonCB, scene->getSceneObject(i).get(), grpNameC);
+            TwAddButton(bar, nameBPButtonC, PButtonCB, scene->getSceneObject(i).get(), grpNameC);
+            TwAddButton(bar, nameGButtonC, glassButtonCB, scene->getSceneObject(i).get(), grpNameC);
+            TwAddButton(bar, nameASButtonC, aSButtonCB, scene->getSceneObject(i).get(), grpNameC);
+            TwAddButton(bar, nameCTButtonC, cTButtonCB, scene->getSceneObject(i).get(), grpNameC);
+            TwAddButton(bar, nameWButtonC, wardButtonCB, scene->getSceneObject(i).get(), grpNameC);
+
+            // ATB Variable for coeff props
+            TwAddVarCB(bar, nameVar2C, TW_TYPE_FLOAT, setBPAmbientCoeffCB, getBPAmbientCoeffCB, scene->getSceneObject(i).get(), grpNameFloat1C);
+            TwAddVarCB(bar, nameVar3C, TW_TYPE_FLOAT, setBPDiffuseCoeffCB, getBPDiffuseCoeffCB, scene->getSceneObject(i).get(), grpNameFloat1C);
+            TwAddVarCB(bar, nameVar4C, TW_TYPE_FLOAT, setBPpecularCoeffCB, getBPSpecularCoeffCB, scene->getSceneObject(i).get(), grpNameFloat1C);
+
+            // ATB Variable for shininess and specularity
+            TwAddVarCB(bar, nameVar5C, TW_TYPE_FLOAT, setBPShininessCB, getBPShininessCB, scene->getSceneObject(i).get(), grpNameFloatC);
+            TwAddVarCB(bar, nameVar6C, TW_TYPE_FLOAT, setBPSpecularityCB, getBPSpecularityCB, scene->getSceneObject(i).get(), grpNameFloat1C);
         }
         //---------------- Material is Glass
         else if(scene->getSceneObject(i)->getMaterial()->getMaterialType() == BaseMaterial::GLASS)
@@ -957,6 +1029,10 @@ void antTBar_material(std::shared_ptr<Scene> scene, TwBar *bar)
             // ATB Buttons to convert into another Material Type
             TwAddButton(bar, nameLButtonC, lambertButtonCB, scene->getSceneObject(i).get(), grpNameC);
             TwAddButton(bar, namePButtonC, phongButtonCB, scene->getSceneObject(i).get(), grpNameC);
+            TwAddButton(bar, nameBPButtonC, bPButtonCB, scene->getSceneObject(i).get(), grpNameC);
+            TwAddButton(bar, nameASButtonC, aSButtonCB, scene->getSceneObject(i).get(), grpNameC);
+            TwAddButton(bar, nameCTButtonC, cTButtonCB, scene->getSceneObject(i).get(), grpNameC);
+            TwAddButton(bar, nameWButtonC, wardButtonCB, scene->getSceneObject(i).get(), grpNameC);
 
             // ATB Variable for refractiveIndex
             TwAddVarCB(bar, nameVar2C, TW_TYPE_FLOAT, setGlassRefractiveIdxCB, getGlassRefractiveIdxCB, scene->getSceneObject(i).get(), grpNameFloat5C);
@@ -985,9 +1061,25 @@ void antTBarInit_material(SceneObject* scObj, TwBar *bar, std::string objName)
     namePButton += " into Phong";
     const char* namePButtonC = namePButton.c_str();
 
+    std::string nameBPButton = objName;
+    nameBPButton += " into BlinnPhong";
+    const char* nameBPButtonC = nameBPButton.c_str();
+
     std::string nameGButton = objName;
     nameGButton += " into Glass";
     const char* nameGButtonC = nameGButton.c_str();
+
+    std::string nameASButton = objName;
+    nameASButton += " into AshikhminShirley";
+    const char* nameASButtonC = nameASButton.c_str();
+
+    std::string nameCTButton = objName;
+    nameCTButton += " into CookTorrance";
+    const char* nameCTButtonC = nameCTButton.c_str();
+
+    std::string nameWButton = objName;
+    nameWButton += " into Ward";
+    const char* nameWButtonC = nameWButton.c_str();
 
     //----- name for object group
     std::string grpName = " group=' ";
@@ -1021,7 +1113,11 @@ void antTBarInit_material(SceneObject* scObj, TwBar *bar, std::string objName)
 
         // ATB Buttons to convert into another Material Type
         TwAddButton(bar, namePButtonC, phongButtonCB, scObj, grpNameC);
+        TwAddButton(bar, nameBPButtonC, bPButtonCB, scObj, grpNameC);
         TwAddButton(bar, nameGButtonC, glassButtonCB, scObj, grpNameC);
+        TwAddButton(bar, nameASButtonC, aSButtonCB, scObj, grpNameC);
+        TwAddButton(bar, nameCTButtonC, cTButtonCB, scObj, grpNameC);
+        TwAddButton(bar, nameWButtonC, wardButtonCB, scObj, grpNameC);
     }
     //---------------- Material is Phong
     else if(scObj->getMaterial()->getMaterialType() == BaseMaterial::PHONG)
@@ -1051,7 +1147,11 @@ void antTBarInit_material(SceneObject* scObj, TwBar *bar, std::string objName)
 
         // ATB Buttons to convert into another Material Type
         TwAddButton(bar, nameLButtonC, lambertButtonCB, scObj, grpNameC);
+        TwAddButton(bar, nameBPButtonC, bPButtonCB, scObj, grpNameC);
         TwAddButton(bar, nameGButtonC, glassButtonCB, scObj, grpNameC);
+        TwAddButton(bar, nameASButtonC, aSButtonCB, scObj, grpNameC);
+        TwAddButton(bar, nameCTButtonC, cTButtonCB, scObj, grpNameC);
+        TwAddButton(bar, nameWButtonC, wardButtonCB, scObj, grpNameC);
 
         // ATB Variable for coeff props
         TwAddVarCB(bar, nameVar2C, TW_TYPE_FLOAT, setPhongAmbientCoeffCB, getPhongAmbientCoeffCB, scObj, grpNameFloat1C);
@@ -1061,6 +1161,50 @@ void antTBarInit_material(SceneObject* scObj, TwBar *bar, std::string objName)
         // ATB Variable for shininess and specularity
         TwAddVarCB(bar, nameVar5C, TW_TYPE_FLOAT, setPhongShininessCB, getPhongShininessCB, scObj, grpNameFloatC);
         TwAddVarCB(bar, nameVar6C, TW_TYPE_FLOAT, setPhongSpecularityCB, getPhongSpecularityCB, scObj, grpNameFloat1C);
+
+    }
+    //---------------- Material is BlinnPhong
+    else if(scObj->getMaterial()->getMaterialType() == BaseMaterial::BLINNPHONG)
+    {
+        //---------- set name to specific variable
+        std::string nameVar1 = objName + " Color";
+        const char* nameVar1C = nameVar1.c_str();
+
+        std::string nameVar2 = objName + " Ambient Coeff";
+        const char* nameVar2C = nameVar2.c_str();
+
+        std::string nameVar3 = objName + " Diffuse Coeff";
+        const char* nameVar3C = nameVar3.c_str();
+
+        std::string nameVar4 = objName + " Specular Coeff";
+        const char* nameVar4C = nameVar4.c_str();
+
+        std::string nameVar5 = objName + " Shininess";
+        const char* nameVar5C = nameVar5.c_str();
+
+        std::string nameVar6 = objName + " Specularity";
+        const char* nameVar6C = nameVar6.c_str();
+
+        //------------ ATB variables
+        // ATB Variable for color props
+        TwAddVarCB(bar, nameVar1C, TW_TYPE_COLOR3F, setColorCB, getColorCB, scObj, grpNameC);
+
+        // ATB Buttons to convert into another Material Type
+        TwAddButton(bar, nameLButtonC, lambertButtonCB, scObj, grpNameC);
+        TwAddButton(bar, namePButtonC, bPButtonCB, scObj, grpNameC);
+        TwAddButton(bar, nameGButtonC, glassButtonCB, scObj, grpNameC);
+        TwAddButton(bar, nameASButtonC, aSButtonCB, scObj, grpNameC);
+        TwAddButton(bar, nameCTButtonC, cTButtonCB, scObj, grpNameC);
+        TwAddButton(bar, nameWButtonC, wardButtonCB, scObj, grpNameC);
+
+        // ATB Variable for coeff props
+        TwAddVarCB(bar, nameVar2C, TW_TYPE_FLOAT, setBPAmbientCoeffCB, getBPAmbientCoeffCB, scObj, grpNameFloat1C);
+        TwAddVarCB(bar, nameVar3C, TW_TYPE_FLOAT, setBPDiffuseCoeffCB, getBPDiffuseCoeffCB, scObj, grpNameFloat1C);
+        TwAddVarCB(bar, nameVar4C, TW_TYPE_FLOAT, setBPSpecularCoeffCB, getBPSpecularCoeffCB, scObj, grpNameFloat1C);
+
+        // ATB Variable for shininess and specularity
+        TwAddVarCB(bar, nameVar5C, TW_TYPE_FLOAT, setBPShininessCB, getPhongShininessCB, scObj, grpNameFloatC);
+        TwAddVarCB(bar, nameVar6C, TW_TYPE_FLOAT, setBPSpecularityCB, getPhongSpecularityCB, scObj, grpNameFloat1C);
 
     }
     //---------------- Material is Glass
@@ -1087,6 +1231,10 @@ void antTBarInit_material(SceneObject* scObj, TwBar *bar, std::string objName)
         // ATB Buttons to convert into another Material Type
         TwAddButton(bar, nameLButtonC, lambertButtonCB, scObj, grpNameC);
         TwAddButton(bar, namePButtonC, phongButtonCB, scObj, grpNameC);
+        TwAddButton(bar, nameBPButtonC, bPButtonCB, scObj, grpNameC);
+        TwAddButton(bar, nameASButtonC, aSButtonCB, scObj, grpNameC);
+        TwAddButton(bar, nameCTButtonC, cTButtonCB, scObj, grpNameC);
+        TwAddButton(bar, nameWButtonC, wardButtonCB, scObj, grpNameC);
 
         // ATB Variable for refractiveIndex
         TwAddVarCB(bar, nameVar2C, TW_TYPE_FLOAT, setGlassRefractiveIdxCB, getGlassRefractiveIdxCB, scObj, grpNameFloat5C);
@@ -1106,17 +1254,33 @@ void antTBarRemoveVariable_material(SceneObject *scObj, TwBar *bar, std::string 
 
     //--------------- Generate names
     // Convert button name
-    std::string nameLButton = scObj->getName();
+    std::string nameLButton = objName;
     nameLButton += " into Lambert";
     const char* nameLButtonC = nameLButton.c_str();
 
-    std::string namePButton = scObj->getName();
+    std::string namePButton = objName;
     namePButton += " into Phong";
     const char* namePButtonC = namePButton.c_str();
 
-    std::string nameGButton = scObj->getName();
+    std::string nameBPButton = objName;
+    nameBPButton += " into BlinnPhong";
+    const char* nameBPButtonC = nameBPButton.c_str();
+
+    std::string nameGButton = objName;
     nameGButton += " into Glass";
     const char* nameGButtonC = nameGButton.c_str();
+
+    std::string nameASButton = objName;
+    nameASButton += " into AshikhminShirley";
+    const char* nameASButtonC = nameASButton.c_str();
+
+    std::string nameCTButton = objName;
+    nameCTButton += " into CookTorrance";
+    const char* nameCTButtonC = nameCTButton.c_str();
+
+    std::string nameWButton = objName;
+    nameWButton += " into Ward";
+    const char* nameWButtonC = nameWButton.c_str();
 
     //----------------- Material is Lambert
     if(scObj->getMaterial()->getMaterialType() == BaseMaterial::LAMBERT)
@@ -1128,8 +1292,12 @@ void antTBarRemoveVariable_material(SceneObject *scObj, TwBar *bar, std::string 
 
         //---------- ATB variables
         // ATB Buttons to convert into another Material Type
+        TwRemoveVar(bar, nameBPButtonC);
         TwRemoveVar(bar, namePButtonC);
         TwRemoveVar(bar, nameGButtonC);
+        TwRemoveVar(bar, nameASButtonC);
+        TwRemoveVar(bar, nameCTButtonC);
+        TwRemoveVar(bar, nameWButtonC);
 
         // ATB Variable to change color
         TwRemoveVar(bar, nameVar1C);
@@ -1159,7 +1327,11 @@ void antTBarRemoveVariable_material(SceneObject *scObj, TwBar *bar, std::string 
         //------------ ATB variables
         // ATB Buttons to convert into another Material Type
         TwRemoveVar(bar, nameLButtonC);
+        TwRemoveVar(bar, nameBPButtonC);
         TwRemoveVar(bar, nameGButtonC);
+        TwRemoveVar(bar, nameASButtonC);
+        TwRemoveVar(bar, nameCTButtonC);
+        TwRemoveVar(bar, nameWButtonC);
 
         // ATB Variable for color props
         TwRemoveVar(bar, nameVar1C);
@@ -1172,7 +1344,49 @@ void antTBarRemoveVariable_material(SceneObject *scObj, TwBar *bar, std::string 
         // ATB Variable for shininess and specularity
         TwRemoveVar(bar, nameVar5C);
         TwRemoveVar(bar, nameVar6C);
+    }
+    //---------------- Material is BlinnPhong
+    else if(scObj->getMaterial()->getMaterialType() == BaseMaterial::BLINNPHONG)
+    {
+        //---------- set name to specific variable
+        std::string nameVar1 = objName + " Color";
+        const char* nameVar1C = nameVar1.c_str();
 
+        std::string nameVar2 = objName + " Ambient Coeff";
+        const char* nameVar2C = nameVar2.c_str();
+
+        std::string nameVar3 = objName + " Diffuse Coeff";
+        const char* nameVar3C = nameVar3.c_str();
+
+        std::string nameVar4 = objName + " Specular Coeff";
+        const char* nameVar4C = nameVar4.c_str();
+
+        std::string nameVar5 = objName + " Shininess";
+        const char* nameVar5C = nameVar5.c_str();
+
+        std::string nameVar6 = objName + " Specularity";
+        const char* nameVar6C = nameVar6.c_str();
+
+        //------------ ATB variables
+        // ATB Buttons to convert into another Material Type
+        TwRemoveVar(bar, nameLButtonC);
+        TwRemoveVar(bar, namePButtonC);
+        TwRemoveVar(bar, nameGButtonC);
+        TwRemoveVar(bar, nameASButtonC);
+        TwRemoveVar(bar, nameCTButtonC);
+        TwRemoveVar(bar, nameWButtonC);
+
+        // ATB Variable for color props
+        TwRemoveVar(bar, nameVar1C);
+
+        // ATB Variable for coeff props
+        TwRemoveVar(bar, nameVar2C);
+        TwRemoveVar(bar, nameVar3C);
+        TwRemoveVar(bar, nameVar4C);
+
+        // ATB Variable for shininess and specularity
+        TwRemoveVar(bar, nameVar5C);
+        TwRemoveVar(bar, nameVar6C);
     }
     //---------------- Material is Glass
     else if(scObj->getMaterial()->getMaterialType() == BaseMaterial::GLASS)
@@ -1198,7 +1412,10 @@ void antTBarRemoveVariable_material(SceneObject *scObj, TwBar *bar, std::string 
         // ATB Buttons to convert into another Material Type
         TwRemoveVar(bar, nameLButtonC);
         TwRemoveVar(bar, namePButtonC);
-
+        TwRemoveVar(bar, nameBPButtonC);
+        TwRemoveVar(bar, nameASButtonC);
+        TwRemoveVar(bar, nameCTButtonC);
+        TwRemoveVar(bar, nameWButtonC);
         // ATB Variable for refractiveIndex
         TwRemoveVar(bar, nameVar2C);
 
@@ -1217,17 +1434,33 @@ void antTBarReInit_material(std::string oldMat, SceneObject* scObj, TwBar *bar, 
 
     //--------------- Generate names
     // Convert button name
-    std::string nameLButton = scObj->getName();
+    std::string nameLButton = objName;
     nameLButton += " into Lambert";
     const char* nameLButtonC = nameLButton.c_str();
 
-    std::string namePButton = scObj->getName();
+    std::string namePButton = objName;
     namePButton += " into Phong";
     const char* namePButtonC = namePButton.c_str();
 
-    std::string nameGButton = scObj->getName();
+    std::string nameBPButton = objName;
+    nameBPButton += " into BlinnPhong";
+    const char* nameBPButtonC = nameBPButton.c_str();
+
+    std::string nameGButton = objName;
     nameGButton += " into Glass";
     const char* nameGButtonC = nameGButton.c_str();
+
+    std::string nameASButton = objName;
+    nameASButton += " into AshikhminShirley";
+    const char* nameASButtonC = nameASButton.c_str();
+
+    std::string nameCTButton = objName;
+    nameCTButton += " into CookTorrance";
+    const char* nameCTButtonC = nameCTButton.c_str();
+
+    std::string nameWButton = objName;
+    nameWButton += " into Ward";
+    const char* nameWButtonC = nameWButton.c_str();
 
     //----- name for object group
     std::string grpName = " group=' ";
@@ -1255,7 +1488,11 @@ void antTBarReInit_material(std::string oldMat, SceneObject* scObj, TwBar *bar, 
         //---------- ATB variables
         // ATB Buttons to convert into another Material Type
         TwRemoveVar(bar, namePButtonC);
+        TwRemoveVar(bar, nameBPButtonC);
         TwRemoveVar(bar, nameGButtonC);
+        TwRemoveVar(bar, nameASButtonC);
+        TwRemoveVar(bar, nameCTButtonC);
+        TwRemoveVar(bar, nameWButtonC);
     }
     //---------------- Material was Phong
     else if(oldMat == "Phong")
@@ -1279,7 +1516,49 @@ void antTBarReInit_material(std::string oldMat, SceneObject* scObj, TwBar *bar, 
         //------------ ATB variables
         // ATB Buttons to convert into another Material Type
         TwRemoveVar(bar, nameLButtonC);
+        TwRemoveVar(bar, nameBPButtonC);
         TwRemoveVar(bar, nameGButtonC);
+        TwRemoveVar(bar, nameASButtonC);
+        TwRemoveVar(bar, nameCTButtonC);
+        TwRemoveVar(bar, nameWButtonC);
+
+        // ATB Variable for coeff props
+        TwRemoveVar(bar, nameVar2C);
+        TwRemoveVar(bar, nameVar3C);
+        TwRemoveVar(bar, nameVar4C);
+
+        // ATB Variable for shininess and specularity
+        TwRemoveVar(bar, nameVar5C);
+        TwRemoveVar(bar, nameVar6C);
+
+    }
+    //---------------- Material was BlinnPhong
+    else if(oldMat == "BlinnPhong")
+    {
+        //---------- set name to specific variable
+        std::string nameVar2 = objName + " Ambient Coeff";
+        const char* nameVar2C = nameVar2.c_str();
+
+        std::string nameVar3 = objName + " Diffuse Coeff";
+        const char* nameVar3C = nameVar3.c_str();
+
+        std::string nameVar4 = objName + " Specular Coeff";
+        const char* nameVar4C = nameVar4.c_str();
+
+        std::string nameVar5 = objName + " Shininess";
+        const char* nameVar5C = nameVar5.c_str();
+
+        std::string nameVar6 = objName + " Specularity";
+        const char* nameVar6C = nameVar6.c_str();
+
+        //------------ ATB variables
+        // ATB Buttons to convert into another Material Type
+        TwRemoveVar(bar, nameLButtonC);
+        TwRemoveVar(bar, namePButtonC);
+        TwRemoveVar(bar, nameGButtonC);
+        TwRemoveVar(bar, nameASButtonC);
+        TwRemoveVar(bar, nameCTButtonC);
+        TwRemoveVar(bar, nameWButtonC);
 
         // ATB Variable for coeff props
         TwRemoveVar(bar, nameVar2C);
@@ -1308,6 +1587,10 @@ void antTBarReInit_material(std::string oldMat, SceneObject* scObj, TwBar *bar, 
         // ATB Buttons to convert into another Material Type
         TwRemoveVar(bar, nameLButtonC);
         TwRemoveVar(bar, namePButtonC);
+        TwRemoveVar(bar, nameBPButtonC);
+        TwRemoveVar(bar, nameASButtonC);
+        TwRemoveVar(bar, nameCTButtonC);
+        TwRemoveVar(bar, nameWButtonC);
 
         // ATB Variable for refractiveIndex
         TwRemoveVar(bar, nameVar2C);
@@ -1324,7 +1607,11 @@ void antTBarReInit_material(std::string oldMat, SceneObject* scObj, TwBar *bar, 
         //---------- ATB variables
         // ATB Buttons to convert into another Material Type
         TwAddButton(bar, namePButtonC, phongButtonCB, scObj, grpNameC);
+        TwAddButton(bar, nameBPButtonC, bPButtonCB, scObj, grpNameC);
         TwAddButton(bar, nameGButtonC, glassButtonCB, scObj, grpNameC);
+        TwAddButton(bar, nameASButtonC, aSButtonCB, scObj, grpNameC);
+        TwAddButton(bar, nameCTButtonC, cTButtonCB, scObj, grpNameC);
+        TwAddButton(bar, nameWButtonC, wardButtonCB, scObj, grpNameC);
     }
     //---------------- Material is Phong
     else if(scObj->getMaterial()->getMaterialType() == BaseMaterial::PHONG)
@@ -1347,7 +1634,11 @@ void antTBarReInit_material(std::string oldMat, SceneObject* scObj, TwBar *bar, 
         //------------ ATB variables
         // ATB Buttons to convert into another Material Type
         TwAddButton(bar, nameLButtonC, lambertButtonCB, scObj, grpNameC);
+        TwAddButton(bar, nameBPButtonC, bPButtonCB, scObj, grpNameC);
         TwAddButton(bar, nameGButtonC, glassButtonCB, scObj, grpNameC);
+        TwAddButton(bar, nameASButtonC, aSButtonCB, scObj, grpNameC);
+        TwAddButton(bar, nameCTButtonC, cTButtonCB, scObj, grpNameC);
+        TwAddButton(bar, nameWButtonC, wardButtonCB, scObj, grpNameC);
 
         // ATB Variable for coeff props
         TwAddVarCB(bar, nameVar2C, TW_TYPE_FLOAT, setPhongAmbientCoeffCB, getPhongAmbientCoeffCB, scObj, grpNameFloat1C);
@@ -1357,6 +1648,42 @@ void antTBarReInit_material(std::string oldMat, SceneObject* scObj, TwBar *bar, 
         // ATB Variable for shininess and specularity
         TwAddVarCB(bar, nameVar5C, TW_TYPE_FLOAT, setPhongShininessCB, getPhongShininessCB, scObj, grpNameFloatC);
         TwAddVarCB(bar, nameVar6C, TW_TYPE_FLOAT, setPhongSpecularityCB, getPhongSpecularityCB, scObj, grpNameFloat1C);
+    }
+    //---------------- Material is BlinnPhong
+    else if(scObj->getMaterial()->getMaterialType() == BaseMaterial::BLINNPHONG)
+    {
+        std::string nameVar2 = objName + " Ambient Coeff";
+        const char* nameVar2C = nameVar2.c_str();
+
+        std::string nameVar3 = objName + " Diffuse Coeff";
+        const char* nameVar3C = nameVar3.c_str();
+
+        std::string nameVar4 = objName + " Specular Coeff";
+        const char* nameVar4C = nameVar4.c_str();
+
+        std::string nameVar5 = objName + " Shininess";
+        const char* nameVar5C = nameVar5.c_str();
+
+        std::string nameVar6 = objName + " Specularity";
+        const char* nameVar6C = nameVar6.c_str();
+
+        //------------ ATB variables
+        // ATB Buttons to convert into another Material Type
+        TwAddButton(bar, nameLButtonC, lambertButtonCB, scObj, grpNameC);
+        TwAddButton(bar, namePButtonC, PButtonCB, scObj, grpNameC);
+        TwAddButton(bar, nameGButtonC, glassButtonCB, scObj, grpNameC);
+        TwAddButton(bar, nameASButtonC, aSButtonCB, scObj, grpNameC);
+        TwAddButton(bar, nameCTButtonC, cTButtonCB, scObj, grpNameC);
+        TwAddButton(bar, nameWButtonC, wardButtonCB, scObj, grpNameC);
+
+        // ATB Variable for coeff props
+        TwAddVarCB(bar, nameVar2C, TW_TYPE_FLOAT, setBPAmbientCoeffCB, getBPAmbientCoeffCB, scObj, grpNameFloat1C);
+        TwAddVarCB(bar, nameVar3C, TW_TYPE_FLOAT, setBPDiffuseCoeffCB, getBPDiffuseCoeffCB, scObj, grpNameFloat1C);
+        TwAddVarCB(bar, nameVar4C, TW_TYPE_FLOAT, setBPSpecularCoeffCB, getBPSpecularCoeffCB, scObj, grpNameFloat1C);
+
+        // ATB Variable for shininess and specularity
+        TwAddVarCB(bar, nameVar5C, TW_TYPE_FLOAT, setBPShininessCB, getBPShininessCB, scObj, grpNameFloatC);
+        TwAddVarCB(bar, nameVar6C, TW_TYPE_FLOAT, setBPSpecularityCB, getBPSpecularityCB, scObj, grpNameFloat1C);
     }
     //---------------- Material is Glass
     else if(scObj->getMaterial()->getMaterialType() == BaseMaterial::GLASS)
@@ -1377,6 +1704,10 @@ void antTBarReInit_material(std::string oldMat, SceneObject* scObj, TwBar *bar, 
         // ATB Buttons to convert into another Material Type
         TwAddButton(bar, nameLButtonC, lambertButtonCB, scObj, grpNameC);
         TwAddButton(bar, namePButtonC, phongButtonCB, scObj, grpNameC);
+        TwAddButton(bar, nameBPButtonC, bPButtonCB, scObj, grpNameC);
+        TwAddButton(bar, nameASButtonC, aSButtonCB, scObj, grpNameC);
+        TwAddButton(bar, nameCTButtonC, cTButtonCB, scObj, grpNameC);
+        TwAddButton(bar, nameWButtonC, wardButtonCB, scObj, grpNameC);
 
         // ATB Variable for refractiveIndex
         TwAddVarCB(bar, nameVar2C, TW_TYPE_FLOAT, setGlassRefractiveIdxCB, getGlassRefractiveIdxCB, scObj, grpNameFloat5C);
