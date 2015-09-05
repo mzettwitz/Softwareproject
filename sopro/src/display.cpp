@@ -232,36 +232,37 @@ void Display::keyPressed(unsigned char key, int x, int y)
     // send event to GLUT
     else
     {
-        //space
+        // w : upward
         if(key == 'w')
         {
             cameraPosition += moveSpeed * normalize(cross(cameraRight,cameraDirection)) * deltaTime * 0.25f;
         }
-        //1
+        // s : downward
         if(key == 's')
         {
             cameraPosition -= moveSpeed * normalize(cross(cameraRight,cameraDirection)) * deltaTime * 0.25f;
         }
-        //2
+        // a : left
         if(key == 'a')
         {
             cameraPosition -= moveSpeed * cameraRight * deltaTime * 0.25f;
         }
-        //3
+        // d : right
         if(key == 'd')
         {
             cameraPosition += moveSpeed * cameraRight * deltaTime * 0.25f;
         }
-        //4
+        // e : zoom in
         if(key == 'e')
         {
             cameraPosition += moveSpeed * cameraDirection * deltaTime * 0.25f;
         }
+        // q : zoom out
         if(key == 'q')
         {
             cameraPosition -= moveSpeed * cameraDirection * deltaTime * 0.25f;
         }
-        //5, dummy purpose, add dummy sphere
+        // + : dummy purpose, add dummy sphere
         if(key == '+')
         {
 
@@ -277,22 +278,22 @@ void Display::keyPressed(unsigned char key, int x, int y)
             antTBarInit_geometry(obj.get(), geomBar, name);
 
         }
-        //7 dummy purpose, delete dummy sphere
+        // - : dummy purpose, delete dummy sphere
         if(key == '-')
         {
             if(mScene->getSceneObjectCount() > 0)
             {
                 // delete ATB variable
                 antTBarRemoveVariable_material(mScene->getSceneObject(mScene->getSceneObjectCount()-1).get(),
-                                      matBar, mScene->getSceneObject(mScene->getSceneObjectCount()-1)->getName());
+                                               matBar, mScene->getSceneObject(mScene->getSceneObjectCount()-1)->getName());
                 antTBarRemoveVariable_geometry(mScene->getSceneObject(mScene->getSceneObjectCount()-1).get(),
-                                      geomBar, mScene->getSceneObject(mScene->getSceneObjectCount()-1)->getName());
+                                               geomBar, mScene->getSceneObject(mScene->getSceneObjectCount()-1)->getName());
 
                 mScene->removeObject(mScene->getSceneObjectCount()-1);
 
             }
         }
-        // 9 dummy purpose, add infinity plane
+        // 9 : dummy purpose, add infinity plane
         if(key == '9')
         {
             std::shared_ptr<LambertMaterial> p = std::make_shared<LambertMaterial>(make_float3(1.0f,1.0f,1.0f));
@@ -302,24 +303,26 @@ void Display::keyPressed(unsigned char key, int x, int y)
             antTBarInit_material(sc.get(),matBar,"groundPlane");
             antTBarInit_geometry(sc.get(),geomBar,"groundPlane");
         }
-
+        // y : set increase sceneEpsilon
         if(key == 'y')
         {
-                mScene->setSceneEpsilon(-0.1e-3f);
+            mScene->setSceneEpsilon(-0.1e-3f);
         }
+        // x : set decrease sceneEpsilon
         if(key == 'x')
         {
-                mScene->setSceneEpsilon(0.1e-3f);
+            mScene->setSceneEpsilon(0.1e-3f);
         }
+        // 5 - load mesh from assets directory and programm file
         if(key == '5')
         {
-             std::shared_ptr<Mesh> m = std::make_shared<Mesh>(mSource,make_float3(0,0,0));
-           std::shared_ptr<PhongMaterial> p = std::make_shared<PhongMaterial>(make_float3(1.0f,1.0f,1.0f),0.2f,0.6f,0.2f,5.2f,0.2f);
-           std::shared_ptr<SceneObject> sc = std::make_shared<SceneObject>("mesh",m,p);
+            std::shared_ptr<Mesh> m = std::make_shared<Mesh>(mSource,make_float3(0,0,0));
+            std::shared_ptr<PhongMaterial> p = std::make_shared<PhongMaterial>(make_float3(1.0f,1.0f,1.0f),0.2f,0.6f,0.2f,5.2f,0.2f);
+            std::shared_ptr<SceneObject> sc = std::make_shared<SceneObject>("mesh",m,p);
 
-          mScene->addSceneObject(sc);
-           //antTBarInit_material(sc.get(),matBar,"mesh");
-           //antTBarInit_geometry(sc.get(),geombar,"mesh");
+            mScene->addSceneObject(sc);
+            antTBarInit_material(sc.get(),matBar,"mesh");
+            //antTBarInit_geometry(sc.get(),geombar,"mesh");
 
         }
     }

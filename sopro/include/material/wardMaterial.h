@@ -53,7 +53,7 @@ public:
         std::shared_ptr<WardMaterial> in = std::dynamic_pointer_cast<WardMaterial>(in1);
         switch(pos)
         {
-        case 1 : //x
+        case 1 : // x
             mColor = in->color();
             mX = value;
             mY = in->y();
@@ -118,25 +118,6 @@ public:
         mDiffuseCoeff = diffuseC;
         mX = 0.5f;
         mY = 0.5f;
-        mMaterialType = WARD;
-        setPTXPath("wardMaterial.cu");
-    }
-    // Ashikhmin-Shirley
-    /*!
-     * \brief CTor to generate a \class WardMaterial object based on given attributes.
-     *
-     * \note Useful for conversion from \class AshikhminShirleyMaterial.
-     *
-     * \param col RGB color information for mColor.
-     * \param diffuseC FLoat value for mDiffuseCoeff.
-     * \param u Float value for mX;
-     * \param v Float value for mY;
-     */
-    WardMaterial(const float3 &col, float diffuseC, float u, float v) : mColor(col)
-    {
-        mDiffuseCoeff = diffuseC;
-        mX = u / fmaxf(u,v);
-        mY = v / fmaxf(u,v);
         mMaterialType = WARD;
         setPTXPath("wardMaterial.cu");
     }
