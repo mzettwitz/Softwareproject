@@ -17,6 +17,7 @@ Scene::Scene()
     mContext = optix::Context::create();
     mGeometryGroup = mContext->createGeometryGroup();
     mSceneObjects = std::make_shared<std::vector<std::shared_ptr<SceneObject>>>();
+    mLights = std::make_shared<std::vector<PointLight>>();
 }
 
 Scene::~Scene()
@@ -58,27 +59,33 @@ void Scene::initScene(const Scene::Camera &camera,int width, int height)
     mContext["radianceRayType"]->setUint(0u);
     mContext["shadowRayType"]->setUint(1u);
   //  mContext["reflectanceRayType"]->setUint(2u);
-    mContext["maxDepth"]->setUint(20u);
+    mContext["maxDepth"]->setUint(10u);
     mContext["sceneEpsilon"]->setFloat(1.5e-3f);
-    mContext->setStackSize(4096);
+    mContext->setStackSize(8192);
 
     mWidth  = width;
     mHeight = height;
 
-    PointLight lights[] = {
-        {make_float3(10.0f,10.0f,-4.0f),make_float3(2.0f,1.0f,1.0f),250.0f,0},
-        {make_float3(-4.0f,10.0f,5.0f),make_float3(1.0f,1.0f,0.0f),400.0f,0},
-        {make_float3(-6.0,10.0f,-3.0f),make_float3(0.1f,0.6,1.0f),500.0f,0}
-    };
+    PointLight l1;
+    l1.color = make_float3(1.0f,0.5f,0.5f);
+    l1.intensity = 1800.0f;
+    l1.padding = 0;
+    l1.position = make_float3(10.0f,20.0f,-60.0f);
+    mLights->push_back(l1);
 
     optix::Buffer lightBuffer = mContext->createBuffer(RT_BUFFER_INPUT);
     lightBuffer->setFormat(RT_FORMAT_USER);
     lightBuffer->setElementSize(sizeof(PointLight));
-    lightBuffer->setSize(sizeof(lights)/sizeof(lights[0]));
+    lightBuffer->setSize(mLights->size());
 
-    std::memcpy(lightBuffer->map(),lights,sizeof(lights));
+    PointLight* lBufferdata = static_cast<PointLight*>(lightBuffer->map());
+    std::copy(mLights->begin(),mLights->end(),lBufferdata);
+
+
     lightBuffer->unmap();
     mContext["lights"]->set(lightBuffer);
+
+
 
     mContext["outputBuffer"]->setBuffer(mContext->createBuffer(RT_BUFFER_OUTPUT,RT_FORMAT_FLOAT4,mWidth,mHeight));
     std::string usedPTXPath(ptxPath("pinholeCamera.cu"));
@@ -130,7 +137,7 @@ void Scene::initScene(const Scene::Camera &camera,int width, int height)
     }
 
 
-    mGeometryGroup->setAcceleration(mContext->createAcceleration("NoAccel","NoAccel"));
+    mGeometryGroup->setAcceleration(mContext->createAcceleration("Trbvh","Bvh"));
 
     mContext["topObject"]->set(mGeometryGroup);
     mContext["topShadower"]->set(mGeometryGroup);
@@ -143,6 +150,7 @@ void Scene::updateScene(const Scene::Camera &camera)
 {
     updateCamera(camera);
     updateSceneObjects();
+    updateLights();
 }
 
 void Scene::addSceneObject(std::shared_ptr<SceneObject> object)
@@ -253,6 +261,10 @@ void Scene::updateSceneObjects()
                     break;
                 }
                 case BaseMaterial::DISNEY : ;break;
+                case BaseMaterial::BLINNPHONG : ;break;
+                case BaseMaterial::ASHIKHMINSHIRLEY : ;break;
+                case BaseMaterial::WARD : ;break;
+                case BaseMaterial::COOKTORRANCE : ;break;
                 }
 
             }
@@ -356,4 +368,58 @@ void Scene::resizeBuffer(int width,int height)
 void Scene::setSceneEpsilon(float amount)
 {
     mContext["sceneEpsilon"]->setFloat(amount + mContext["sceneEpsilon"]->getFloat());
+}
+
+void Scene::updateLights()
+{
+    Buffer lightBuffer = mContext["lights"]->getBuffer();
+    RTsize numLights;
+    lightBuffer->getSize(numLights);
+    if(mLights->size() != numLights)
+    {
+        lightBuffer->setSize(mLights->size());
+    }
+    PointLight* lBufferdata = static_cast<PointLight*>(lightBuffer->map());
+    for(unsigned int i = 0;i < mLights->size();++i)
+    {
+        lBufferdata[i].position = mLights->at(i).position;
+        lBufferdata[i].color = mLights->at(i).color;
+        lBufferdata[i].intensity = mLights->at(i).intensity;
+    }
+
+    lightBuffer->unmap();
+
+}
+
+void Scene::addLight(PointLight &light)
+{
+    mLights->push_back(light);
+}
+
+void Scene::addLight(const float3 &position, const float3 &color, const float intensity)
+{
+    PointLight l;
+    l.color = color;
+    l.padding = 0;
+    l.position = position;
+    l.intensity = intensity;
+    mLights->push_back(l);
+}
+
+void Scene::removeLight(const unsigned int index)
+{
+    if(index < mLights->size())
+    {
+        mLights->erase(mLights->begin()+index);
+    }
+}
+
+PointLight Scene::getLight(const unsigned int index)
+{
+    return mLights->at(index);
+}
+
+int Scene::getLightCount()
+{
+    return mLights->size();
 }

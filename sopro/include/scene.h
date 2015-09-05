@@ -20,7 +20,8 @@ public:
     };
 
 private:
-    std::shared_ptr<std::vector<std::shared_ptr<SceneObject>>>        mSceneObjects;
+    std::shared_ptr<std::vector<std::shared_ptr<SceneObject>>>      mSceneObjects;
+    std::shared_ptr<std::vector<PointLight>>       mLights;
     optix::GeometryGroup            mGeometryGroup;
     optix::Context                  mContext;
     unsigned int                    mWidth;
@@ -34,12 +35,18 @@ public:
     void                            initScene(const Scene::Camera &camera,int width, int height);
     void                            addSceneObject(std::shared_ptr<SceneObject> object);
     void                            addSceneObject(std::shared_ptr<BaseGeometry> geometry, std::shared_ptr<BaseMaterial> material, const std::string &name);
+    void                            addLight(PointLight &light);
+    void                            addLight(const float3 &position, const float3 &color,const float intensity);
     void                            removeObject(const std::string &object);
     void                            removeObject(const unsigned int index);
+    void                            removeLight(const unsigned int index);
     std::shared_ptr<std::vector<std::shared_ptr<SceneObject>>>   getSceneObjects();
+    std::shared_ptr<std::vector<PointLight>>    getLights();
     std::shared_ptr<SceneObject>    getSceneObject(const std::string &name);
     std::shared_ptr<SceneObject>    getSceneObject(const unsigned int index);
+    PointLight                      getLight(const unsigned int index);
     int                             getSceneObjectCount();
+    int                             getLightCount();
     optix::Buffer                   getOutputBuffer();
     void                            resizeBuffer(int width, int height);
     void                            setSceneEpsilon(float amount);
@@ -47,6 +54,7 @@ public:
 private:
     void                            updateScene(const Scene::Camera &camera);
     void                            updateSceneObjects();
+    void                            updateLights();
     void                            updateCamera(const Scene::Camera &camera);
     optix::Buffer                   createOutputBuffer(RTformat format);
 

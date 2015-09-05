@@ -14,6 +14,7 @@ using namespace optix;
 
 std::shared_ptr<Scene>        Display::mScene = 0;
 std::string         Display::mTitle = "";
+std::string         Display::mSource = "";
 int                 Display::mWidth = 0;
 int                 Display::mHeight = 0;
 float               Display::horizontalAngle = 0.0f;
@@ -312,11 +313,11 @@ void Display::keyPressed(unsigned char key, int x, int y)
         }
         if(key == '5')
         {
-           std::shared_ptr<Mesh> m = std::make_shared<Mesh>("dragonBlender.obj",make_float3(0,0,0));
-          // std::shared_ptr<LambertMaterial> p = std::make_shared<LambertMaterial>(make_float3(1.0f,1.0f,1.0f));
-          // std::shared_ptr<SceneObject> sc = std::make_shared<SceneObject>("mesh",m,p);
+             std::shared_ptr<Mesh> m = std::make_shared<Mesh>(mSource,make_float3(0,0,0));
+           std::shared_ptr<PhongMaterial> p = std::make_shared<PhongMaterial>(make_float3(1.0f,1.0f,1.0f),0.2f,0.6f,0.2f,5.2f,0.2f);
+           std::shared_ptr<SceneObject> sc = std::make_shared<SceneObject>("mesh",m,p);
 
-          //mScene->addSceneObject(sc);
+          mScene->addSceneObject(sc);
            //antTBarInit_material(sc.get(),matBar,"mesh");
            //antTBarInit_geometry(sc.get(),geombar,"mesh");
 
@@ -422,4 +423,7 @@ void Display::setFOV(float fov)
     initialFOV = fov;
 }
 
-
+void Display::setMeshSource(const std::string &src)
+{
+    mSource = src;
+}

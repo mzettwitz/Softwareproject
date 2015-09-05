@@ -31,10 +31,15 @@ void SceneHandle::setSize(const unsigned int width, const unsigned int height)
     mHeight = height;
 }
 
+void SceneHandle::setSceneFile(const std::string &scenefile)
+{
+    mSceneFile = scenefile;
+}
 
 void SceneHandle::run(int &argc,char **argv)
 {
     Display::init(argc,argv,mWidth,mHeight);
+    Display::setMeshSource(mSceneFile);
     Display::setFOV(mFOV);
     Display::setInitialCamera(mInitialCamera);
     Display::run(mTitle,mScene);

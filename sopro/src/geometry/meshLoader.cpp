@@ -6,16 +6,20 @@
 using namespace std;
 using namespace optix;
 
-bool MeshLoader::loadOBJ(const char* path, std::vector <float3>& outVertices, std::vector<float3>& outNormals, std::vector<float2>& outUVs)
+bool MeshLoader::loadOBJ(const char* path, std::vector <float3>& outVertices, std::vector<float3>& outNormals, std::vector<float2>& outUVs,std::vector<int3> &outVertexIndices,std::vector<int3> &outNormalIndices,std::vector<int3> &outUVIndices,unsigned int &outNumPrimitives)
 {
-    std::vector<unsigned int> vertexIndices, uvIndices, normalIndices;
-    std::vector<float3> tempVertices, tempNormals;
-    std::vector<float2> tempUVs;
 
-    tempVertices.clear();
-    tempNormals.clear();
-    tempUVs.clear();
+    //clear mesh
+    outVertices.clear();
+    outNormals.clear();
+    outUVs.clear();
+    outNormalIndices.clear();
+    outNumPrimitives = 0;
+    outUVIndices.clear();
+    outVertexIndices.clear();
+    //open file
     FILE * file = fopen(path,"r");
+
     if(file == NULL)
     {
         std::cout << "Could NOT open file!\n" << std::endl;
@@ -38,79 +42,91 @@ bool MeshLoader::loadOBJ(const char* path, std::vector <float3>& outVertices, st
             //vertex
             float3 vertex = make_float3(0,0,0);
             fscanf(file,"%f %f %f\n", &vertex.x,&vertex.y,&vertex.z);
-            tempVertices.push_back(vertex);
+            outVertices.push_back(vertex);
         }
         else if(strcmp(lineHeader,"vt") == 0)
         {
             //texture coordinate
             float2 uv = make_float2(0,0);
             fscanf(file,"%f %f\n",&uv.x,&uv.y);
-            tempUVs.push_back(uv);
+            outUVs.push_back(uv);
         }
         else if(strcmp(lineHeader,"vn") == 0)
         {
             //normal
             float3 normal = make_float3(0,0,0);
             fscanf(file,"%f %f %f\n",&normal.x,&normal.y,&normal.z);
-            tempNormals.push_back(normal);
+            outNormals.push_back(normal);
         }
         else if(strcmp(lineHeader,"f") == 0)
         {
+            outNumPrimitives++;
             //face
-            unsigned int vertexIndex[3],normalIndex[3],uvIndex[3];
+            int3 vIndex,nIndex,uvIndex;
 
-            if(tempUVs.size() > 0 && tempNormals.size() > 0)
+            if(outNormals.size() > 0 && outUVs.size() > 0)
             {
-                int matches = fscanf(file, "%d/%d/%d %d/%d/%d %d/%d/%d\n",&vertexIndex[0],&uvIndex[0],&normalIndex[0],&vertexIndex[1],&uvIndex[1],&normalIndex[1],&vertexIndex[2],&uvIndex[2],&normalIndex[2]);
+                int matches = fscanf(file, "%d/%d/%d %d/%d/%d %d/%d/%d\n",&vIndex.x,&uvIndex.x,&nIndex.x,&vIndex.y,&uvIndex.y,&nIndex.y,&vIndex.z,&uvIndex.z,&nIndex.z);
                 if(matches != 9)
                 {
                     std::cout << "Could NOT parse this kind of .obj file!" << std::endl;
                     return false;
                 }
 
+                uvIndex.x--;
+                uvIndex.y--;
+                uvIndex.z--;
 
-                uvIndices.push_back(uvIndex[0]);
-                uvIndices.push_back(uvIndex[1]);
-                uvIndices.push_back(uvIndex[2]);
+                outUVIndices.push_back(uvIndex);
 
-                normalIndices.push_back(normalIndex[0]);
-                normalIndices.push_back(normalIndex[1]);
-                normalIndices.push_back(normalIndex[2]);
+                nIndex.x--;
+                nIndex.y--;
+                nIndex.z--;
 
-                vertexIndices.push_back(vertexIndex[0]);
-                vertexIndices.push_back(vertexIndex[1]);
-                vertexIndices.push_back(vertexIndex[2]);
+                outNormalIndices.push_back(nIndex);
+
+                vIndex.x--;
+                vIndex.y--;
+                vIndex.z--;
+
+                outVertexIndices.push_back(vIndex);
 
             }
-            else if(tempUVs.size() == 0 && tempNormals.size() > 0)
+            else if(outUVs.size() == 0 && outNormals.size() > 0)
             {
-                int matches = fscanf(file, "%d//%d %d//%d %d//%d\n",&vertexIndex[0],&normalIndex[0],&vertexIndex[1],&normalIndex[1],&vertexIndex[2],&normalIndex[2]);
+                int matches = fscanf(file, "%d//%d %d//%d %d//%d\n",&vIndex.x,&nIndex.x,&vIndex.y,&nIndex.y,&vIndex.z,&nIndex.z);
                 if(matches != 6)
                 {
                     std::cout << "Could NOT parse this kind of .obj file!" << std::endl;
                     return false;
                 }
 
-                normalIndices.push_back(normalIndex[0]);
-                normalIndices.push_back(normalIndex[1]);
-                normalIndices.push_back(normalIndex[2]);
+                nIndex.x--;
+                nIndex.y--;
+                nIndex.z--;
 
-                vertexIndices.push_back(vertexIndex[0]);
-                vertexIndices.push_back(vertexIndex[1]);
-                vertexIndices.push_back(vertexIndex[2]);
+                outNormalIndices.push_back(nIndex);
+
+                vIndex.x--;
+                vIndex.y--;
+                vIndex.z--;
+
+                outVertexIndices.push_back(vIndex);
             }
             else
             {
-                int matches = fscanf(file, "%d %d %d\n", &vertexIndex[0],&vertexIndex[1],&vertexIndex[2]);
+                int matches = fscanf(file, "%d %d %d\n", &vIndex.x,&vIndex.y,&vIndex.z);
                 if(matches != 3)
                 {
                     std::cout << "Could NOT parse this kind of .obj file!" << std::endl;
                     return false;
                 }
 
-                vertexIndices.push_back(vertexIndex[0]);
-                vertexIndices.push_back(vertexIndex[1]);
-                vertexIndices.push_back(vertexIndex[2]);
+                vIndex.x--;
+                vIndex.y--;
+                vIndex.z--;
+
+                outVertexIndices.push_back(vIndex);
             }
         }
         else
@@ -121,30 +137,5 @@ bool MeshLoader::loadOBJ(const char* path, std::vector <float3>& outVertices, st
         }
     }
 
-    //process file
-    for(unsigned int i = 0; i< vertexIndices.size();++i)
-    {
-        unsigned int vertexIndex = vertexIndices[i];
-        float3 vertex = tempVertices[vertexIndex-1];
-        outVertices.push_back(vertex);
-
-        if(uvIndices.size() > 0)
-        {
-            unsigned int uvIndex = uvIndices[i];
-            float2 uv = tempUVs[uvIndex-1];
-            outUVs.push_back(uv);
-        }
-
-        if(normalIndices.size() > 0)
-        {
-            unsigned int normalIndex = normalIndices[i];
-            float3 normal = tempNormals[normalIndex-1];
-            outNormals.push_back(normal);
-        }
-
-
-
-
-    }
     return true;
 }

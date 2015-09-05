@@ -10,6 +10,7 @@ class Display
 private:
     static std::shared_ptr<Scene> mScene;
     static std::string          mTitle;
+    static std::string          mSource;
     static int                  mWidth, mHeight;
     static float                horizontalAngle;
     static float                verticalAngle;
@@ -37,6 +38,7 @@ public:
     static void                 run(const std::string &title, std::shared_ptr<Scene> scene);
     static void                 setInitialCamera(const Scene::Camera &camera);
     static void                 setFOV(float fov);
+    static void                 setMeshSource(const std::string &src);
 
 private:
     static void                 displayFrame();
