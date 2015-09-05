@@ -991,7 +991,7 @@ void antTBar_material(std::shared_ptr<Scene> scene, TwBar *bar)
 
             // ATB Buttons to convert into another Material Type
             TwAddButton(bar, nameLButtonC, lambertButtonCB, scene->getSceneObject(i).get(), grpNameC);
-            TwAddButton(bar, nameBPButtonC, PButtonCB, scene->getSceneObject(i).get(), grpNameC);
+            TwAddButton(bar, nameBPButtonC, phongButtonCB, scene->getSceneObject(i).get(), grpNameC);
             TwAddButton(bar, nameGButtonC, glassButtonCB, scene->getSceneObject(i).get(), grpNameC);
             TwAddButton(bar, nameASButtonC, aSButtonCB, scene->getSceneObject(i).get(), grpNameC);
             TwAddButton(bar, nameCTButtonC, cTButtonCB, scene->getSceneObject(i).get(), grpNameC);
@@ -1000,7 +1000,7 @@ void antTBar_material(std::shared_ptr<Scene> scene, TwBar *bar)
             // ATB Variable for coeff props
             TwAddVarCB(bar, nameVar2C, TW_TYPE_FLOAT, setBPAmbientCoeffCB, getBPAmbientCoeffCB, scene->getSceneObject(i).get(), grpNameFloat1C);
             TwAddVarCB(bar, nameVar3C, TW_TYPE_FLOAT, setBPDiffuseCoeffCB, getBPDiffuseCoeffCB, scene->getSceneObject(i).get(), grpNameFloat1C);
-            TwAddVarCB(bar, nameVar4C, TW_TYPE_FLOAT, setBPpecularCoeffCB, getBPSpecularCoeffCB, scene->getSceneObject(i).get(), grpNameFloat1C);
+            TwAddVarCB(bar, nameVar4C, TW_TYPE_FLOAT, setBPSpecularCoeffCB, getBPSpecularCoeffCB, scene->getSceneObject(i).get(), grpNameFloat1C);
 
             // ATB Variable for shininess and specularity
             TwAddVarCB(bar, nameVar5C, TW_TYPE_FLOAT, setBPShininessCB, getBPShininessCB, scene->getSceneObject(i).get(), grpNameFloatC);
@@ -1670,7 +1670,7 @@ void antTBarReInit_material(std::string oldMat, SceneObject* scObj, TwBar *bar, 
         //------------ ATB variables
         // ATB Buttons to convert into another Material Type
         TwAddButton(bar, nameLButtonC, lambertButtonCB, scObj, grpNameC);
-        TwAddButton(bar, namePButtonC, PButtonCB, scObj, grpNameC);
+        TwAddButton(bar, namePButtonC, phongButtonCB, scObj, grpNameC);
         TwAddButton(bar, nameGButtonC, glassButtonCB, scObj, grpNameC);
         TwAddButton(bar, nameASButtonC, aSButtonCB, scObj, grpNameC);
         TwAddButton(bar, nameCTButtonC, cTButtonCB, scObj, grpNameC);
