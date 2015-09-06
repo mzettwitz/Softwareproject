@@ -904,6 +904,10 @@ void antTBarInit_material(SceneObject* scObj, TwBar *bar, std::string objName)
     std::string grpNameFloat = grpName + " min=0 step=0.05 ";
     const char* grpNameFloatC = grpNameFloat.c_str();
 
+    // [0,) large steps
+    std::string grpNameFloatL = grpName + " min=0 step=5 ";
+    const char* grpNameFloatLC = grpNameFloatL.c_str();
+
     //----------------- Material is Lambert
     if(scObj->getMaterial()->getMaterialType() == BaseMaterial::LAMBERT)
     {
@@ -1145,6 +1149,200 @@ void antTBarInit_material(SceneObject* scObj, TwBar *bar, std::string objName)
         TwDefine(conversionGroupC);
         TwDefine(propertyGroupC);
     }
+    //---------------- Material is AshikhminShirley
+    else if(scObj->getMaterial()->getMaterialType() == BaseMaterial::ASHIKHMINSHIRLEY)
+    {
+        //---------- set name to specific variable
+        std::string nameVar1 = objName + " Color";
+        const char* nameVar1C = nameVar1.c_str();
+
+        std::string nameVar2 = objName + " Anisotropic U";
+        const char* nameVar2C = nameVar2.c_str();
+
+        std::string nameVar3 = objName + " Anisotropic V";
+        const char* nameVar3C = nameVar3.c_str();
+
+        std::string nameVar4 = objName + " Rs (specular)";
+        const char* nameVar4C = nameVar4.c_str();
+
+        std::string nameVar5 = objName + " Rd (diffuse)";
+        const char* nameVar5C = nameVar5.c_str();
+
+        //------------ ATB variables
+        // ATB Variable for color props
+        TwAddVarCB(bar, nameVar1C, TW_TYPE_COLOR3F, setColorCB, getColorCB, scObj, grpNameC);
+
+        // ATB Buttons to convert into another Material Type
+        TwAddButton(bar, nameLButtonC, lambertButtonCB, scObj, grpNameC);
+        TwAddButton(bar, namePButtonC, phongButtonCB, scObj, grpNameC);
+        TwAddButton(bar, namePButtonC, bPButtonCB, scObj, grpNameC);
+        TwAddButton(bar, nameGButtonC, glassButtonCB, scObj, grpNameC);
+        TwAddButton(bar, nameCTButtonC, cTButtonCB, scObj, grpNameC);
+        TwAddButton(bar, nameWButtonC, wardButtonCB, scObj, grpNameC);
+
+        // ATB Variable Anisotropic
+        TwAddVarCB(bar, nameVar2C, TW_TYPE_FLOAT, setASAnisotropicUCB, getASAnisotropicUCB, scObj, grpNameFloatLC);
+        TwAddVarCB(bar, nameVar3C, TW_TYPE_FLOAT, setASAnisotropicVCB, getASAnisotropicVCB, scObj, grpNameFloatLC);
+
+        // ATB Variable for Rs and Rd
+        TwAddVarCB(bar, nameVar4C, TW_TYPE_FLOAT, setASRsCB, getASRsCB, scObj, grpNameFloat1C);
+        TwAddVarCB(bar, nameVar5C, TW_TYPE_FLOAT, setASRdCB, getASRsCB, scObj, grpNameFloat1C);
+
+        //---------- ATB subgroups
+        // define strings for subgroups
+        std::string conversionGroup;
+        conversionGroup += " MatBar/'" + nameLButton + "'   group='" + objName +   " Conversion'     \n";
+        conversionGroup += " MatBar/'" + namePButton + "'   group='" + objName +   " Conversion'     \n";
+        conversionGroup += " MatBar/'" + nameBPButton + "'   group='" + objName +   " Conversion'     \n";
+        conversionGroup += " MatBar/'" + nameGButton + "'   group='" + objName +   " Conversion'     \n";
+        conversionGroup += " MatBar/'" + nameCTButton + "'   group='" + objName +   " Conversion'     \n";
+        conversionGroup += " MatBar/'" + nameWButton + "'   group='" + objName +   " Conversion'     \n";
+        conversionGroup += " MatBar/'" + objName + " Conversion' opened=false     \n";  //collapse the group
+        conversionGroup += " MatBar/' " + objName + "' opened=false     \n";
+        conversionGroup+= " MatBar/'" + objName + " Conversion'  group=' " + objName + "'  ";
+        const char* conversionGroupC = conversionGroup.c_str();
+
+        std::string propertyGroup;
+        propertyGroup += " MatBar/'" + nameVar2 + "'   group='" + objName + " Properties'     \n";
+        propertyGroup += " MatBar/'" + nameVar3 + "'   group='" + objName + " Properties'     \n";
+        propertyGroup += " MatBar/'" + nameVar4 + "'   group='" + objName + " Properties'     \n";
+        propertyGroup += " MatBar/'" + nameVar5 + "'   group='" + objName + " Properties'     \n";
+        propertyGroup += " MatBar/'" + objName + " Properties' opened=false     \n";
+        propertyGroup += " MatBar/'" + objName + " Properties'  group=' " + objName + "'  ";
+        const char* propertyGroupC = propertyGroup.c_str();
+
+        // define subgroups in ATB
+        TwDefine(conversionGroupC);
+        TwDefine(propertyGroupC);
+    }
+    //---------------- Material is CookTorrance
+    else if(scObj->getMaterial()->getMaterialType() == BaseMaterial::COOKTORRANCE)
+    {
+        //---------- set name to specific variable
+        std::string nameVar1 = objName + " Color";
+        const char* nameVar1C = nameVar1.c_str();
+
+        std::string nameVar2 = objName + " Diffuse Coeff";
+        const char* nameVar2C = nameVar2.c_str();
+
+        std::string nameVar3 = objName + " Fresnel Factor";
+        const char* nameVar3C = nameVar3.c_str();
+
+        std::string nameVar4 = objName + " Roughness";
+        const char* nameVar4C = nameVar4.c_str();
+
+        std::string nameVar5 = objName + " Reflectance";
+        const char* nameVar5C = nameVar5.c_str();
+
+        //------------ ATB variables
+        // ATB Variable for color props
+        TwAddVarCB(bar, nameVar1C, TW_TYPE_COLOR3F, setColorCB, getColorCB, scObj, grpNameC);
+
+        // ATB Buttons to convert into another Material Type
+        TwAddButton(bar, nameLButtonC, lambertButtonCB, scObj, grpNameC);
+        TwAddButton(bar, namePButtonC, phongButtonCB, scObj, grpNameC);
+        TwAddButton(bar, namePButtonC, bPButtonCB, scObj, grpNameC);
+        TwAddButton(bar, nameGButtonC, glassButtonCB, scObj, grpNameC);
+        TwAddButton(bar, nameASButtonC, aSButtonCB, scObj, grpNameC);
+        TwAddButton(bar, nameWButtonC, wardButtonCB, scObj, grpNameC);
+
+        // ATB Variable Diffuse coefficient and Fresnel factor
+        TwAddVarCB(bar, nameVar2C, TW_TYPE_FLOAT, setCTDiffuseCoeffCB, getCTDiffuseCoeffCB, scObj, grpNameFloat1C);
+        TwAddVarCB(bar, nameVar3C, TW_TYPE_FLOAT, setCTFressnelFactorCB, getCTFressnelFactorCB, scObj, grpNameFloat5C);
+
+        // ATB Variable for Roughness and Reflectance
+        TwAddVarCB(bar, nameVar4C, TW_TYPE_FLOAT, setCTRoughnessCB, getCTRoughnessCB, scObj, grpNameFloat1C);
+        TwAddVarCB(bar, nameVar5C, TW_TYPE_FLOAT, setCTReflectanceCB, getCTReflectanceCB, scObj, grpNameFloat1C);
+
+        //---------- ATB subgroups
+        // define strings for subgroups
+        std::string conversionGroup;
+        conversionGroup += " MatBar/'" + nameLButton + "'   group='" + objName +   " Conversion'     \n";
+        conversionGroup += " MatBar/'" + namePButton + "'   group='" + objName +   " Conversion'     \n";
+        conversionGroup += " MatBar/'" + nameBPButton + "'   group='" + objName +   " Conversion'     \n";
+        conversionGroup += " MatBar/'" + nameGButton + "'   group='" + objName +   " Conversion'     \n";
+        conversionGroup += " MatBar/'" + nameASButton + "'   group='" + objName +   " Conversion'     \n";
+        conversionGroup += " MatBar/'" + nameWButton + "'   group='" + objName +   " Conversion'     \n";
+        conversionGroup += " MatBar/'" + objName + " Conversion' opened=false     \n";  //collapse the group
+        conversionGroup += " MatBar/' " + objName + "' opened=false     \n";
+        conversionGroup+= " MatBar/'" + objName + " Conversion'  group=' " + objName + "'  ";
+        const char* conversionGroupC = conversionGroup.c_str();
+
+        std::string propertyGroup;
+        propertyGroup += " MatBar/'" + nameVar2 + "'   group='" + objName + " Properties'     \n";
+        propertyGroup += " MatBar/'" + nameVar3 + "'   group='" + objName + " Properties'     \n";
+        propertyGroup += " MatBar/'" + nameVar4 + "'   group='" + objName + " Properties'     \n";
+        propertyGroup += " MatBar/'" + nameVar5 + "'   group='" + objName + " Properties'     \n";
+        propertyGroup += " MatBar/'" + objName + " Properties' opened=false     \n";
+        propertyGroup += " MatBar/'" + objName + " Properties'  group=' " + objName + "'  ";
+        const char* propertyGroupC = propertyGroup.c_str();
+
+        // define subgroups in ATB
+        TwDefine(conversionGroupC);
+        TwDefine(propertyGroupC);
+    }
+    //---------------- Material is Ward
+    else if(scObj->getMaterial()->getMaterialType() == BaseMaterial::WARD)
+    {
+        //---------- set name to specific variable
+        std::string nameVar1 = objName + " Color";
+        const char* nameVar1C = nameVar1.c_str();
+
+        std::string nameVar2 = objName + " Diffuse Coeff";
+        const char* nameVar2C = nameVar2.c_str();
+
+        std::string nameVar3 = objName + " X";
+        const char* nameVar3C = nameVar3.c_str();
+
+        std::string nameVar4 = objName + " Y";
+        const char* nameVar4C = nameVar4.c_str();
+
+
+        //------------ ATB variables
+        // ATB Variable for color props
+        TwAddVarCB(bar, nameVar1C, TW_TYPE_COLOR3F, setColorCB, getColorCB, scObj, grpNameC);
+
+        // ATB Buttons to convert into another Material Type
+        TwAddButton(bar, nameLButtonC, lambertButtonCB, scObj, grpNameC);
+        TwAddButton(bar, namePButtonC, phongButtonCB, scObj, grpNameC);
+        TwAddButton(bar, namePButtonC, bPButtonCB, scObj, grpNameC);
+        TwAddButton(bar, nameGButtonC, glassButtonCB, scObj, grpNameC);
+        TwAddButton(bar, nameASButtonC, aSButtonCB, scObj, grpNameC);
+        TwAddButton(bar, nameCTButtonC, cTButtonCB, scObj, grpNameC);
+
+        // ATB Variable Diffuse coefficient
+        TwAddVarCB(bar, nameVar2C, TW_TYPE_FLOAT, setWardDiffuseCoeffCB, getWardDiffuseCoeffCB, scObj, grpNameFloat1C);
+
+        // ATB Variable X and Y
+        TwAddVarCB(bar, nameVar3C, TW_TYPE_FLOAT, setWardXCB, getWardXCB, scObj, grpNameFloat5C);
+        TwAddVarCB(bar, nameVar4C, TW_TYPE_FLOAT, setWardYCB, getWardYCB, scObj, grpNameFloat1C);
+
+        //---------- ATB subgroups
+        // define strings for subgroups
+        std::string conversionGroup;
+        conversionGroup += " MatBar/'" + nameLButton + "'   group='" + objName +   " Conversion'     \n";
+        conversionGroup += " MatBar/'" + namePButton + "'   group='" + objName +   " Conversion'     \n";
+        conversionGroup += " MatBar/'" + nameBPButton + "'   group='" + objName +   " Conversion'     \n";
+        conversionGroup += " MatBar/'" + nameGButton + "'   group='" + objName +   " Conversion'     \n";
+        conversionGroup += " MatBar/'" + nameASButton + "'   group='" + objName +   " Conversion'     \n";
+        conversionGroup += " MatBar/'" + nameCTButton + "'   group='" + objName +   " Conversion'     \n";
+        conversionGroup += " MatBar/'" + objName + " Conversion' opened=false     \n";  //collapse the group
+        conversionGroup += " MatBar/' " + objName + "' opened=false     \n";
+        conversionGroup+= " MatBar/'" + objName + " Conversion'  group=' " + objName + "'  ";
+        const char* conversionGroupC = conversionGroup.c_str();
+
+        std::string propertyGroup;
+        propertyGroup += " MatBar/'" + nameVar2 + "'   group='" + objName + " Properties'     \n";
+        propertyGroup += " MatBar/'" + nameVar3 + "'   group='" + objName + " Properties'     \n";
+        propertyGroup += " MatBar/'" + nameVar4 + "'   group='" + objName + " Properties'     \n";
+        propertyGroup += " MatBar/'" + objName + " Properties' opened=false     \n";
+        propertyGroup += " MatBar/'" + objName + " Properties'  group=' " + objName + "'  ";
+        const char* propertyGroupC = propertyGroup.c_str();
+
+        // define subgroups in ATB
+        TwDefine(conversionGroupC);
+        TwDefine(propertyGroupC);
+    }
 
 }
 
@@ -1325,6 +1523,119 @@ void antTBarRemoveVariable_material(SceneObject *scObj, TwBar *bar, std::string 
         TwRemoveVar(bar, nameVar4C);
         TwRemoveVar(bar, nameVar5C);
     }
+    //---------------- Material is AshikhminShirley
+    else if(scObj->getMaterial()->getMaterialType() == BaseMaterial::ASHIKHMINSHIRLEY)
+    {
+        //---------- set name to specific variable
+        std::string nameVar1 = objName + " Color";
+        const char* nameVar1C = nameVar1.c_str();
+
+        std::string nameVar2 = objName + " Anisotropic U";
+        const char* nameVar2C = nameVar2.c_str();
+
+        std::string nameVar3 = objName + " Anisotropic V";
+        const char* nameVar3C = nameVar3.c_str();
+
+        std::string nameVar4 = objName + " Rs (specular)";
+        const char* nameVar4C = nameVar4.c_str();
+
+        std::string nameVar5 = objName + " Rd (diffuse)";
+        const char* nameVar5C = nameVar5.c_str();
+
+        //------------ ATB variables
+        // ATB Variable for color props
+        TwRemoveVar(bar, nameVar1C);
+
+        // ATB Buttons to convert into another Material Type
+        TwRemoveVar(bar, nameLButtonC);
+        TwRemoveVar(bar, namePButtonC);
+        TwRemoveVar(bar, nameBPButtonC);
+        TwRemoveVar(bar, nameGButtonC);
+        TwRemoveVar(bar, nameCTButtonC);
+        TwRemoveVar(bar, nameWButtonC);
+
+        // ATB Variable for Anisotropic Coeffs
+        TwRemoveVar(bar, nameVar2C);
+        TwRemoveVar(bar, nameVar3C);
+
+        // ATB Variable for Rs and Rd
+        TwRemoveVar(bar, nameVar4C);
+        TwRemoveVar(bar, nameVar5C);
+    }
+    //---------------- Material is CookTorrance
+    else if(scObj->getMaterial()->getMaterialType() == BaseMaterial::COOKTORRANCE)
+    {
+        //---------- set name to specific variable
+        std::string nameVar1 = objName + " Color";
+        const char* nameVar1C = nameVar1.c_str();
+
+        std::string nameVar2 = objName + " Diffuse Coeff";
+        const char* nameVar2C = nameVar2.c_str();
+
+        std::string nameVar3 = objName + " Fresnel Factor";
+        const char* nameVar3C = nameVar3.c_str();
+
+        std::string nameVar4 = objName + " Roughness";
+        const char* nameVar4C = nameVar4.c_str();
+
+        std::string nameVar5 = objName + " Reflectance";
+        const char* nameVar5C = nameVar5.c_str();
+
+        //------------ ATB variables
+        // ATB Variable for color props
+        TwRemoveVar(bar, nameVar1C);
+
+        // ATB Buttons to convert into another Material Type
+        TwRemoveVar(bar, nameLButtonC);
+        TwRemoveVar(bar, namePButtonC);
+        TwRemoveVar(bar, nameBPButtonC);
+        TwRemoveVar(bar, nameGButtonC);
+        TwRemoveVar(bar, nameASButtonC);
+        TwRemoveVar(bar, nameWButtonC);
+
+        // ATB Variable for Diffuse coefficient and Fresnel factor
+        TwRemoveVar(bar, nameVar2C);
+        TwRemoveVar(bar, nameVar3C);
+
+        // ATB Variable for Roughness and Reflectance
+        TwRemoveVar(bar, nameVar4C);
+        TwRemoveVar(bar, nameVar5C);
+    }
+    //---------------- Material is Ward
+    else if(scObj->getMaterial()->getMaterialType() == BaseMaterial::WARD)
+    {
+        //---------- set name to specific variable
+        std::string nameVar1 = objName + " Color";
+        const char* nameVar1C = nameVar1.c_str();
+
+        std::string nameVar2 = objName + " Diffuse Coeff";
+        const char* nameVar2C = nameVar2.c_str();
+
+        std::string nameVar3 = objName + " X";
+        const char* nameVar3C = nameVar3.c_str();
+
+        std::string nameVar4 = objName + " Y";
+        const char* nameVar4C = nameVar4.c_str();
+
+        //------------ ATB variables
+        // ATB Variable for color props
+        TwRemoveVar(bar, nameVar1C);
+
+        // ATB Buttons to convert into another Material Type
+        TwRemoveVar(bar, nameLButtonC);
+        TwRemoveVar(bar, namePButtonC);
+        TwRemoveVar(bar, nameBPButtonC);
+        TwRemoveVar(bar, nameGButtonC);
+        TwRemoveVar(bar, nameASButtonC);
+        TwRemoveVar(bar, nameCTButtonC);
+
+        // ATB Variable for Diffuse coefficient
+        TwRemoveVar(bar, nameVar2C);
+
+        // ATB Variable for X and Y
+        TwRemoveVar(bar, nameVar3C);
+        TwRemoveVar(bar, nameVar4C);
+    }
 
 }
 
@@ -1382,6 +1693,10 @@ void antTBarReInit_material(std::string oldMat, SceneObject* scObj, TwBar *bar, 
     // [0,)
     std::string grpNameFloat = grpName + " min=0 step=0.05 ";
     const char* grpNameFloatC = grpNameFloat.c_str();
+
+    // [0,) large steps
+    std::string grpNameFloatL = grpName + " min=0 step=5 ";
+    const char* grpNameFloatLC = grpNameFloatL.c_str();
 
     //------------------------ Clear variables
     //----------------- Material was Lambert
@@ -1501,6 +1816,102 @@ void antTBarReInit_material(std::string oldMat, SceneObject* scObj, TwBar *bar, 
         TwRemoveVar(bar, nameVar4C);
         TwRemoveVar(bar, nameVar5C);
     }
+    //---------------- Material was AshikhminShirley
+    else if(oldMat == "AshikhminShirley")
+    {
+        //---------- set name to specific variable
+        std::string nameVar2 = objName + " Anisotropic U";
+        const char* nameVar2C = nameVar2.c_str();
+
+        std::string nameVar3 = objName + " Anisotropic V";
+        const char* nameVar3C = nameVar3.c_str();
+
+        std::string nameVar4 = objName + " Rs (specular)";
+        const char* nameVar4C = nameVar4.c_str();
+
+        std::string nameVar5 = objName + " Rd (diffuse)";
+        const char* nameVar5C = nameVar5.c_str();
+
+        //------------ ATB variables
+        // ATB Buttons to convert into another Material Type
+        TwRemoveVar(bar, nameLButtonC);
+        TwRemoveVar(bar, namePButtonC);
+        TwRemoveVar(bar, nameBPButtonC);
+        TwRemoveVar(bar, nameGButtonC);
+        TwRemoveVar(bar, nameCTButtonC);
+        TwRemoveVar(bar, nameWButtonC);
+
+        // ATB Variable for Anisotropic Coeffs
+        TwRemoveVar(bar, nameVar2C);
+        TwRemoveVar(bar, nameVar3C);
+
+        // ATB Variable for Rs and Rd
+        TwRemoveVar(bar, nameVar4C);
+        TwRemoveVar(bar, nameVar5C);
+    }
+    //---------------- Material was CookTorrance
+    else if(oldMat == "CookTorrance")
+    {
+        //---------- set name to specific variable
+        std::string nameVar2 = objName + " Diffuse Coeff";
+        const char* nameVar2C = nameVar2.c_str();
+
+        std::string nameVar3 = objName + " Fresnel Factor";
+        const char* nameVar3C = nameVar3.c_str();
+
+        std::string nameVar4 = objName + " Roughness";
+        const char* nameVar4C = nameVar4.c_str();
+
+        std::string nameVar5 = objName + " Reflectance";
+        const char* nameVar5C = nameVar5.c_str();
+
+        //------------ ATB variables
+        // ATB Buttons to convert into another Material Type
+        TwRemoveVar(bar, nameLButtonC);
+        TwRemoveVar(bar, namePButtonC);
+        TwRemoveVar(bar, nameBPButtonC);
+        TwRemoveVar(bar, nameGButtonC);
+        TwRemoveVar(bar, nameASButtonC);
+        TwRemoveVar(bar, nameWButtonC);
+
+        // ATB Variable for Diffuse coefficient and Fresnel factor
+        TwRemoveVar(bar, nameVar2C);
+        TwRemoveVar(bar, nameVar3C);
+
+        // ATB Variable for Roughness and Reflectance
+        TwRemoveVar(bar, nameVar4C);
+        TwRemoveVar(bar, nameVar5C);
+    }
+    //---------------- Material was Ward
+    else if(oldMat == "Ward")
+    {
+        //---------- set name to specific variable
+        std::string nameVar2 = objName + " Diffuse Coeff";
+        const char* nameVar2C = nameVar2.c_str();
+
+        std::string nameVar3 = objName + " X";
+        const char* nameVar3C = nameVar3.c_str();
+
+        std::string nameVar4 = objName + " Y";
+        const char* nameVar4C = nameVar4.c_str();
+
+        //------------ ATB variables
+        // ATB Buttons to convert into another Material Type
+        TwRemoveVar(bar, nameLButtonC);
+        TwRemoveVar(bar, namePButtonC);
+        TwRemoveVar(bar, nameBPButtonC);
+        TwRemoveVar(bar, nameGButtonC);
+        TwRemoveVar(bar, nameASButtonC);
+        TwRemoveVar(bar, nameCTButtonC);
+
+        // ATB Variable for Diffuse coefficient
+        TwRemoveVar(bar, nameVar2C);
+
+        // ATB Variable for X and Y
+        TwRemoveVar(bar, nameVar3C);
+        TwRemoveVar(bar, nameVar4C);
+    }
+
 
     //------------------------ Re-init variables
     //----------------- Material is Lambert
@@ -1703,6 +2114,182 @@ void antTBarReInit_material(std::string oldMat, SceneObject* scObj, TwBar *bar, 
         propertyGroup += " MatBar/'" + nameVar2 + "'   group='" + objName + " Properties'     \n";
         propertyGroup += " MatBar/'" + nameVar4 + "'   group='" + objName + " Properties'     \n";
         propertyGroup += " MatBar/'" + nameVar5 + "'   group='" + objName + " Properties'     \n";
+        propertyGroup += " MatBar/'" + objName + " Properties' opened=false     \n";
+        propertyGroup += " MatBar/'" + objName + " Properties'  group=' " + objName + "'  ";
+        const char* propertyGroupC = propertyGroup.c_str();
+
+        // define subgroups in ATB
+        TwDefine(conversionGroupC);
+        TwDefine(propertyGroupC);
+    }
+    //---------------- Material is AshikhminShirley
+    else if(scObj->getMaterial()->getMaterialType() == BaseMaterial::ASHIKHMINSHIRLEY)
+    {
+        //---------- set name to specific variable
+        std::string nameVar2 = objName + " Anisotropic U";
+        const char* nameVar2C = nameVar2.c_str();
+
+        std::string nameVar3 = objName + " Anisotropic V";
+        const char* nameVar3C = nameVar3.c_str();
+
+        std::string nameVar4 = objName + " Rs (specular)";
+        const char* nameVar4C = nameVar4.c_str();
+
+        std::string nameVar5 = objName + " Rd (diffuse)";
+        const char* nameVar5C = nameVar5.c_str();
+
+        //------------ ATB variables
+        // ATB Buttons to convert into another Material Type
+        TwAddButton(bar, nameLButtonC, lambertButtonCB, scObj, grpNameC);
+        TwAddButton(bar, namePButtonC, phongButtonCB, scObj, grpNameC);
+        TwAddButton(bar, namePButtonC, bPButtonCB, scObj, grpNameC);
+        TwAddButton(bar, nameGButtonC, glassButtonCB, scObj, grpNameC);
+        TwAddButton(bar, nameCTButtonC, cTButtonCB, scObj, grpNameC);
+        TwAddButton(bar, nameWButtonC, wardButtonCB, scObj, grpNameC);
+
+        // ATB Variable Anisotropic
+        TwAddVarCB(bar, nameVar2C, TW_TYPE_FLOAT, setASAnisotropicUCB, getASAnisotropicUCB, scObj, grpNameFloatLC);
+        TwAddVarCB(bar, nameVar3C, TW_TYPE_FLOAT, setASAnisotropicVCB, getASAnisotropicVCB, scObj, grpNameFloatLC);
+
+        // ATB Variable for Rs and Rd
+        TwAddVarCB(bar, nameVar4C, TW_TYPE_FLOAT, setASRsCB, getASRsCB, scObj, grpNameFloat1C);
+        TwAddVarCB(bar, nameVar5C, TW_TYPE_FLOAT, setASRdCB, getASRsCB, scObj, grpNameFloat1C);
+
+        //---------- ATB subgroups
+        // define strings for subgroups
+        std::string conversionGroup;
+        conversionGroup += " MatBar/'" + nameLButton + "'   group='" + objName +   " Conversion'     \n";
+        conversionGroup += " MatBar/'" + namePButton + "'   group='" + objName +   " Conversion'     \n";
+        conversionGroup += " MatBar/'" + nameBPButton + "'   group='" + objName +   " Conversion'     \n";
+        conversionGroup += " MatBar/'" + nameGButton + "'   group='" + objName +   " Conversion'     \n";
+        conversionGroup += " MatBar/'" + nameCTButton + "'   group='" + objName +   " Conversion'     \n";
+        conversionGroup += " MatBar/'" + nameWButton + "'   group='" + objName +   " Conversion'     \n";
+        conversionGroup += " MatBar/'" + objName + " Conversion' opened=false     \n";  //collapse the group
+        conversionGroup += " MatBar/' " + objName + "' opened=false     \n";
+        conversionGroup+= " MatBar/'" + objName + " Conversion'  group=' " + objName + "'  ";
+        const char* conversionGroupC = conversionGroup.c_str();
+
+        std::string propertyGroup;
+        propertyGroup += " MatBar/'" + nameVar2 + "'   group='" + objName + " Properties'     \n";
+        propertyGroup += " MatBar/'" + nameVar3 + "'   group='" + objName + " Properties'     \n";
+        propertyGroup += " MatBar/'" + nameVar4 + "'   group='" + objName + " Properties'     \n";
+        propertyGroup += " MatBar/'" + nameVar5 + "'   group='" + objName + " Properties'     \n";
+        propertyGroup += " MatBar/'" + objName + " Properties' opened=false     \n";
+        propertyGroup += " MatBar/'" + objName + " Properties'  group=' " + objName + "'  ";
+        const char* propertyGroupC = propertyGroup.c_str();
+
+        // define subgroups in ATB
+        TwDefine(conversionGroupC);
+        TwDefine(propertyGroupC);
+    }
+    //---------------- Material is CookTorrance
+    else if(scObj->getMaterial()->getMaterialType() == BaseMaterial::COOKTORRANCE)
+    {
+        //---------- set name to specific variable
+        std::string nameVar2 = objName + " Diffuse Coeff";
+        const char* nameVar2C = nameVar2.c_str();
+
+        std::string nameVar3 = objName + " Fresnel Factor";
+        const char* nameVar3C = nameVar3.c_str();
+
+        std::string nameVar4 = objName + " Roughness";
+        const char* nameVar4C = nameVar4.c_str();
+
+        std::string nameVar5 = objName + " Reflectance";
+        const char* nameVar5C = nameVar5.c_str();
+
+        //------------ ATB variables
+        // ATB Buttons to convert into another Material Type
+        TwAddButton(bar, nameLButtonC, lambertButtonCB, scObj, grpNameC);
+        TwAddButton(bar, namePButtonC, phongButtonCB, scObj, grpNameC);
+        TwAddButton(bar, namePButtonC, bPButtonCB, scObj, grpNameC);
+        TwAddButton(bar, nameGButtonC, glassButtonCB, scObj, grpNameC);
+        TwAddButton(bar, nameASButtonC, aSButtonCB, scObj, grpNameC);
+        TwAddButton(bar, nameWButtonC, wardButtonCB, scObj, grpNameC);
+
+        // ATB Variable Diffuse coefficient and Fresnel factor
+        TwAddVarCB(bar, nameVar2C, TW_TYPE_FLOAT, setCTDiffuseCoeffCB, getCTDiffuseCoeffCB, scObj, grpNameFloat1C);
+        TwAddVarCB(bar, nameVar3C, TW_TYPE_FLOAT, setCTFressnelFactorCB, getCTFressnelFactorCB, scObj, grpNameFloat5C);
+
+        // ATB Variable for Roughness and Reflectance
+        TwAddVarCB(bar, nameVar4C, TW_TYPE_FLOAT, setCTRoughnessCB, getCTRoughnessCB, scObj, grpNameFloat1C);
+        TwAddVarCB(bar, nameVar5C, TW_TYPE_FLOAT, setCTReflectanceCB, getCTReflectanceCB, scObj, grpNameFloat1C);
+
+        //---------- ATB subgroups
+        // define strings for subgroups
+        std::string conversionGroup;
+        conversionGroup += " MatBar/'" + nameLButton + "'   group='" + objName +   " Conversion'     \n";
+        conversionGroup += " MatBar/'" + namePButton + "'   group='" + objName +   " Conversion'     \n";
+        conversionGroup += " MatBar/'" + nameBPButton + "'   group='" + objName +   " Conversion'     \n";
+        conversionGroup += " MatBar/'" + nameGButton + "'   group='" + objName +   " Conversion'     \n";
+        conversionGroup += " MatBar/'" + nameASButton + "'   group='" + objName +   " Conversion'     \n";
+        conversionGroup += " MatBar/'" + nameWButton + "'   group='" + objName +   " Conversion'     \n";
+        conversionGroup += " MatBar/'" + objName + " Conversion' opened=false     \n";  //collapse the group
+        conversionGroup += " MatBar/' " + objName + "' opened=false     \n";
+        conversionGroup+= " MatBar/'" + objName + " Conversion'  group=' " + objName + "'  ";
+        const char* conversionGroupC = conversionGroup.c_str();
+
+        std::string propertyGroup;
+        propertyGroup += " MatBar/'" + nameVar2 + "'   group='" + objName + " Properties'     \n";
+        propertyGroup += " MatBar/'" + nameVar3 + "'   group='" + objName + " Properties'     \n";
+        propertyGroup += " MatBar/'" + nameVar4 + "'   group='" + objName + " Properties'     \n";
+        propertyGroup += " MatBar/'" + nameVar5 + "'   group='" + objName + " Properties'     \n";
+        propertyGroup += " MatBar/'" + objName + " Properties' opened=false     \n";
+        propertyGroup += " MatBar/'" + objName + " Properties'  group=' " + objName + "'  ";
+        const char* propertyGroupC = propertyGroup.c_str();
+
+        // define subgroups in ATB
+        TwDefine(conversionGroupC);
+        TwDefine(propertyGroupC);
+    }
+    //---------------- Material is Ward
+    else if(scObj->getMaterial()->getMaterialType() == BaseMaterial::WARD)
+    {
+        //---------- set name to specific variable
+        std::string nameVar2 = objName + " Diffuse Coeff";
+        const char* nameVar2C = nameVar2.c_str();
+
+        std::string nameVar3 = objName + " X";
+        const char* nameVar3C = nameVar3.c_str();
+
+        std::string nameVar4 = objName + " Y";
+        const char* nameVar4C = nameVar4.c_str();
+
+
+        //------------ ATB variables
+        // ATB Buttons to convert into another Material Type
+        TwAddButton(bar, nameLButtonC, lambertButtonCB, scObj, grpNameC);
+        TwAddButton(bar, namePButtonC, phongButtonCB, scObj, grpNameC);
+        TwAddButton(bar, namePButtonC, bPButtonCB, scObj, grpNameC);
+        TwAddButton(bar, nameGButtonC, glassButtonCB, scObj, grpNameC);
+        TwAddButton(bar, nameASButtonC, aSButtonCB, scObj, grpNameC);
+        TwAddButton(bar, nameCTButtonC, cTButtonCB, scObj, grpNameC);
+
+        // ATB Variable Diffuse coefficient
+        TwAddVarCB(bar, nameVar2C, TW_TYPE_FLOAT, setWardDiffuseCoeffCB, getWardDiffuseCoeffCB, scObj, grpNameFloat1C);
+
+        // ATB Variable X and Y
+        TwAddVarCB(bar, nameVar3C, TW_TYPE_FLOAT, setWardXCB, getWardXCB, scObj, grpNameFloat5C);
+        TwAddVarCB(bar, nameVar4C, TW_TYPE_FLOAT, setWardYCB, getWardYCB, scObj, grpNameFloat1C);
+
+        //---------- ATB subgroups
+        // define strings for subgroups
+        std::string conversionGroup;
+        conversionGroup += " MatBar/'" + nameLButton + "'   group='" + objName +   " Conversion'     \n";
+        conversionGroup += " MatBar/'" + namePButton + "'   group='" + objName +   " Conversion'     \n";
+        conversionGroup += " MatBar/'" + nameBPButton + "'   group='" + objName +   " Conversion'     \n";
+        conversionGroup += " MatBar/'" + nameGButton + "'   group='" + objName +   " Conversion'     \n";
+        conversionGroup += " MatBar/'" + nameASButton + "'   group='" + objName +   " Conversion'     \n";
+        conversionGroup += " MatBar/'" + nameCTButton + "'   group='" + objName +   " Conversion'     \n";
+        conversionGroup += " MatBar/'" + objName + " Conversion' opened=false     \n";  //collapse the group
+        conversionGroup += " MatBar/' " + objName + "' opened=false     \n";
+        conversionGroup+= " MatBar/'" + objName + " Conversion'  group=' " + objName + "'  ";
+        const char* conversionGroupC = conversionGroup.c_str();
+
+        std::string propertyGroup;
+        propertyGroup += " MatBar/'" + nameVar2 + "'   group='" + objName + " Properties'     \n";
+        propertyGroup += " MatBar/'" + nameVar3 + "'   group='" + objName + " Properties'     \n";
+        propertyGroup += " MatBar/'" + nameVar4 + "'   group='" + objName + " Properties'     \n";
         propertyGroup += " MatBar/'" + objName + " Properties' opened=false     \n";
         propertyGroup += " MatBar/'" + objName + " Properties'  group=' " + objName + "'  ";
         const char* propertyGroupC = propertyGroup.c_str();
