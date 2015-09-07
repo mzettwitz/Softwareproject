@@ -8,8 +8,8 @@ Material AshikhminShirleyMaterial::createMaterial(Context context) const
     material["color"]->setFloat(mColor.x,mColor.y,mColor.z);
     material["au"]->setFloat(mAnisotropicFactorU);
     material["av"]->setFloat(mAnisotropicFactorV);
-    material["rs"]->setFloat(mRs);
-    material["rd"]->setFloat(mRd);
+    material["rs"]->setFloat(mSpecularCoeff);
+    material["rd"]->setFloat(mDiffuseCoeff);
     return material;
 }
 
@@ -58,32 +58,32 @@ void AshikhminShirleyMaterial::setAnistropicFactorV(const float &v)
     mAnisotropicFactorV = v;
 }
 
-const float& AshikhminShirleyMaterial::rd() const
+const float& AshikhminShirleyMaterial::diffuseCoeff() const
 {
-    return mRd;
+    return mDiffuseCoeff;
 }
 
-float& AshikhminShirleyMaterial::rd()
+float& AshikhminShirleyMaterial::diffuseCoeff()
 {
-    return mRd;
+    return mDiffuseCoeff;
 }
 
 void AshikhminShirleyMaterial::setRd(const float &rd)
 {
-    mRd = rd;
+    mDiffuseCoeff = rd;
 }
 
-const float& AshikhminShirleyMaterial::rs() const
+const float& AshikhminShirleyMaterial::specularCoeff() const
 {
-    return mRs;
+    return mSpecularCoeff;
 }
 
-float& AshikhminShirleyMaterial::rs()
+float& AshikhminShirleyMaterial::specularCoeff()
 {
-    return mRs;
+    return mSpecularCoeff;
 }
 
 void AshikhminShirleyMaterial::setRs(const float &rs)
 {
-    mRs = rs;
+    mSpecularCoeff = rs;
 }

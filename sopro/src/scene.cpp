@@ -341,7 +341,7 @@ void Scene::updateSceneObjects()
                                    0,0,0,1};
                Matrix4x4 scaleM(s);
 
-               Matrix4x4 M = transM * scaleM * rotM;
+               Matrix4x4 M = transM * rotM * scaleM;
 
                t->setMatrix(0,M.getData(),0);
                mGroup->getAcceleration()->markDirty();

@@ -8,8 +8,8 @@ Material WardMaterial::createMaterial(Context context) const
     material["color"]->setFloat(mColor.x,mColor.y,mColor.z);
     material["diffuseCoeff"]->setFloat(mDiffuseCoeff);
     material["specularCoeff"]->setFloat(mSpecularCoeff);
-    material["anisotropicX"]->setFloat(mX);
-    material["anisotropicY"]->setFloat(mY);
+    material["anisotropicFactorU"]->setFloat(mAnisotropicFactorU);
+    material["anisotropicFactorV"]->setFloat(mAnisotropicFactorV);
     return material;
 }
 const float3& WardMaterial::color() const
@@ -42,34 +42,34 @@ void WardMaterial::setDiffuseCoeff(const float &diffuseCoeff)
     mDiffuseCoeff = diffuseCoeff;
 }
 
-const float& WardMaterial::x() const
+const float& WardMaterial::anistropicFactorU() const
 {
-    return mX;
+    return mAnisotropicFactorU;
 }
 
-float& WardMaterial::x()
+float& WardMaterial::anisotropicFactorU()
 {
-    return mX;
+    return mAnisotropicFactorU;
 }
 
-void WardMaterial::setX(const float &x)
+void WardMaterial::setAnisotropicFactorU(const float &u)
 {
-    mX = x;
+    mAnisotropicFactorU = u;
 }
 
-const float& WardMaterial::y() const
+const float& WardMaterial::anisotropicFactorV() const
 {
-    return mY;
+    return mAnisotropicFactorV;
 }
 
-float& WardMaterial::y()
+float& WardMaterial::anistropicFactorV()
 {
-    return mY;
+    return mAnisotropicFactorV;
 }
 
-void WardMaterial::setY(const float &y)
+void WardMaterial::setAnistropicFactorV(const float &v)
 {
-    mY = y;
+    mAnisotropicFactorV = v;
 }
 
 const float& WardMaterial::specularCoeff() const

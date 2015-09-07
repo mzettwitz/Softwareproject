@@ -179,7 +179,7 @@ static void TW_CALL phongButtonCB(void* clientData)
         oldMat = "AshikhminShirley";
         ASM* p = (ASM*)tmpSO->getMaterial().get();
         std::shared_ptr<PhongMaterial> phongMat = std::make_shared<PhongMaterial>
-                (p->color(), p->rd(), p->rs(), 3);
+                (p->color(), p->diffuseCoeff(), p->specularCoeff(), 3);
         tmpSO->setMaterial(phongMat);
     }
     else if(tmpSO->getMaterial()->getMaterialType() == BaseMaterial::COOKTORRANCE)
@@ -308,7 +308,7 @@ static void TW_CALL bPButtonCB(void* clientData)
         oldMat = "AshikhminShirley";
         ASM* p = (ASM*)tmpSO->getMaterial().get();
         std::shared_ptr<BPM> blinnPhongMat = std::make_shared<BPM>
-                (p->color(), p->rd(), p->rs(), 3);
+                (p->color(), p->diffuseCoeff(), p->specularCoeff(), 3);
         tmpSO->setMaterial(blinnPhongMat);
     }
     else if(tmpSO->getMaterial()->getMaterialType() == BaseMaterial::COOKTORRANCE)
@@ -437,7 +437,7 @@ static void TW_CALL glassButtonCB(void* clientData)
         oldMat = "AshikhminShirley";
         ASM* p = (ASM*)tmpSO->getMaterial().get();
         std::shared_ptr<GlassMaterial> glassMat = std::make_shared<GlassMaterial>
-                (p->color(), p->rs());
+                (p->color(), p->specularCoeff());
         tmpSO->setMaterial(glassMat);
     }
     else if(tmpSO->getMaterial()->getMaterialType() == BaseMaterial::COOKTORRANCE)
@@ -593,7 +593,7 @@ static void TW_CALL setASAnisotropicVCB(const void* value, void* clientData)
 static void TW_CALL getASRsCB(void* value, void* clientData)
 {
     SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
-    *((float*) value) =  static_cast<ASM*>(tmpSO->getMaterial().get())->rs();
+    *((float*) value) =  static_cast<ASM*>(tmpSO->getMaterial().get())->specularCoeff();
 }
 //----- Rs setter
 static void TW_CALL setASRsCB(const void* value, void* clientData)
@@ -607,7 +607,7 @@ static void TW_CALL setASRsCB(const void* value, void* clientData)
 static void TW_CALL getASRdCB(void* value, void* clientData)
 {
     SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
-    *((float*) value) =  static_cast<ASM*>(tmpSO->getMaterial().get())->rd();
+    *((float*) value) =  static_cast<ASM*>(tmpSO->getMaterial().get())->diffuseCoeff();
 }
 //----- Rd setter
 static void TW_CALL setASRdCB(const void* value, void* clientData)
@@ -663,7 +663,7 @@ static void TW_CALL cTButtonCB(void* clientData)
         oldMat = "AshikhminShirley";
         ASM* p = (ASM*)tmpSO->getMaterial().get();
         std::shared_ptr<CTM> CookTorranceMat = std::make_shared<CTM>
-                (p->color(), p->rd());
+                (p->color(), p->diffuseCoeff());
         tmpSO->setMaterial(CookTorranceMat);
     }
     else if(tmpSO->getMaterial()->getMaterialType() == BaseMaterial::WARD)
@@ -778,7 +778,7 @@ static void TW_CALL wardButtonCB(void* clientData)
         oldMat = "AshikhminShirley";
         ASM* p = (ASM*)tmpSO->getMaterial().get();
         std::shared_ptr<WardMaterial> wardMat = std::make_shared<WardMaterial>
-                (p->color(), p->rd(),p->rs(), p->anisotropicFactorU(), p->anisotropicFactorV());
+                (p->color(), p->diffuseCoeff(),p->specularCoeff(), p->anisotropicFactorU(), p->anisotropicFactorV());
         tmpSO->setMaterial(wardMat);
     }
     if(tmpSO->getMaterial()->getMaterialType() == BaseMaterial::COOKTORRANCE)
@@ -796,7 +796,7 @@ static void TW_CALL wardButtonCB(void* clientData)
 static void TW_CALL getWardXCB(void* value, void* clientData)
 {
     SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
-    *((float*) value) =  static_cast<WardMaterial*>(tmpSO->getMaterial().get())->x();
+    *((float*) value) =  static_cast<WardMaterial*>(tmpSO->getMaterial().get())->anisotropicFactorU();
 }
 //----- X setter
 static void TW_CALL setWardXCB(const void* value, void* clientData)
@@ -810,7 +810,7 @@ static void TW_CALL setWardXCB(const void* value, void* clientData)
 static void TW_CALL getWardYCB(void* value, void* clientData)
 {
     SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
-    *((float*) value) =  static_cast<WardMaterial*>(tmpSO->getMaterial().get())->y();
+    *((float*) value) =  static_cast<WardMaterial*>(tmpSO->getMaterial().get())->anisotropicFactorV();
 }
 //----- Anisotropic V setter
 static void TW_CALL setWardYCB(const void* value, void* clientData)

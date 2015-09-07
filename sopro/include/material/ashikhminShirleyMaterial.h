@@ -19,14 +19,14 @@ private:
     float3  mColor;
     float   mAnisotropicFactorU;
     float   mAnisotropicFactorV;
-    float   mRs;    //specularCoefficient
-    float   mRd;    //diffuseCoefficient
+    float   mSpecularCoeff;    //specularCoefficient
+    float   mDiffuseCoeff;    //diffuseCoefficient
 
 public:
 
     // ------------------------CTor
     // ------------ Advanced CTor
-    AshikhminShirleyMaterial(float3 color, float anisotropicFactorU, float anisotropicFactorV,float rs,float rd) : mColor(color),mAnisotropicFactorU(anisotropicFactorU), mAnisotropicFactorV(anisotropicFactorV), mRs(rs),mRd(rd)
+    AshikhminShirleyMaterial(float3 color, float anisotropicFactorU, float anisotropicFactorV,float specularCoeff,float diffuseCoeff) : mColor(color),mAnisotropicFactorU(anisotropicFactorU), mAnisotropicFactorV(anisotropicFactorV), mSpecularCoeff(specularCoeff),mDiffuseCoeff(diffuseCoeff)
     {
         mMaterialType = ASHIKHMINSHIRLEY;
         setPTXPath("ashikhminShirleyMaterial.cu");
@@ -41,8 +41,8 @@ public:
         mColor = in->color();
         mAnisotropicFactorU =in->anisotropicFactorU();
         mAnisotropicFactorV = in->anisotropicFactorV();
-        mRs = in->rs();
-        mRd = in->rd();
+        mSpecularCoeff = in->specularCoeff();
+        mDiffuseCoeff = in->diffuseCoeff();
         mMaterialType = ASHIKHMINSHIRLEY;
         setPTXPath("ashikhminShirleyMaterial.cu");
     }
@@ -53,8 +53,8 @@ public:
         std::shared_ptr<AshikhminShirleyMaterial> in = std::dynamic_pointer_cast<AshikhminShirleyMaterial>(in1);
         mAnisotropicFactorU =in->anisotropicFactorU();
         mAnisotropicFactorV = in->anisotropicFactorV();
-        mRs = in->rs();
-        mRd = in->rd();
+        mSpecularCoeff = in->specularCoeff();
+        mDiffuseCoeff = in->diffuseCoeff();
         mMaterialType = ASHIKHMINSHIRLEY;
         setPTXPath("ashikhminShirleyMaterial.cu");
     }
@@ -69,8 +69,8 @@ public:
             mColor = in->color();
             mAnisotropicFactorU = value;
             mAnisotropicFactorV = in->anisotropicFactorV();
-            mRs = in->rs();
-            mRd = in->rd();
+            mSpecularCoeff = in->specularCoeff();
+            mDiffuseCoeff = in->diffuseCoeff();
             mMaterialType = ASHIKHMINSHIRLEY;
             setPTXPath("ashikhminShirleyMaterial.cu");
             break;
@@ -78,8 +78,8 @@ public:
             mColor = in->color();
             mAnisotropicFactorU = in->anisotropicFactorU();
             mAnisotropicFactorV = value;
-            mRs = in->rs();
-            mRd = in->rd();
+            mSpecularCoeff = in->specularCoeff();
+            mDiffuseCoeff = in->diffuseCoeff();
             mMaterialType = ASHIKHMINSHIRLEY;
             setPTXPath("ashikhminShirleyMaterial.cu");
             break;
@@ -87,8 +87,8 @@ public:
             mColor = in->color();
             mAnisotropicFactorU = in->anisotropicFactorU();
             mAnisotropicFactorV = in->anisotropicFactorV();
-            mRs = value;
-            mRd = in->rd();
+            mSpecularCoeff = value;
+            mDiffuseCoeff = in->diffuseCoeff();
             mMaterialType = ASHIKHMINSHIRLEY;
             setPTXPath("ashikhminShirleyMaterial.cu");
             break;
@@ -96,8 +96,8 @@ public:
             mColor = in->color();
             mAnisotropicFactorU = in->anisotropicFactorU();
             mAnisotropicFactorV = in->anisotropicFactorV();
-            mRs = in->rs();
-            mRd = value;
+            mSpecularCoeff = in->specularCoeff();
+            mDiffuseCoeff = value;
             mMaterialType = ASHIKHMINSHIRLEY;
             setPTXPath("ashikhminShirleyMaterial.cu");
             break;
@@ -105,8 +105,8 @@ public:
             mColor = in->color();
             mAnisotropicFactorU = in->anisotropicFactorU();
             mAnisotropicFactorV = in->anisotropicFactorV();
-            mRs = in->rs();
-            mRd = in->rd();
+            mSpecularCoeff = in->specularCoeff();
+            mDiffuseCoeff = in->diffuseCoeff();
             mMaterialType = ASHIKHMINSHIRLEY;
             setPTXPath("ashikhminShirleyMaterial.cu");
             break;
@@ -126,8 +126,8 @@ public:
     {
         mAnisotropicFactorU = 1.f;
         mAnisotropicFactorV = 1.f;
-        mRs = 0.5f;
-        mRd = 0.5f;
+        mSpecularCoeff = 0.5f;
+        mDiffuseCoeff = 0.5f;
         mMaterialType = ASHIKHMINSHIRLEY;
         setPTXPath("ashikhminShirleyMaterial.cu");
     }
@@ -144,8 +144,8 @@ public:
     {
         mAnisotropicFactorU = 1.f;
         mAnisotropicFactorV = 1.f;
-        mRs = 0.5f;
-        mRd = 0.5f;
+        mSpecularCoeff = 0.5f;
+        mDiffuseCoeff = 0.5f;
         mMaterialType = ASHIKHMINSHIRLEY;
         setPTXPath("ashikhminShirleyMaterial.cu");
     }
@@ -166,23 +166,23 @@ public:
         case 1: // ward
             mAnisotropicFactorU = 1.f;
             mAnisotropicFactorV = 1.f;
-            mRs = 0.5f;
-            mRd = param;
+            mSpecularCoeff = 0.5f;
+            mDiffuseCoeff = param;
             mMaterialType = ASHIKHMINSHIRLEY;
             setPTXPath("ashikhminShirleyMaterial.cu");
             break;
         case 2: //glass
             mAnisotropicFactorU = 1.f;
             mAnisotropicFactorV = 1.f;
-            mRs = param;
-            mRd = 0.5f;
+            mSpecularCoeff = param;
+            mDiffuseCoeff = 0.5f;
             mMaterialType = ASHIKHMINSHIRLEY;
             setPTXPath("ashikhminShirleyMaterial.cu");
         default:
             mAnisotropicFactorU = 1.f;
             mAnisotropicFactorV = 1.f;
-            mRs = 0.5f;
-            mRd = 0.5f;
+            mSpecularCoeff = 0.5f;
+            mDiffuseCoeff = 0.5f;
             mMaterialType = ASHIKHMINSHIRLEY;
             setPTXPath("ashikhminShirleyMaterial.cu");
         }
@@ -203,8 +203,8 @@ AshikhminShirleyMaterial(const float3 &col, float diffuseC, float specC) : mColo
 {
     mAnisotropicFactorU = 1.f;
     mAnisotropicFactorV = 1.f;
-    mRs = specC;
-    mRd = diffuseC;
+    mSpecularCoeff = specC;
+    mDiffuseCoeff = diffuseC;
     mMaterialType = ASHIKHMINSHIRLEY;
     setPTXPath("ashikhminShirleyMaterial.cu");
 }
@@ -225,13 +225,13 @@ AshikhminShirleyMaterial(const float3 &col, float diffuseC, float specC) : mColo
     float& anisotropicFactorV();
     void setAnistropicFactorV(const float &v);
 
-    const float& rs() const;
-    float& rs();
-    void setRs(const float &rs);
+    const float& specularCoeff() const;
+    float& specularCoeff();
+    void setRs(const float &specularCoeff);
 
-    const float& rd() const;
-    float& rd();
-    void setRd(const float &rd);
+    const float& diffuseCoeff() const;
+    float& diffuseCoeff();
+    void setRd(const float &diffuseCoeff);
 };
 
 #endif
