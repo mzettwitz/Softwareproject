@@ -219,9 +219,7 @@ void Scene::removeObject(const std::string &object)
             mGroup->getAcceleration()->markDirty();
             return;
         }
-
     }
-
 }
 
 void Scene::removeObject(const unsigned int index)
@@ -309,7 +307,7 @@ void Scene::updateSceneObjects()
             //TODO split into translation rotation scaling
                Transform t = mGroup->getChild<Transform>(i);
                float3 pos = mSceneObjects->at(i)->getGeometry()->position();
-               float3 rot = mSceneObjects->at(i)->getGeometry()->rotation();
+               float4 rot = mSceneObjects->at(i)->getGeometry()->rotation();
                float3 scale = mSceneObjects->at(i)->getGeometry()->scale();
                const float trans[16] = {1,0,0,pos.x,
                                         0,1,0,pos.y,

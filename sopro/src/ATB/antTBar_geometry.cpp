@@ -62,14 +62,14 @@ static void TW_CALL getRotationCB(void* value, void* clientData)
     // get sceneObject
     BaseGeometry* tmpO =  static_cast<BaseGeometry*>(clientData);
     // get position from object
-    *((float3*) value) = tmpO->rotation();
+    *((float4*) value) = tmpO->rotation();
 }
 //----- Rotation getter
 static void TW_CALL setRotationCB(const void* value, void* clientData)
 {
     // save params in temporary pointer
     BaseGeometry* tmpO =  static_cast<BaseGeometry*>(clientData);
-    float3 v = *((float3*)value);
+    float4 v = *((float4*)value);
     // create a new Geometry
     tmpO->setRotation(v);
 }
@@ -328,7 +328,7 @@ void antTBarInit_geometry(SceneObject* scObj, TwBar *bar, std::string objName)
         TwAddVarCB(bar, nameVar3C, TW_TYPE_FLOAT, setPositionZCB, getPositionZCB, scObj->getGeometry().get(), grpNameFloatC);
 
         // ATB Variable for Rotation
-        TwAddVarCB(bar, nameVar4C, TW_TYPE_DIR3F, setRotationCB, getRotationCB, scObj->getGeometry().get(), grpNameC);
+        TwAddVarCB(bar, nameVar4C, TW_TYPE_QUAT4F, setRotationCB, getRotationCB, scObj->getGeometry().get(), grpNameC);
 
         // ATB Variable for Scale
         TwAddVarCB(bar, nameVar5C, TW_TYPE_FLOAT, setScale3CB, getScale3CB, scObj->getGeometry().get(), grpNameFloat0C);
@@ -395,7 +395,7 @@ void antTBarInit_geometry(SceneObject* scObj, TwBar *bar, std::string objName)
         TwAddVarCB(bar, nameVar3C, TW_TYPE_FLOAT, setPositionZCB, getPositionZCB, scObj->getGeometry().get(), grpNameFloatC);
 
         // ATB Variable for Rotation
-        TwAddVarCB(bar, nameVar4C, TW_TYPE_DIR3F, setRotationCB, getRotationCB, scObj->getGeometry().get(), grpNameC);
+        TwAddVarCB(bar, nameVar4C, TW_TYPE_QUAT4F, setRotationCB, getRotationCB, scObj->getGeometry().get(), grpNameC);
 
         // ATB Variable for Scale
         TwAddVarCB(bar, nameVar5C, TW_TYPE_FLOAT, setScale3CB, getScale3CB, scObj->getGeometry().get(), grpNameFloat0C);

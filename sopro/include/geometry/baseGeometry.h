@@ -28,7 +28,7 @@ public:
     } GeometryType;
 protected:
     float3 mPos;
-    float3 mRot;
+    float4 mRot;
     float3 mScale;
     bool changed;
     std::string mIntersectionProgram;
@@ -48,8 +48,7 @@ public:
     void setPosition(const float3 &pos);
     void setPosition(const float value, const short pos);
 
-    void setRotation(const float3 &rot);
-    void setRotation(const float value, const short pos);
+    void setRotation(const float4 &rot);
 
     void setScale(const float3 &scale);
     void setScale(const float value, const short pos);
@@ -58,15 +57,17 @@ public:
     const float3& position() const;
     float3& position();
 
-    const float3& rotation() const;
-    float3& rotation();
+    const float4& rotation() const;
+    float4& rotation();
 
     const float3& scale() const;
     float3& scale();
 
 
 protected:
-    BaseGeometry(float3 pos, std::string intersect, std::string boundingbox,std::string path) : mPos(pos),mRot(make_float3(0,0,0)),mScale(make_float3(1,1,1)),mIntersectionProgram(intersect),mBoundingBoxProgram(boundingbox),changed(false)
+    BaseGeometry(float3 pos, std::string intersect, std::string boundingbox,std::string path) :
+        mPos(pos),mRot(make_float4(0,0,0,0)),mScale(make_float3(1,1,1)),
+        mIntersectionProgram(intersect),mBoundingBoxProgram(boundingbox),changed(false)
     {
         setPTXpath(path);
     }
