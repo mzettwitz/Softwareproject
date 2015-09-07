@@ -315,23 +315,17 @@ void Scene::updateSceneObjects()
                                         0,0,0,1};
                Matrix4x4 transM(trans);
 
-               const float rotX[16] = {1,0          ,0          ,0,
-                                       0,static_cast<float>(cos(rot.x)) ,static_cast<float>(-sin(rot.x)),0,
-                                       0,static_cast<float>(sin(rot.x)) ,static_cast<float>(cos(rot.x)) ,0,
-                                       0,0          ,0          ,1};
-               const float rotY[16] = {static_cast<float>(cos(rot.y)),0,static_cast<float>(sin(rot.y)),0,
-                                       0,1,0,0,
-                                       static_cast<float>(-sin(rot.y)),0,static_cast<float>(cos(rot.y)),0,
-                                       0,0,0,1};
-               const float rotZ[16] = {static_cast<float>(cos(rot.z)),static_cast<float>(-sin(rot.z)),0,0,
-                                       static_cast<float>(sin(rot.z)),static_cast<float>(cos(rot.z)),0,0,
-                                       0,0,1,0,
-                                       0,0,0,1};
-               Matrix4x4 rotXM(rotX);
-               Matrix4x4 rotYM(rotY);
-               Matrix4x4 rotZM(rotZ);
+               float a = rot.z;
+               float b = rot.y;
+               float c = rot.x;
+               float d = rot.w;
 
-               Matrix4x4 rotM = rotXM * rotYM * rotZM;
+               const float ro[16] = {1 - 2 * (c * c+ d* d),2*(b * c - a * d), 2*(b * d + a * c),0,
+                                      2 *(b * c + a * d), 1-2 * (d * d + b * b), 2 * (c * d - a * b), 0,
+                                      2 * (b * d - a * c), 2 * (c * d + a * b), 1 - 2 * (b * b + c * c),0,
+                                      0,0,0,1};
+
+               Matrix4x4 rotM(ro);
 
                const float s[16] ={scale.x,0,0,0,
                                    0,scale.y,0,0,
