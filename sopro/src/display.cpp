@@ -206,9 +206,6 @@ void Display::displayFrame()
     glDrawPixels(static_cast<GLsizei>(bufferWidth),static_cast<GLsizei>(bufferHeight),glFormat,glDataType,imageData);
     buffer->unmap();
 
-
-
-
     TwDraw();   // draw ATB
 
     glutPostRedisplay();
@@ -312,7 +309,7 @@ void Display::keyPressed(unsigned char key, int x, int y)
 
             mScene->addSceneObject(sc);
             antTBarInit_material(sc.get(),matBar,"mesh");
-            //antTBarInit_geometry(sc.get(),geombar,"mesh");
+            antTBarInit_geometry(sc.get(),geomBar,"mesh");
 
         }
 
@@ -326,6 +323,7 @@ void Display::keyPressed(unsigned char key, int x, int y)
 
             mScene->addSceneObject(sc);
             antTBarInit_material(sc.get(),matBar,"groundPlane");
+            antTBarInit_geometry(sc.get(),geomBar,"groundPlane");
         }
     }
     //needs to be called, to update change
