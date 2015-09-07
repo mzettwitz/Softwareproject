@@ -104,14 +104,14 @@ static void TW_CALL setInfHeightCB(const void* value, void* clientData)
 static void TW_CALL getSphereRadiusCB(void* value, void* clientData)
 {
     Sphere* tmpO =  static_cast<Sphere*>(clientData);
-    *((float*) value) =  tmpO->radius();
+    *((float*) value) =  tmpO->scale().x;
 }
 //----- Sphere Radius setter
 static void TW_CALL setSphereRadiusCB(const void* value, void* clientData)
 {
     Sphere* tmpO =  static_cast<Sphere*>(clientData);
     float v = *((float*)value);
-    tmpO->setRadius(v);
+    tmpO->setScale(make_float3(v,v,v));
 }
 
 //--------------------------------- Basic variable init

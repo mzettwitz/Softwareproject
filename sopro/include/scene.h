@@ -19,10 +19,15 @@ public:
         optix::float3 right;
     };
 
+    const float IdentityMatrix[16] = {1,0,0,0,
+                         0,1,0,0,
+                         0,0,1,0,
+                         0,0,0,1};
+
 private:
     std::shared_ptr<std::vector<std::shared_ptr<SceneObject>>>      mSceneObjects;
     std::shared_ptr<std::vector<PointLight>>       mLights;
-    optix::GeometryGroup            mGeometryGroup;
+    optix::Group                    mGroup;
     optix::Context                  mContext;
     unsigned int                    mWidth;
     unsigned int                    mHeight;

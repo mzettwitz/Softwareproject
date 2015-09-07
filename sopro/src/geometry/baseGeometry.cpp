@@ -66,3 +66,69 @@ bool BaseGeometry::isChanged()
     }
     return false;
 }
+
+void BaseGeometry::setRotation(const float3 &rot)
+{
+    mRot = rot;
+    changed = true;
+}
+
+void BaseGeometry::setRotation(const float value, const short pos)
+{
+    changed = true;
+    switch(pos)
+    {
+    case 0:
+        mRot.x = value;
+        break;
+    case 1:
+        mRot.y = value;
+        break;
+    case 2:
+        mRot.z = value;
+        break;
+    }
+}
+
+const float3& BaseGeometry::rotation() const
+{
+    return mRot;
+}
+
+float3& BaseGeometry::rotation()
+{
+    return mRot;
+}
+
+void BaseGeometry::setScale(const float3 &scale)
+{
+    changed = true;
+    mScale =  scale;
+}
+
+void BaseGeometry::setScale(const float value, const short pos)
+{
+    changed = true;
+    switch(pos)
+    {
+    case 0 :
+        mScale.x = value;
+        break;
+    case 1 :
+        mScale.y = value;
+        break;
+    case 2:
+        mScale.z = value;
+        break;
+    }
+}
+
+const float3& BaseGeometry::scale() const
+{
+    return mScale;
+}
+
+float3& BaseGeometry::scale()
+{
+    return mScale;
+}

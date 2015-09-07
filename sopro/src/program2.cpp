@@ -40,13 +40,13 @@ int program2(int argc,char* argv[])
         std::vector<Material> mat;
         std::vector<Geometry> geom;
     //create sphere
-    Sphere s(make_float3(0.0f,1.0f,0.0f),1.0f);
+    Sphere s(make_float3(0.0f,1.0f,0.0f));
     geom.push_back(s.createGeometry(context));
     LambertMaterial sphereMaterial(make_float3(0.8f,0.4f,0.1f));
     mat.push_back(sphereMaterial.createMaterial(context));
 
     //create sphere
-    Sphere s2(make_float3(2.0f,1.2f,0.0f),1.2f);
+    Sphere s2(make_float3(2.0f,1.2f,0.0f));
     geom.push_back(s2.createGeometry(context));
     LambertMaterial sphereMaterial2(make_float3(1.0f,0.2f,0.6f));
     mat.push_back(sphereMaterial2.createMaterial(context));

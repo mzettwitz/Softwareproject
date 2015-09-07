@@ -267,7 +267,7 @@ void Display::keyPressed(unsigned char key, int x, int y)
         {
 
             std::shared_ptr<LambertMaterial> l = std::make_shared<LambertMaterial>(make_float3(0.3f,0.5f,0.9f));
-            std::shared_ptr<Sphere> s = std::make_shared<Sphere>(make_float3(0.0f,0.0f,0.0f),1.0f);
+            std::shared_ptr<Sphere> s = std::make_shared<Sphere>(make_float3(0.0f,0.0f,0.0f));
             std::string name = "Sphere_" + std::to_string(mScene->getSceneObjectCount());
             std::shared_ptr<SceneObject> obj = std::make_shared<SceneObject>(name,s,l);
             mScene->addSceneObject(obj);
@@ -293,16 +293,6 @@ void Display::keyPressed(unsigned char key, int x, int y)
 
             }
         }
-        // 9 : dummy purpose, add infinity plane
-        if(key == '9')
-        {
-            std::shared_ptr<LambertMaterial> p = std::make_shared<LambertMaterial>(make_float3(1.0f,1.0f,1.0f));
-            std::shared_ptr<InfinitePlane> plane = std::make_shared<InfinitePlane>(-2.0f);
-            std::shared_ptr<SceneObject> sc = std::make_shared<SceneObject>("groundPlane",plane,p);
-            mScene->addSceneObject(sc);
-            antTBarInit_material(sc.get(),matBar,"groundPlane");
-            antTBarInit_geometry(sc.get(),geomBar,"groundPlane");
-        }
         // y : set increase sceneEpsilon
         if(key == 'y')
         {
@@ -324,6 +314,18 @@ void Display::keyPressed(unsigned char key, int x, int y)
             antTBarInit_material(sc.get(),matBar,"mesh");
             //antTBarInit_geometry(sc.get(),geombar,"mesh");
 
+        }
+
+        //new groudPlane, just a box , but to be modified to a 'plane'
+        if(key == '9')
+        {
+            std::shared_ptr<Mesh> groundPlane = std::make_shared<Mesh>("cube.obj",make_float3(0.0f,-2.0f,0.0f));
+            groundPlane->setScale(make_float3(100.0f,0.2f,100.0f));
+            std::shared_ptr<LambertMaterial> p = std::make_shared<LambertMaterial>(make_float3(1.0f,1.0f,1.0f));
+            std::shared_ptr<SceneObject> sc = std::make_shared<SceneObject>("groundPlane",groundPlane,p);
+
+            mScene->addSceneObject(sc);
+            antTBarInit_material(sc.get(),matBar,"groundPlane");
         }
     }
     //needs to be called, to update change
