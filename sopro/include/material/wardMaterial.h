@@ -11,13 +11,14 @@ private:
 
     float3  mColor;
     float   mDiffuseCoeff;
+    float   mSpecularCoeff;
     float   mX;
     float   mY;
 
 public:
     // ------------------------CTor
     // ------------ Advanced CTor
-    WardMaterial(float3 color, float diffuseCoeff, float x, float y) : mColor(color),mDiffuseCoeff(diffuseCoeff), mX(x), mY(y)
+    WardMaterial(float3 color, float diffuseCoeff, float specularCoeff, float x, float y) : mColor(color),mDiffuseCoeff(diffuseCoeff),mSpecularCoeff(specularCoeff), mX(x), mY(y)
     {
         mMaterialType = WARD;
         setPTXPath("wardMaterial.cu");
@@ -58,6 +59,7 @@ public:
             mX = value;
             mY = in->y();
             mDiffuseCoeff = in->diffuseCoeff();
+            mSpecularCoeff = in->specularCoeff();
             mMaterialType = WARD;
             setPTXPath("wardMaterial.cu");
             break;
@@ -66,6 +68,7 @@ public:
             mX = in->x();
             mY = value;
             mDiffuseCoeff = in->diffuseCoeff();
+            mSpecularCoeff = in->specularCoeff();
             mMaterialType = WARD;
             setPTXPath("wardMaterial.cu");
             break;
@@ -74,8 +77,19 @@ public:
             mX = in->x();
             mY = in->y();
             mDiffuseCoeff = value;
+            mSpecularCoeff = in->specularCoeff();
             mMaterialType = WARD;
             setPTXPath("wardMaterial.cu");
+            break;
+        case 4:
+            mColor = in->color();
+            mX = in->x();
+            mY = in->y();
+            mDiffuseCoeff = in->diffuseCoeff();
+            mSpecularCoeff = value;
+            mMaterialType = WARD;
+            setPTXPath("wardMaterial.cu");
+            break;
         default : // pass through
             mColor = in->color();
             mX = in->x();
@@ -98,7 +112,8 @@ public:
      */
     WardMaterial(const float3 &col) : mColor(col)
     {
-        mDiffuseCoeff = 1.0f;
+        mDiffuseCoeff = 0.5f;
+        mSpecularCoeff = 0.5f;
         mX = 0.5f;
         mY = 0.5f;
         mMaterialType = WARD;
@@ -116,6 +131,7 @@ public:
     WardMaterial(const float3 &col, float diffuseC) : mColor(col)
     {
         mDiffuseCoeff = diffuseC;
+        mSpecularCoeff = 1-diffuseC;
         mX = 0.5f;
         mY = 0.5f;
         mMaterialType = WARD;
@@ -141,6 +157,10 @@ public:
     const float& y() const;
     float& y();
     void setY(const float &y);
+
+    const float& specularCoeff() const;
+    float& specularCoeff();
+    void setSpecularCoeff(const float &specularCoeff);
 };
 
 

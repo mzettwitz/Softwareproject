@@ -12,6 +12,7 @@ private:
 
     float3 mColor;
     float mDiffuseCoeff;
+    float mSpecularCoeff;
     float mFresnelFactor;
     float mRoughness;
     float mReflectance;
@@ -20,7 +21,7 @@ public:
 
     // ------------------------CTor
     // ------------ Advanced CTor
-    CookTorranceMaterial(float3 color, float diffuseCoeff, float fresnelFactor, float roughness, float reflectance) : mColor(color),mDiffuseCoeff(diffuseCoeff), mFresnelFactor(fresnelFactor), mRoughness(roughness), mReflectance(reflectance)
+    CookTorranceMaterial(float3 color, float diffuseCoeff, float specularCoeff, float fresnelFactor, float roughness, float reflectance) : mColor(color),mDiffuseCoeff(diffuseCoeff),mSpecularCoeff(specularCoeff), mFresnelFactor(fresnelFactor), mRoughness(roughness), mReflectance(reflectance)
     {
         mMaterialType = COOKTORRANCE;
         setPTXPath("cookTorranceMaterial.cu");
@@ -33,6 +34,7 @@ public:
         std::shared_ptr<CookTorranceMaterial> in = std::dynamic_pointer_cast<CookTorranceMaterial>(in1);
         mColor = in->color();
         mDiffuseCoeff = in->diffuseCoeff();
+        mSpecularCoeff = in->specularCoeff();
         mFresnelFactor = in->fresnelFactor();
         mRoughness = in->roughness();
         mReflectance = in->reflectance();
@@ -45,6 +47,7 @@ public:
     {
         std::shared_ptr<CookTorranceMaterial> in = std::dynamic_pointer_cast<CookTorranceMaterial>(in1);
         mDiffuseCoeff = in->diffuseCoeff();
+        mSpecularCoeff = in->specularCoeff();
         mFresnelFactor = in->fresnelFactor();
         mRoughness = in->roughness();
         mReflectance = in->reflectance();
@@ -64,6 +67,7 @@ public:
             mFresnelFactor = in->fresnelFactor();
             mRoughness = in->roughness();
             mReflectance = in->reflectance();
+            mSpecularCoeff = in->specularCoeff();
             mMaterialType = COOKTORRANCE;
             setPTXPath("cookTorranceMaterial.cu");
             break;
@@ -74,6 +78,7 @@ public:
             mRoughness = in->roughness();
             mReflectance = in->reflectance();
             mMaterialType = COOKTORRANCE;
+            mSpecularCoeff = in->specularCoeff();
             setPTXPath("cookTorranceMaterial.cu");
             break;
         case 3: //roughness
@@ -82,6 +87,7 @@ public:
             mFresnelFactor = in->fresnelFactor();
             mRoughness = value;
             mReflectance = in->reflectance();
+            mSpecularCoeff = in->specularCoeff();
             mMaterialType = COOKTORRANCE;
             setPTXPath("cookTorranceMaterial.cu");
             break;
@@ -91,6 +97,17 @@ public:
             mFresnelFactor = in->fresnelFactor();
             mRoughness = in->roughness();
             mReflectance = value;
+            mSpecularCoeff = in->specularCoeff();
+            mMaterialType = COOKTORRANCE;
+            setPTXPath("cookTorranceMaterial.cu");
+            break;
+        case 5:
+            mColor = in->color();
+            mDiffuseCoeff = in->diffuseCoeff();
+            mFresnelFactor = in->fresnelFactor();
+            mRoughness = in->roughness();
+            mReflectance = in->reflectance();
+            mSpecularCoeff = value;
             mMaterialType = COOKTORRANCE;
             setPTXPath("cookTorranceMaterial.cu");
             break;
@@ -100,6 +117,7 @@ public:
             mFresnelFactor = in->fresnelFactor();
             mRoughness = in->roughness();
             mReflectance = in->reflectance();
+            mSpecularCoeff = in->specularCoeff();
             mMaterialType = COOKTORRANCE;
             setPTXPath("cookTorranceMaterial.cu");
             break;
@@ -118,11 +136,12 @@ public:
     CookTorranceMaterial(const float3 &col) :
         mColor(col)
     {
-        mDiffuseCoeff = 1.f;
+        mDiffuseCoeff = 0.5f;
         mFresnelFactor = 0.5f;
         mRoughness = 0.5f;
         mReflectance = 0.5f;
         mMaterialType = COOKTORRANCE;
+        mSpecularCoeff = 0.5f;
         setPTXPath("cookTorranceMaterial.cu");
     }
     // Ward, Ashikhmin-Shirley
@@ -140,6 +159,7 @@ public:
             mFresnelFactor = 0.5f;
             mRoughness = 0.5f;
             mReflectance = 0.5f;
+            mSpecularCoeff = 1-diffuseC;
             mMaterialType = COOKTORRANCE;
             setPTXPath("cookTorranceMaterial.cu");
     }
@@ -159,6 +179,7 @@ public:
         mFresnelFactor = 0.5f;
         mRoughness = 0.5f;
         mReflectance = spec;
+        mSpecularCoeff = 1- diffuseC;
         mMaterialType = COOKTORRANCE;
         setPTXPath("cookTorranceMaterial.cu");
     }
@@ -187,6 +208,10 @@ public:
     const float& reflectance() const;
     float& reflectance();
     void setReflectance(const float &reflectance);
+
+    const float& specularCoeff() const;
+    float& specularCoeff();
+    void setSpecularCoeff(const float &specularCoeff);
 
 
 };

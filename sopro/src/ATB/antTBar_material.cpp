@@ -778,7 +778,7 @@ static void TW_CALL wardButtonCB(void* clientData)
         oldMat = "AshikhminShirley";
         ASM* p = (ASM*)tmpSO->getMaterial().get();
         std::shared_ptr<WardMaterial> wardMat = std::make_shared<WardMaterial>
-                (p->color(), p->rd(), p->anisotropicFactorU(), p->anisotropicFactorV());
+                (p->color(), p->rd(),p->rs(), p->anisotropicFactorU(), p->anisotropicFactorV());
         tmpSO->setMaterial(wardMat);
     }
     if(tmpSO->getMaterial()->getMaterialType() == BaseMaterial::COOKTORRANCE)

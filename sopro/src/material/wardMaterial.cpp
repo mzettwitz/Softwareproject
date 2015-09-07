@@ -6,7 +6,8 @@ Material WardMaterial::createMaterial(Context context) const
     material->setAnyHitProgram(1,context->createProgramFromPTXFile(mPTXpath,"anyhit_shadow"));
     material->setClosestHitProgram(0,context->createProgramFromPTXFile(mPTXpath,"closesthit_radiance"));
     material["color"]->setFloat(mColor.x,mColor.y,mColor.z);
-    material["diffuseCoefficient"]->setFloat(mDiffuseCoeff);
+    material["diffuseCoeff"]->setFloat(mDiffuseCoeff);
+    material["specularCoeff"]->setFloat(mSpecularCoeff);
     material["anisotropicX"]->setFloat(mX);
     material["anisotropicY"]->setFloat(mY);
     return material;
@@ -69,5 +70,20 @@ float& WardMaterial::y()
 void WardMaterial::setY(const float &y)
 {
     mY = y;
+}
+
+const float& WardMaterial::specularCoeff() const
+{
+    return mSpecularCoeff;
+}
+
+float& WardMaterial::specularCoeff()
+{
+    return mSpecularCoeff;
+}
+
+void WardMaterial::setSpecularCoeff(const float &specularCoeff)
+{
+    mSpecularCoeff = specularCoeff;
 }
 

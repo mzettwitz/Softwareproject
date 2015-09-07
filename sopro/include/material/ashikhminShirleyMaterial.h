@@ -19,8 +19,8 @@ private:
     float3  mColor;
     float   mAnisotropicFactorU;
     float   mAnisotropicFactorV;
-    float   mRs;
-    float   mRd;
+    float   mRs;    //specularCoefficient
+    float   mRd;    //diffuseCoefficient
 
 public:
 

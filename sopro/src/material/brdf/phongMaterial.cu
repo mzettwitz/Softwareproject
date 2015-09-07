@@ -132,12 +132,12 @@ static __device__ void shade()
         if(fmaxf(shadowPrd.attenuation) > 0.0f)
         {
             // material color * coeff * (positive)surface angle * lightintensity at hitpoint
-            Kd = color * diffuseCoefficient / M_PIf;
+            Kd = make_float3(diffuseCoefficient / M_PIf);
             // lightcolor * coeff * normalized shininess * (positive)angle between eye and reflected light ray ^ shininess * lightintensity at hitpoint
             Ks = make_float3(specularCoefficient * ((shininess + 2.f)/(2.f*M_PIf)) *
                     pow(fmaxf(dot(ray.direction, R),0.f), shininess));
 
-            fr += Kd + Ks;
+            fr +=color * (Kd + Ks);
 
         }
 

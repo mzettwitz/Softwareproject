@@ -6,7 +6,8 @@ Material CookTorranceMaterial::createMaterial(Context context) const
     material->setAnyHitProgram(1,context->createProgramFromPTXFile(mPTXpath,"anyhit_shadow"));
     material->setClosestHitProgram(0,context->createProgramFromPTXFile(mPTXpath,"closesthit_radiance"));
     material["color"]->setFloat(mColor.x,mColor.y,mColor.z);
-    material["diffuseCoeff"]->setFloat(mDiffuseCoeff);
+    material["diffuseCoefficient"]->setFloat(mDiffuseCoeff);
+    material["specularCoefficient"]->setFloat(mSpecularCoeff);
     material["fresnelFactor"]->setFloat(mFresnelFactor);
     material["roughness"]->setFloat(mRoughness);
     material["reflectance"]->setFloat(mReflectance);
@@ -86,4 +87,19 @@ float& CookTorranceMaterial::reflectance()
 void CookTorranceMaterial::setReflectance(const float &reflectance)
 {
     mReflectance = reflectance;
+}
+
+const float& CookTorranceMaterial::specularCoeff() const
+{
+    return mSpecularCoeff;
+}
+
+float& CookTorranceMaterial::specularCoeff()
+{
+    return mSpecularCoeff;
+}
+
+void CookTorranceMaterial::setSpecularCoeff(const float &specularCoeff)
+{
+    mSpecularCoeff = specularCoeff;
 }
