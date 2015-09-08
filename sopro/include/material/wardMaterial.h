@@ -18,7 +18,8 @@ private:
 public:
     // ------------------------CTor
     // ------------ Advanced CTor
-    WardMaterial(float3 color, float diffuseCoeff, float specularCoeff, float u, float v) : mColor(color),mDiffuseCoeff(diffuseCoeff),mSpecularCoeff(specularCoeff), mAnisotropicFactorU(u), mAnisotropicFactorV(v)
+    WardMaterial(float3 color, float diffuseCoeff, float specularCoeff, float u, float v) :
+        mColor(color),mDiffuseCoeff(diffuseCoeff),mSpecularCoeff(specularCoeff), mAnisotropicFactorU(u), mAnisotropicFactorV(v)
     {
         mMaterialType = WARD;
         setPTXPath("wardMaterial.cu");
@@ -54,7 +55,7 @@ public:
         std::shared_ptr<WardMaterial> in = std::dynamic_pointer_cast<WardMaterial>(in1);
         switch(pos)
         {
-        case 1 : // x
+        case 1 : // anisotropic U
             mColor = in->color();
             mAnisotropicFactorU = value;
             mAnisotropicFactorV = in->anisotropicFactorV();
@@ -63,7 +64,7 @@ public:
             mMaterialType = WARD;
             setPTXPath("wardMaterial.cu");
             break;
-        case 2 : // y
+        case 2 : // anisotropic V
             mColor = in->color();
             mAnisotropicFactorU = in->anisotropicFactorU();
             mAnisotropicFactorV = value;
@@ -76,17 +77,17 @@ public:
             mColor = in->color();
             mAnisotropicFactorU = in->anisotropicFactorU();
             mAnisotropicFactorV = in->anisotropicFactorV();
-            mDiffuseCoeff = value;
+            value + mSpecularCoeff < 1 ? mDiffuseCoeff = value: mDiffuseCoeff = in->diffuseCoeff();
             mSpecularCoeff = in->specularCoeff();
             mMaterialType = WARD;
             setPTXPath("wardMaterial.cu");
             break;
-        case 4:
+        case 4: // specular coeff
             mColor = in->color();
             mAnisotropicFactorU = in->anisotropicFactorU();
             mAnisotropicFactorV = in->anisotropicFactorV();
             mDiffuseCoeff = in->diffuseCoeff();
-            mSpecularCoeff = value;
+            mDiffuseCoeff + value < 1 ? mSpecularCoeff = value: mSpecularCoeff = in->specularCoeff();
             mMaterialType = WARD;
             setPTXPath("wardMaterial.cu");
             break;

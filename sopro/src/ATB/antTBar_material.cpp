@@ -831,7 +831,7 @@ static void TW_CALL setWardSpecularCoeffCB(const void* value, void* clientData)
 {
     SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
     float v = *((float*)value);
-    std::shared_ptr<WardMaterial> wardMat = std::make_shared<WardMaterial>(tmpSO->getMaterial(), v, 5);
+    std::shared_ptr<WardMaterial> wardMat = std::make_shared<WardMaterial>(tmpSO->getMaterial(), v, 4);
     tmpSO->setMaterial(wardMat);
 }
 //----- Anisotropic U getter
