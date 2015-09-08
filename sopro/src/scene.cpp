@@ -87,7 +87,7 @@ void Scene::initScene(const Scene::Camera &camera,int width, int height)
 
 
 
-    mContext["outputBuffer"]->setBuffer(mContext->createBuffer(RT_BUFFER_OUTPUT,RT_FORMAT_FLOAT4,mWidth,mHeight));
+    mContext["outputBuffer"]->setBuffer(mContext->createBuffer(RT_BUFFER_INPUT_OUTPUT,RT_FORMAT_FLOAT4,mWidth,mHeight));
     std::string usedPTXPath(ptxPath("pinholeCamera.cu"));
 
     Program rayGenerationProgram = mContext->createProgramFromPTXFile(usedPTXPath,"pinholeCamera");

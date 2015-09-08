@@ -75,6 +75,9 @@ void Display::run(const std::string &title, std::shared_ptr<Scene> scene)
 
     glutCreateWindow(title.c_str());
 
+    cameraDirection = make_float3(cos(verticalAngle) * sin(horizontalAngle),sin(verticalAngle),cos(verticalAngle) * cos(horizontalAngle));
+    cameraRight = make_float3(sin(horizontalAngle - 3.14f/2.0f),0,cos(horizontalAngle - 3.14f/2.0f));
+
     float3 pos = cameraPosition;
     float3 dir = cameraDirection;
     float3 rig = cameraRight;

@@ -127,7 +127,7 @@ static __device__ void shade()
         {
             // material color * coeff * (positive)surface angle * lightintensity at hitpoint
             Kd = color * diffuseCoefficient / M_PIf;
-            float3 V = normalize(ray.direction);
+            float3 V = normalize(-ray.direction);
             float3 H = (V + L) / length(V+L);
             H = normalize(H);
             // lightcolor * coeff * normalized shininess * (positive)angle between normak and halfvector ^ shininess * lightintensity at hitpoint
