@@ -10,6 +10,10 @@
 #include "../../sutil/OptixMesh.h"
 #include "../include/material/phongMaterial.h"
 #include "../include/material/glassMaterial.h"
+#include "../include/material/ashikhminShirleyMaterial.h"
+#include "../include/material/blinnPhongMaterial.h"
+#include "../include/material/cookTorranceMaterial.h"
+#include "../include/material/wardMaterial.h"
 #include "../include/geometry/sphere.h"
 
 Scene::Scene()
@@ -285,11 +289,79 @@ void Scene::updateSceneObjects()
                     m["specularCoeff"]->setFloat(specularCoeff);
                     break;
                 }
-                case BaseMaterial::DISNEY : ;break;
-                case BaseMaterial::BLINNPHONG : ;break;
-                case BaseMaterial::ASHIKHMINSHIRLEY : ;break;
-                case BaseMaterial::WARD : ;break;
-                case BaseMaterial::COOKTORRANCE : ;break;
+                case BaseMaterial::BLINNPHONG :
+                {
+                    std::shared_ptr<BlinnPhongMaterial> phong = std::dynamic_pointer_cast<BlinnPhongMaterial>(mSceneObjects->at(i)->getMaterial());
+                    float3 c = phong->color();
+                    float ambientCoeff = phong->ambientCoeff();
+                    float diffuseCoeff = phong->diffuseCoeff();
+                    float specularCoeff = phong->specularCoeff();
+                    float shininess = phong->shininess();
+                    float specularity = phong->specularity();
+
+                    Material m = mGroup->getChild<Transform>(i)->getChild<GeometryGroup>()->getChild(0)->getMaterial(0);
+                    m["color"]->setFloat(c.x,c.y,c.z);
+                    m["ambientCoefficient"]->setFloat(ambientCoeff);
+                    m["diffuseCoefficient"]->setFloat(diffuseCoeff);
+                    m["specularCoefficient"]->setFloat(specularCoeff);
+                    m["specularity"]->setFloat(specularity);
+                    m["shininess"]->setFloat(shininess);
+                    break;
+                }
+                case BaseMaterial::ASHIKHMINSHIRLEY :
+                {
+                    std::shared_ptr<AshikhminShirleyMaterial> m = std::dynamic_pointer_cast<AshikhminShirleyMaterial>(mSceneObjects->at(i)->getMaterial());
+                    float3 color = m->color();
+                    float u = m->anisotropicFactorU();
+                    float v = m->anisotropicFactorV();
+                    float spec = m->specularCoeff();
+                    float diff = m->diffuseCoeff();
+
+                    Material a = mGroup->getChild<Transform>(i)->getChild<GeometryGroup>()->getChild(0)->getMaterial(0);
+                    a["color"]->setFloat(color.x,color.y,color.z);
+                    a["anisotropicFactorU"]->setFloat(u);
+                    a["anisotropicFactorV"]->setFloat(v);
+                    a["specularCoeff"]->setFloat(spec);
+                    a["diff"]->setFloat(diff);
+                    break;
+                }
+                case BaseMaterial::WARD :
+                {
+                    std::shared_ptr<WardMaterial> w = std::dynamic_pointer_cast<WardMaterial>(mSceneObjects->at(i)->getMaterial());
+                    float3 color = w->color();
+                    float u = w->anisotropicFactorU();
+                    float v = w->anisotropicFactorV();
+                    float diff = w->diffuseCoeff();
+                    float spec = w->specularCoeff();
+
+                    Material m = mGroup->getChild<Transform>(i)->getChild<GeometryGroup>()->getChild(0)->getMaterial(0);
+                    m["color"]->setFloat(color.x,color.y,color.z);
+                    m["anisotropicFactorU"]->setFloat(u);
+                    m["anisotropicFactorV"]->setFloat(v);
+                    m["diffuseCoeff"]->setFloat(diff);
+                    m["specularCoeff"]->setFloat(spec);
+                    ;break;
+                }
+                case BaseMaterial::COOKTORRANCE :
+                {
+                    std::shared_ptr<CookTorranceMaterial> c = std::dynamic_pointer_cast<CookTorranceMaterial>(mSceneObjects->at(i)->getMaterial());
+                    float3 color = c->color();
+                    float diff = c->diffuseCoeff();
+                    float spec = c->specularCoeff();
+                    float fresnel = c->fresnelFactor();
+                    float roughness = c->roughness();
+                    float refl = c->reflectance();
+
+                    Material m = mGroup->getChild<Transform>(i)->getChild<GeometryGroup>()->getChild(0)->getMaterial(0);
+                    m["color"]->setFloat(color.x,color.y,color.z);
+                    m["diffuseCoeff"]->setFloat(diff);
+                    m["specularCoeff"]->setFloat(spec);
+                    m["fresnelFactor"]->setFloat(fresnel);
+                    m["roughness"]->setFloat(roughness);
+                    m["reflectance"]->setFloat(refl);
+                    ;break;
+                }
+                case BaseMaterial::DISNEY : ;break; //TODO
                 }
 
             }
@@ -309,33 +381,38 @@ void Scene::updateSceneObjects()
                float3 pos = mSceneObjects->at(i)->getGeometry()->position();
                float4 rot = mSceneObjects->at(i)->getGeometry()->rotation();
                float3 scale = mSceneObjects->at(i)->getGeometry()->scale();
-               const float trans[16] = {1,0,0,pos.x,
-                                        0,1,0,pos.y,
-                                        0,0,1,pos.z,
-                                        0,0,0,1};
-               Matrix4x4 transM(trans);
 
+               //translate
+               const float tr[16] = {1,0,0,pos.x,
+                                    0,1,0,pos.y,
+                                    0,0,1,pos.z,
+                                    0,0,0,1};
+               Matrix4x4 transM(tr);
+
+               //rotate, using quaternions
                float a = rot.z;
                float b = rot.y;
                float c = rot.x;
                float d = rot.w;
 
-               const float ro[16] = {1 - 2 * (c * c+ d* d),2*(b * c - a * d), 2*(b * d + a * c),0,
-                                      2 *(b * c + a * d), 1-2 * (d * d + b * b), 2 * (c * d - a * b), 0,
-                                      2 * (b * d - a * c), 2 * (c * d + a * b), 1 - 2 * (b * b + c * c),0,
-                                      0,0,0,1};
+               const float r[16] =  { 1 - 2 * (c * c+ d* d),2*(b * c - a * d),      2*(b * d + a * c),      0,
+                                      2 *(b * c + a * d),   1-2 * (d * d + b * b),  2 * (c * d - a * b),    0,
+                                      2 * (b * d - a * c),  2 * (c * d + a * b),    1 - 2 * (b * b + c * c),0,
+                                      0,                    0,                      0,                      1};
 
-               Matrix4x4 rotM(ro);
-
-               const float s[16] ={scale.x,0,0,0,
-                                   0,scale.y,0,0,
-                                   0,0,scale.z,0,
-                                   0,0,0,1};
+               Matrix4x4 rotM(r);
+               //scale
+               const float s[16] ={scale.x, 0,      0,      0,
+                                   0,       scale.y,0,      0,
+                                   0,       0,      scale.z,0,
+                                   0,       0,      0,      1};
                Matrix4x4 scaleM(s);
 
+               //set modelMatrix
                Matrix4x4 M = transM * rotM * scaleM;
-
+               //pass to transform
                t->setMatrix(0,M.getData(),0);
+               //mark dirty, otherwise no update
                mGroup->getAcceleration()->markDirty();
                t->getChild<GeometryGroup>()->getAcceleration()->markDirty();
         }

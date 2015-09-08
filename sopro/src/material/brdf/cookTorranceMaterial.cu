@@ -128,5 +128,18 @@ static __device__ void shade()
 
     float4 result = make_float4(irradiance,1);
 
+    // recursive reflections
+    if(reflectance > 0.0f && prd_radiance.depth < maxDepth)
+    {
+
+        PerRayData_radiance prd_radiance_reflect;
+        prd_radiance_reflect.depth = prd_radiance.depth+1;
+
+        float maxLambda = 10000.0f;
+        Ray reflectedRay = make_Ray(hitPoint,reflect(ray.direction,N),radianceRayType,sceneEpsilon,maxLambda);
+        rtTrace(topObject, reflectedRay, prd_radiance_reflect);
+        result = (1.0f-reflectance) * result + prd_radiance_reflect.result * reflectance;
+    }
+
     prd_radiance.result = result;
 }
