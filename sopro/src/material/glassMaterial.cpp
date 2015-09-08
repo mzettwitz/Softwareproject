@@ -75,7 +75,7 @@ void GlassMaterial::setSpecularCoeff(float specC)
 // Operator overload
 bool operator!=(const GlassMaterial &mat1, const GlassMaterial &mat2)
 {
-    return(mat1.refractiveIdx() != mat2.refractiveIdx() ||
-            mat1.color().x != mat2.color().x || mat1.color().y != mat2.color().y ||
-            mat1.color().z != mat2.color().z);
+    return(mat1.refractiveIdx() != mat2.refractiveIdx() || mat1.specularCoeff() != mat2.specularCoeff() ||
+            mat1.shininess() != mat2.shininess() ||
+            mat1.color().x != mat2.color().x || mat1.color().y != mat2.color().y || mat1.color().z != mat2.color().z);
 }

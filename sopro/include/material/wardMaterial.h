@@ -41,8 +41,8 @@ public:
     WardMaterial(const std::shared_ptr<BaseMaterial> in1, const float3 &newColor) : mColor(newColor)
     {
         std::shared_ptr<WardMaterial> in = std::dynamic_pointer_cast<WardMaterial>(in1);
-        mAnisotropicFactorU = in->anistropicFactorU();
-        mAnisotropicFactorV = in->anistropicFactorV();
+        mAnisotropicFactorU = in->anisotropicFactorU();
+        mAnisotropicFactorV = in->anisotropicFactorV();
         mDiffuseCoeff = in->diffuseCoeff();
         mMaterialType = WARD;
         setPTXPath("wardMaterial.cu");
@@ -57,7 +57,7 @@ public:
         case 1 : // x
             mColor = in->color();
             mAnisotropicFactorU = value;
-            mAnisotropicFactorV = in->anistropicFactorV();
+            mAnisotropicFactorV = in->anisotropicFactorV();
             mDiffuseCoeff = in->diffuseCoeff();
             mSpecularCoeff = in->specularCoeff();
             mMaterialType = WARD;
@@ -65,7 +65,7 @@ public:
             break;
         case 2 : // y
             mColor = in->color();
-            mAnisotropicFactorU = in->anistropicFactorU();
+            mAnisotropicFactorU = in->anisotropicFactorU();
             mAnisotropicFactorV = value;
             mDiffuseCoeff = in->diffuseCoeff();
             mSpecularCoeff = in->specularCoeff();
@@ -74,8 +74,8 @@ public:
             break;
         case 3 : // diffuseCoeff
             mColor = in->color();
-            mAnisotropicFactorU = in->anistropicFactorU();
-            mAnisotropicFactorV = in->anistropicFactorV();
+            mAnisotropicFactorU = in->anisotropicFactorU();
+            mAnisotropicFactorV = in->anisotropicFactorV();
             mDiffuseCoeff = value;
             mSpecularCoeff = in->specularCoeff();
             mMaterialType = WARD;
@@ -83,8 +83,8 @@ public:
             break;
         case 4:
             mColor = in->color();
-            mAnisotropicFactorU = in->anistropicFactorU();
-            mAnisotropicFactorV = in->anistropicFactorV();
+            mAnisotropicFactorU = in->anisotropicFactorU();
+            mAnisotropicFactorV = in->anisotropicFactorV();
             mDiffuseCoeff = in->diffuseCoeff();
             mSpecularCoeff = value;
             mMaterialType = WARD;
@@ -92,8 +92,8 @@ public:
             break;
         default : // pass through
             mColor = in->color();
-            mAnisotropicFactorU = in->anistropicFactorU();
-            mAnisotropicFactorV = in->anistropicFactorV();
+            mAnisotropicFactorU = in->anisotropicFactorU();
+            mAnisotropicFactorV = in->anisotropicFactorV();
             mDiffuseCoeff = in->diffuseCoeff();
             mMaterialType = WARD;
             setPTXPath("wardMaterial.cu");
@@ -131,7 +131,7 @@ public:
     WardMaterial(const float3 &col, float diffuseC) : mColor(col)
     {
         mDiffuseCoeff = diffuseC;
-        mSpecularCoeff = 1-diffuseC;
+        mSpecularCoeff = 1.f-diffuseC;
         mAnisotropicFactorU = 0.5f;
         mAnisotropicFactorV = 0.5f;
         mMaterialType = WARD;
@@ -150,12 +150,12 @@ public:
     float& diffuseCoeff();
     void setDiffuseCoeff(const float& diffuseCoeff);
 
-    const float& anistropicFactorU() const;
+    const float& anisotropicFactorU() const;
     float& anisotropicFactorU();
     void setAnisotropicFactorU(const float &u);
 
     const float& anisotropicFactorV() const;
-    float& anistropicFactorV();
+    float& anisotropicFactorV();
     void setAnistropicFactorV(const float &v);
 
     const float& specularCoeff() const;

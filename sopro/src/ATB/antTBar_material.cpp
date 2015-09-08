@@ -321,7 +321,7 @@ static void TW_CALL bPButtonCB(void* clientData)
     }
     else if(tmpSO->getMaterial()->getMaterialType() == BaseMaterial::WARD)
     {
-        oldMat = "WARD";
+        oldMat = "Ward";
         WardMaterial* p = (WardMaterial*)tmpSO->getMaterial().get();
         std::shared_ptr<BPM> blinnPhongMat = std::make_shared<BPM>(p->color(), p->diffuseCoeff());
         tmpSO->setMaterial(blinnPhongMat);
@@ -589,28 +589,28 @@ static void TW_CALL setASAnisotropicVCB(const void* value, void* clientData)
     std::shared_ptr<ASM> ashikhminShirleyMat = std::make_shared<ASM>(tmpSO->getMaterial(), v, 2);
     tmpSO->setMaterial(ashikhminShirleyMat);
 }
-//----- Rs getter
-static void TW_CALL getASRsCB(void* value, void* clientData)
+//----- Specular Coeff getter
+static void TW_CALL getASSpecularCoeffCB(void* value, void* clientData)
 {
     SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
     *((float*) value) =  static_cast<ASM*>(tmpSO->getMaterial().get())->specularCoeff();
 }
-//----- Rs setter
-static void TW_CALL setASRsCB(const void* value, void* clientData)
+//----- Specular Coeff setter
+static void TW_CALL setASSpecularCoeffCB(const void* value, void* clientData)
 {
     SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
     float v = *((float*)value);
     std::shared_ptr<ASM> ashikhminShirleyMat = std::make_shared<ASM>(tmpSO->getMaterial(), v, 3);
     tmpSO->setMaterial(ashikhminShirleyMat);
 }
-//----- Rd getter
-static void TW_CALL getASRdCB(void* value, void* clientData)
+//----- Diffuse Coeff getter
+static void TW_CALL getASDiffuseCoeffCB(void* value, void* clientData)
 {
     SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
     *((float*) value) =  static_cast<ASM*>(tmpSO->getMaterial().get())->diffuseCoeff();
 }
-//----- Rd setter
-static void TW_CALL setASRdCB(const void* value, void* clientData)
+//----- Diffuse Coeff setter
+static void TW_CALL setASDiffuseCoeffCB(const void* value, void* clientData)
 {
     SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
     float v = *((float*)value);
@@ -690,13 +690,27 @@ static void TW_CALL setCTDiffuseCoeffCB(const void* value, void* clientData)
     std::shared_ptr<CTM> CookTorranceMat = std::make_shared<CTM>(tmpSO->getMaterial(), v, 1);
     tmpSO->setMaterial(CookTorranceMat);
 }
+//----- Specular Coeff getter
+static void TW_CALL getCTSpecularCoeffCB(void* value, void* clientData)
+{
+    SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
+    *((float*) value) =  static_cast<CTM*>(tmpSO->getMaterial().get())->specularCoeff();
+}
+//----- Specular Coeff setter
+static void TW_CALL setCTSpecularCoeffCB(const void* value, void* clientData)
+{
+    SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
+    float v = *((float*)value);
+    std::shared_ptr<CTM> CookTorranceMat = std::make_shared<CTM>(tmpSO->getMaterial(), v, 5);
+    tmpSO->setMaterial(CookTorranceMat);
+}
 //----- FresnelFactor getter
 static void TW_CALL getCTFressnelFactorCB(void* value, void* clientData)
 {
     SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
     *((float*) value) =  static_cast<CTM*>(tmpSO->getMaterial().get())->fresnelFactor();
 }
-//----- SpecularCoeff setter
+//----- FresnelCoeff setter
 static void TW_CALL setCTFressnelFactorCB(const void* value, void* clientData)
 {
     SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
@@ -724,7 +738,7 @@ static void TW_CALL getCTReflectanceCB(void* value, void* clientData)
     SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
     *((float*) value) =  static_cast<CTM*>(tmpSO->getMaterial().get())->reflectance();
 }
-//----- Specularity setter
+//----- Reflectance setter
 static void TW_CALL setCTReflectanceCB(const void* value, void* clientData)
 {
     SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
@@ -792,34 +806,6 @@ static void TW_CALL wardButtonCB(void* clientData)
     // re-init new variables
     antTBarReInit_material(oldMat, tmpSO, gBar, tmpSO->getName());
 }
-//----- X getter
-static void TW_CALL getWardXCB(void* value, void* clientData)
-{
-    SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
-    *((float*) value) =  static_cast<WardMaterial*>(tmpSO->getMaterial().get())->anisotropicFactorU();
-}
-//----- X setter
-static void TW_CALL setWardXCB(const void* value, void* clientData)
-{
-    SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
-    float v = *((float*)value);
-    std::shared_ptr<WardMaterial> wardMat = std::make_shared<WardMaterial>(tmpSO->getMaterial(), v, 1);
-    tmpSO->setMaterial(wardMat);
-}
-//----- Y getter
-static void TW_CALL getWardYCB(void* value, void* clientData)
-{
-    SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
-    *((float*) value) =  static_cast<WardMaterial*>(tmpSO->getMaterial().get())->anisotropicFactorV();
-}
-//----- Anisotropic V setter
-static void TW_CALL setWardYCB(const void* value, void* clientData)
-{
-    SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
-    float v = *((float*)value);
-    std::shared_ptr<WardMaterial> wardMat = std::make_shared<WardMaterial>(tmpSO->getMaterial(), v, 2);
-    tmpSO->setMaterial(wardMat);
-}
 //----- diffuse coefficient getter
 static void TW_CALL getWardDiffuseCoeffCB(void* value, void* clientData)
 {
@@ -832,6 +818,48 @@ static void TW_CALL setWardDiffuseCoeffCB(const void* value, void* clientData)
     SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
     float v = *((float*)value);
     std::shared_ptr<WardMaterial> wardMat = std::make_shared<WardMaterial>(tmpSO->getMaterial(), v, 3);
+    tmpSO->setMaterial(wardMat);
+}
+//----- specular coefficient getter
+static void TW_CALL getWardSpecularCoeffCB(void* value, void* clientData)
+{
+    SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
+    *((float*) value) =  static_cast<WardMaterial*>(tmpSO->getMaterial().get())->specularCoeff();
+}
+//----- specular coefficient setter
+static void TW_CALL setWardSpecularCoeffCB(const void* value, void* clientData)
+{
+    SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
+    float v = *((float*)value);
+    std::shared_ptr<WardMaterial> wardMat = std::make_shared<WardMaterial>(tmpSO->getMaterial(), v, 5);
+    tmpSO->setMaterial(wardMat);
+}
+//----- Anisotropic U getter
+static void TW_CALL getWardAnisotropicUCB(void* value, void* clientData)
+{
+    SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
+    *((float*) value) =  static_cast<WardMaterial*>(tmpSO->getMaterial().get())->anisotropicFactorU();
+}
+//----- Anisotropic U setter
+static void TW_CALL setWardAnisotropicUCB(const void* value, void* clientData)
+{
+    SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
+    float v = *((float*)value);
+    std::shared_ptr<WardMaterial> wardMat = std::make_shared<WardMaterial>(tmpSO->getMaterial(), v, 1);
+    tmpSO->setMaterial(wardMat);
+}
+//----- Anisotropic V getter
+static void TW_CALL getWardAnisotropicVCB(void* value, void* clientData)
+{
+    SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
+    *((float*) value) =  static_cast<WardMaterial*>(tmpSO->getMaterial().get())->anisotropicFactorV();
+}
+//----- Anisotropic V setter
+static void TW_CALL setWardAnisotropicVCB(const void* value, void* clientData)
+{
+    SceneObject* tmpSO =  static_cast<SceneObject*>(clientData);
+    float v = *((float*)value);
+    std::shared_ptr<WardMaterial> wardMat = std::make_shared<WardMaterial>(tmpSO->getMaterial(), v, 2);
     tmpSO->setMaterial(wardMat);
 }
 
@@ -1162,10 +1190,10 @@ void antTBarInit_material(SceneObject* scObj, TwBar *bar, std::string objName)
         std::string nameVar3 = objName + " Anisotropic V";
         const char* nameVar3C = nameVar3.c_str();
 
-        std::string nameVar4 = objName + " Rs (specular)";
+        std::string nameVar4 = objName + " Specular Coeff";
         const char* nameVar4C = nameVar4.c_str();
 
-        std::string nameVar5 = objName + " Rd (diffuse)";
+        std::string nameVar5 = objName + " Diffuse Coeff";
         const char* nameVar5C = nameVar5.c_str();
 
         //------------ ATB variables
@@ -1184,9 +1212,9 @@ void antTBarInit_material(SceneObject* scObj, TwBar *bar, std::string objName)
         TwAddVarCB(bar, nameVar2C, TW_TYPE_FLOAT, setASAnisotropicUCB, getASAnisotropicUCB, scObj, grpNameFloatLC);
         TwAddVarCB(bar, nameVar3C, TW_TYPE_FLOAT, setASAnisotropicVCB, getASAnisotropicVCB, scObj, grpNameFloatLC);
 
-        // ATB Variable for Rs and Rd
-        TwAddVarCB(bar, nameVar4C, TW_TYPE_FLOAT, setASRsCB, getASRsCB, scObj, grpNameFloat1C);
-        TwAddVarCB(bar, nameVar5C, TW_TYPE_FLOAT, setASRdCB, getASRsCB, scObj, grpNameFloat1C);
+        // ATB Variable for Specular coeff and Diffuse coeff
+        TwAddVarCB(bar, nameVar4C, TW_TYPE_FLOAT, setASSpecularCoeffCB, getASSpecularCoeffCB, scObj, grpNameFloat1C);
+        TwAddVarCB(bar, nameVar5C, TW_TYPE_FLOAT, setASDiffuseCoeffCB, getASDiffuseCoeffCB, scObj, grpNameFloat1C);
 
         //---------- ATB subgroups
         // define strings for subgroups
@@ -1225,14 +1253,17 @@ void antTBarInit_material(SceneObject* scObj, TwBar *bar, std::string objName)
         std::string nameVar2 = objName + " Diffuse Coeff";
         const char* nameVar2C = nameVar2.c_str();
 
-        std::string nameVar3 = objName + " Fresnel Factor";
+        std::string nameVar3 = objName + " Specular Coeff";
         const char* nameVar3C = nameVar3.c_str();
 
-        std::string nameVar4 = objName + " Roughness";
+        std::string nameVar4 = objName + " Fresnel Factor";
         const char* nameVar4C = nameVar4.c_str();
 
-        std::string nameVar5 = objName + " Reflectance";
+        std::string nameVar5 = objName + " Roughness";
         const char* nameVar5C = nameVar5.c_str();
+
+        std::string nameVar6 = objName + " Reflectance";
+        const char* nameVar6C = nameVar6.c_str();
 
         //------------ ATB variables
         // ATB Variable for color props
@@ -1246,13 +1277,14 @@ void antTBarInit_material(SceneObject* scObj, TwBar *bar, std::string objName)
         TwAddButton(bar, nameASButtonC, aSButtonCB, scObj, grpNameC);
         TwAddButton(bar, nameWButtonC, wardButtonCB, scObj, grpNameC);
 
-        // ATB Variable Diffuse coefficient and Fresnel factor
+        // ATB Variable Diffuse coefficient, Specular coefficient and Fresnel factor
         TwAddVarCB(bar, nameVar2C, TW_TYPE_FLOAT, setCTDiffuseCoeffCB, getCTDiffuseCoeffCB, scObj, grpNameFloat1C);
-        TwAddVarCB(bar, nameVar3C, TW_TYPE_FLOAT, setCTFressnelFactorCB, getCTFressnelFactorCB, scObj, grpNameFloat5C);
+        TwAddVarCB(bar, nameVar3C, TW_TYPE_FLOAT, setCTSpecularCoeffCB, getCTSpecularCoeffCB, scObj, grpNameFloat1C);
+        TwAddVarCB(bar, nameVar4C, TW_TYPE_FLOAT, setCTFressnelFactorCB, getCTFressnelFactorCB, scObj, grpNameFloat5C);
 
         // ATB Variable for Roughness and Reflectance
-        TwAddVarCB(bar, nameVar4C, TW_TYPE_FLOAT, setCTRoughnessCB, getCTRoughnessCB, scObj, grpNameFloat1C);
-        TwAddVarCB(bar, nameVar5C, TW_TYPE_FLOAT, setCTReflectanceCB, getCTReflectanceCB, scObj, grpNameFloat1C);
+        TwAddVarCB(bar, nameVar5C, TW_TYPE_FLOAT, setCTRoughnessCB, getCTRoughnessCB, scObj, grpNameFloat1C);
+        TwAddVarCB(bar, nameVar6C, TW_TYPE_FLOAT, setCTReflectanceCB, getCTReflectanceCB, scObj, grpNameFloat1C);
 
         //---------- ATB subgroups
         // define strings for subgroups
@@ -1273,6 +1305,7 @@ void antTBarInit_material(SceneObject* scObj, TwBar *bar, std::string objName)
         propertyGroup += " MatBar/'" + nameVar3 + "'   group='" + objName + " Properties'     \n";
         propertyGroup += " MatBar/'" + nameVar4 + "'   group='" + objName + " Properties'     \n";
         propertyGroup += " MatBar/'" + nameVar5 + "'   group='" + objName + " Properties'     \n";
+        propertyGroup += " MatBar/'" + nameVar6 + "'   group='" + objName + " Properties'     \n";
         propertyGroup += " MatBar/'" + objName + " Properties' opened=false     \n";
         propertyGroup += " MatBar/'" + objName + " Properties'  group=' " + objName + "'  ";
         const char* propertyGroupC = propertyGroup.c_str();
@@ -1291,11 +1324,14 @@ void antTBarInit_material(SceneObject* scObj, TwBar *bar, std::string objName)
         std::string nameVar2 = objName + " Diffuse Coeff";
         const char* nameVar2C = nameVar2.c_str();
 
-        std::string nameVar3 = objName + " X";
+        std::string nameVar3 = objName + " Specular Coeff";
         const char* nameVar3C = nameVar3.c_str();
 
-        std::string nameVar4 = objName + " Y";
+        std::string nameVar4 = objName + " Anisotropic U";
         const char* nameVar4C = nameVar4.c_str();
+
+        std::string nameVar5 = objName + " Anisotropic V";
+        const char* nameVar5C = nameVar5.c_str();
 
 
         //------------ ATB variables
@@ -1310,12 +1346,13 @@ void antTBarInit_material(SceneObject* scObj, TwBar *bar, std::string objName)
         TwAddButton(bar, nameASButtonC, aSButtonCB, scObj, grpNameC);
         TwAddButton(bar, nameCTButtonC, cTButtonCB, scObj, grpNameC);
 
-        // ATB Variable Diffuse coefficient
+        // ATB Variable Diffuse coefficient and specular coefficient
         TwAddVarCB(bar, nameVar2C, TW_TYPE_FLOAT, setWardDiffuseCoeffCB, getWardDiffuseCoeffCB, scObj, grpNameFloat1C);
+        TwAddVarCB(bar, nameVar3C, TW_TYPE_FLOAT, setWardSpecularCoeffCB, getWardSpecularCoeffCB, scObj, grpNameFloat1C);
 
-        // ATB Variable X and Y
-        TwAddVarCB(bar, nameVar3C, TW_TYPE_FLOAT, setWardXCB, getWardXCB, scObj, grpNameFloat5C);
-        TwAddVarCB(bar, nameVar4C, TW_TYPE_FLOAT, setWardYCB, getWardYCB, scObj, grpNameFloat1C);
+        // ATB Variable Anisotropic U/V
+        TwAddVarCB(bar, nameVar4C, TW_TYPE_FLOAT, setWardAnisotropicUCB, getWardAnisotropicUCB, scObj, grpNameFloat5C);
+        TwAddVarCB(bar, nameVar5C, TW_TYPE_FLOAT, setWardAnisotropicVCB, getWardAnisotropicVCB, scObj, grpNameFloat1C);
 
         //---------- ATB subgroups
         // define strings for subgroups
@@ -1335,6 +1372,7 @@ void antTBarInit_material(SceneObject* scObj, TwBar *bar, std::string objName)
         propertyGroup += " MatBar/'" + nameVar2 + "'   group='" + objName + " Properties'     \n";
         propertyGroup += " MatBar/'" + nameVar3 + "'   group='" + objName + " Properties'     \n";
         propertyGroup += " MatBar/'" + nameVar4 + "'   group='" + objName + " Properties'     \n";
+        propertyGroup += " MatBar/'" + nameVar5 + "'   group='" + objName + " Properties'     \n";
         propertyGroup += " MatBar/'" + objName + " Properties' opened=false     \n";
         propertyGroup += " MatBar/'" + objName + " Properties'  group=' " + objName + "'  ";
         const char* propertyGroupC = propertyGroup.c_str();
@@ -1536,10 +1574,10 @@ void antTBarRemoveVariable_material(SceneObject *scObj, TwBar *bar, std::string 
         std::string nameVar3 = objName + " Anisotropic V";
         const char* nameVar3C = nameVar3.c_str();
 
-        std::string nameVar4 = objName + " Rs (specular)";
+        std::string nameVar4 = objName + " Specular Coeff";
         const char* nameVar4C = nameVar4.c_str();
 
-        std::string nameVar5 = objName + " Rd (diffuse)";
+        std::string nameVar5 = objName + " Diffuse Coeff";
         const char* nameVar5C = nameVar5.c_str();
 
         //------------ ATB variables
@@ -1558,7 +1596,7 @@ void antTBarRemoveVariable_material(SceneObject *scObj, TwBar *bar, std::string 
         TwRemoveVar(bar, nameVar2C);
         TwRemoveVar(bar, nameVar3C);
 
-        // ATB Variable for Rs and Rd
+        // ATB Variable for Specular coeff and Diffuse coeff
         TwRemoveVar(bar, nameVar4C);
         TwRemoveVar(bar, nameVar5C);
     }
@@ -1572,14 +1610,17 @@ void antTBarRemoveVariable_material(SceneObject *scObj, TwBar *bar, std::string 
         std::string nameVar2 = objName + " Diffuse Coeff";
         const char* nameVar2C = nameVar2.c_str();
 
-        std::string nameVar3 = objName + " Fresnel Factor";
+        std::string nameVar3 = objName + " Specular Coeff";
         const char* nameVar3C = nameVar3.c_str();
 
-        std::string nameVar4 = objName + " Roughness";
+        std::string nameVar4 = objName + " Fresnel Factor";
         const char* nameVar4C = nameVar4.c_str();
 
-        std::string nameVar5 = objName + " Reflectance";
+        std::string nameVar5 = objName + " Roughness";
         const char* nameVar5C = nameVar5.c_str();
+
+        std::string nameVar6 = objName + " Reflectance";
+        const char* nameVar6C = nameVar6.c_str();
 
         //------------ ATB variables
         // ATB Variable for color props
@@ -1593,13 +1634,14 @@ void antTBarRemoveVariable_material(SceneObject *scObj, TwBar *bar, std::string 
         TwRemoveVar(bar, nameASButtonC);
         TwRemoveVar(bar, nameWButtonC);
 
-        // ATB Variable for Diffuse coefficient and Fresnel factor
+        // ATB Variable Diffuse coefficient, Specular coefficient and Fresnel factor
         TwRemoveVar(bar, nameVar2C);
         TwRemoveVar(bar, nameVar3C);
+        TwRemoveVar(bar, nameVar4C);
 
         // ATB Variable for Roughness and Reflectance
-        TwRemoveVar(bar, nameVar4C);
         TwRemoveVar(bar, nameVar5C);
+        TwRemoveVar(bar, nameVar6C);
     }
     //---------------- Material is Ward
     else if(scObj->getMaterial()->getMaterialType() == BaseMaterial::WARD)
@@ -1611,11 +1653,14 @@ void antTBarRemoveVariable_material(SceneObject *scObj, TwBar *bar, std::string 
         std::string nameVar2 = objName + " Diffuse Coeff";
         const char* nameVar2C = nameVar2.c_str();
 
-        std::string nameVar3 = objName + " X";
+        std::string nameVar3 = objName + " Specular Coeff";
         const char* nameVar3C = nameVar3.c_str();
 
-        std::string nameVar4 = objName + " Y";
+        std::string nameVar4 = objName + " Anisotropic U";
         const char* nameVar4C = nameVar4.c_str();
+
+        std::string nameVar5 = objName + " Anisotropic V";
+        const char* nameVar5C = nameVar5.c_str();
 
         //------------ ATB variables
         // ATB Variable for color props
@@ -1629,14 +1674,14 @@ void antTBarRemoveVariable_material(SceneObject *scObj, TwBar *bar, std::string 
         TwRemoveVar(bar, nameASButtonC);
         TwRemoveVar(bar, nameCTButtonC);
 
-        // ATB Variable for Diffuse coefficient
+        // ATB Variable Diffuse coefficient and specular coefficient
         TwRemoveVar(bar, nameVar2C);
-
-        // ATB Variable for X and Y
         TwRemoveVar(bar, nameVar3C);
-        TwRemoveVar(bar, nameVar4C);
-    }
 
+        // ATB Variable Anisotropic U/V
+        TwRemoveVar(bar, nameVar4C);
+        TwRemoveVar(bar, nameVar5C);
+    }
 }
 
 //--------------------------------- Variable re-init
@@ -1826,10 +1871,10 @@ void antTBarReInit_material(std::string oldMat, SceneObject* scObj, TwBar *bar, 
         std::string nameVar3 = objName + " Anisotropic V";
         const char* nameVar3C = nameVar3.c_str();
 
-        std::string nameVar4 = objName + " Rs (specular)";
+        std::string nameVar4 = objName + " Specular Coeff";
         const char* nameVar4C = nameVar4.c_str();
 
-        std::string nameVar5 = objName + " Rd (diffuse)";
+        std::string nameVar5 = objName + " Diffuse Coeff";
         const char* nameVar5C = nameVar5.c_str();
 
         //------------ ATB variables
@@ -1845,7 +1890,7 @@ void antTBarReInit_material(std::string oldMat, SceneObject* scObj, TwBar *bar, 
         TwRemoveVar(bar, nameVar2C);
         TwRemoveVar(bar, nameVar3C);
 
-        // ATB Variable for Rs and Rd
+        // ATB Variable for Specular coeff and Diffuse coeff
         TwRemoveVar(bar, nameVar4C);
         TwRemoveVar(bar, nameVar5C);
     }
@@ -1856,14 +1901,17 @@ void antTBarReInit_material(std::string oldMat, SceneObject* scObj, TwBar *bar, 
         std::string nameVar2 = objName + " Diffuse Coeff";
         const char* nameVar2C = nameVar2.c_str();
 
-        std::string nameVar3 = objName + " Fresnel Factor";
+        std::string nameVar3 = objName + " Specular Coeff";
         const char* nameVar3C = nameVar3.c_str();
 
-        std::string nameVar4 = objName + " Roughness";
+        std::string nameVar4 = objName + " Fresnel Factor";
         const char* nameVar4C = nameVar4.c_str();
 
-        std::string nameVar5 = objName + " Reflectance";
+        std::string nameVar5 = objName + " Roughness";
         const char* nameVar5C = nameVar5.c_str();
+
+        std::string nameVar6 = objName + " Reflectance";
+        const char* nameVar6C = nameVar6.c_str();
 
         //------------ ATB variables
         // ATB Buttons to convert into another Material Type
@@ -1874,13 +1922,14 @@ void antTBarReInit_material(std::string oldMat, SceneObject* scObj, TwBar *bar, 
         TwRemoveVar(bar, nameASButtonC);
         TwRemoveVar(bar, nameWButtonC);
 
-        // ATB Variable for Diffuse coefficient and Fresnel factor
+        // ATB Variable Diffuse coefficient, Specular coefficient and Fresnel factor
         TwRemoveVar(bar, nameVar2C);
         TwRemoveVar(bar, nameVar3C);
+        TwRemoveVar(bar, nameVar4C);
 
         // ATB Variable for Roughness and Reflectance
-        TwRemoveVar(bar, nameVar4C);
         TwRemoveVar(bar, nameVar5C);
+        TwRemoveVar(bar, nameVar6C);
     }
     //---------------- Material was Ward
     else if(oldMat == "Ward")
@@ -1889,11 +1938,14 @@ void antTBarReInit_material(std::string oldMat, SceneObject* scObj, TwBar *bar, 
         std::string nameVar2 = objName + " Diffuse Coeff";
         const char* nameVar2C = nameVar2.c_str();
 
-        std::string nameVar3 = objName + " X";
+        std::string nameVar3 = objName + " Specular Coeff";
         const char* nameVar3C = nameVar3.c_str();
 
-        std::string nameVar4 = objName + " Y";
+        std::string nameVar4 = objName + " Anisotropic U";
         const char* nameVar4C = nameVar4.c_str();
+
+        std::string nameVar5 = objName + " Anisotropic V";
+        const char* nameVar5C = nameVar5.c_str();
 
         //------------ ATB variables
         // ATB Buttons to convert into another Material Type
@@ -1904,12 +1956,13 @@ void antTBarReInit_material(std::string oldMat, SceneObject* scObj, TwBar *bar, 
         TwRemoveVar(bar, nameASButtonC);
         TwRemoveVar(bar, nameCTButtonC);
 
-        // ATB Variable for Diffuse coefficient
+        // ATB Variable Diffuse coefficient and specular coefficient
         TwRemoveVar(bar, nameVar2C);
-
-        // ATB Variable for X and Y
         TwRemoveVar(bar, nameVar3C);
+
+        // ATB Variable Anisotropic U/V
         TwRemoveVar(bar, nameVar4C);
+        TwRemoveVar(bar, nameVar5C);
     }
 
 
@@ -1936,7 +1989,7 @@ void antTBarReInit_material(std::string oldMat, SceneObject* scObj, TwBar *bar, 
         conversionGroup += " MatBar/'" + nameCTButton + "'   group='" + objName +   " Conversion'     \n";
         conversionGroup += " MatBar/'" + nameWButton + "'   group='" + objName +   " Conversion'     \n";
         conversionGroup += " MatBar/'" + objName + " Conversion' opened=false     \n";  //collapse the group
-        conversionGroup+= " MatBar/'" + objName + " Conversion'  group=' " + objName + "'  ";
+        conversionGroup += " MatBar/'" + objName + " Conversion'  group=' " + objName + "'  ";
         const char* conversionGroupC = conversionGroup.c_str();
 
         // define subgroups in ATB
@@ -1988,7 +2041,7 @@ void antTBarReInit_material(std::string oldMat, SceneObject* scObj, TwBar *bar, 
         conversionGroup += " MatBar/'" + nameCTButton + "'   group='" + objName +   " Conversion'     \n";
         conversionGroup += " MatBar/'" + nameWButton + "'   group='" + objName +   " Conversion'     \n";
         conversionGroup += " MatBar/'" + objName + " Conversion' opened=false     \n";  //collapse the group
-        conversionGroup+= " MatBar/'" + objName + " Conversion'  group=' " + objName + "'  ";
+        conversionGroup += " MatBar/'" + objName + " Conversion'  group=' " + objName + "'  ";
         const char* conversionGroupC = conversionGroup.c_str();
 
         std::string propertyGroup;
@@ -1998,7 +2051,6 @@ void antTBarReInit_material(std::string oldMat, SceneObject* scObj, TwBar *bar, 
         propertyGroup += " MatBar/'" + nameVar5 + "'   group='" + objName + " Properties'     \n";
         propertyGroup += " MatBar/'" + nameVar6 + "'   group='" + objName + " Properties'     \n";
         propertyGroup += " MatBar/'" + objName + " Properties' opened=false     \n";
-        conversionGroup += " MatBar/' " + objName + "' opened=false     \n";
         propertyGroup += " MatBar/'" + objName + " Properties'  group=' " + objName + "'  ";
         const char* propertyGroupC = propertyGroup.c_str();
 
@@ -2107,7 +2159,7 @@ void antTBarReInit_material(std::string oldMat, SceneObject* scObj, TwBar *bar, 
         conversionGroup += " MatBar/'" + nameCTButton + "'   group='" + objName +   " Conversion'     \n";
         conversionGroup += " MatBar/'" + nameWButton + "'   group='" + objName +   " Conversion'     \n";
         conversionGroup += " MatBar/'" + objName + " Conversion' opened=false     \n";  //collapse the group
-        conversionGroup+= " MatBar/'" + objName + " Conversion'  group=' " + objName + "'  ";
+        conversionGroup += " MatBar/'" + objName + " Conversion'  group=' " + objName + "'  ";
         const char* conversionGroupC = conversionGroup.c_str();
 
         std::string propertyGroup;
@@ -2132,10 +2184,10 @@ void antTBarReInit_material(std::string oldMat, SceneObject* scObj, TwBar *bar, 
         std::string nameVar3 = objName + " Anisotropic V";
         const char* nameVar3C = nameVar3.c_str();
 
-        std::string nameVar4 = objName + " Rs (specular)";
+        std::string nameVar4 = objName + " Specular Coeff";
         const char* nameVar4C = nameVar4.c_str();
 
-        std::string nameVar5 = objName + " Rd (diffuse)";
+        std::string nameVar5 = objName + " Diffuse Coeff";
         const char* nameVar5C = nameVar5.c_str();
 
         //------------ ATB variables
@@ -2151,9 +2203,9 @@ void antTBarReInit_material(std::string oldMat, SceneObject* scObj, TwBar *bar, 
         TwAddVarCB(bar, nameVar2C, TW_TYPE_FLOAT, setASAnisotropicUCB, getASAnisotropicUCB, scObj, grpNameFloatLC);
         TwAddVarCB(bar, nameVar3C, TW_TYPE_FLOAT, setASAnisotropicVCB, getASAnisotropicVCB, scObj, grpNameFloatLC);
 
-        // ATB Variable for Rs and Rd
-        TwAddVarCB(bar, nameVar4C, TW_TYPE_FLOAT, setASRsCB, getASRsCB, scObj, grpNameFloat1C);
-        TwAddVarCB(bar, nameVar5C, TW_TYPE_FLOAT, setASRdCB, getASRsCB, scObj, grpNameFloat1C);
+        // ATB Variable for Specular coeff and Diffuse coeff
+        TwAddVarCB(bar, nameVar4C, TW_TYPE_FLOAT, setASSpecularCoeffCB, getASSpecularCoeffCB, scObj, grpNameFloat1C);
+        TwAddVarCB(bar, nameVar5C, TW_TYPE_FLOAT, setASDiffuseCoeffCB, getASDiffuseCoeffCB, scObj, grpNameFloat1C);
 
         //---------- ATB subgroups
         // define strings for subgroups
@@ -2165,8 +2217,7 @@ void antTBarReInit_material(std::string oldMat, SceneObject* scObj, TwBar *bar, 
         conversionGroup += " MatBar/'" + nameCTButton + "'   group='" + objName +   " Conversion'     \n";
         conversionGroup += " MatBar/'" + nameWButton + "'   group='" + objName +   " Conversion'     \n";
         conversionGroup += " MatBar/'" + objName + " Conversion' opened=false     \n";  //collapse the group
-        conversionGroup += " MatBar/' " + objName + "' opened=false     \n";
-        conversionGroup+= " MatBar/'" + objName + " Conversion'  group=' " + objName + "'  ";
+        conversionGroup += " MatBar/'" + objName + " Conversion'  group=' " + objName + "'  ";
         const char* conversionGroupC = conversionGroup.c_str();
 
         std::string propertyGroup;
@@ -2189,31 +2240,35 @@ void antTBarReInit_material(std::string oldMat, SceneObject* scObj, TwBar *bar, 
         std::string nameVar2 = objName + " Diffuse Coeff";
         const char* nameVar2C = nameVar2.c_str();
 
-        std::string nameVar3 = objName + " Fresnel Factor";
+        std::string nameVar3 = objName + " Specular Coeff";
         const char* nameVar3C = nameVar3.c_str();
 
-        std::string nameVar4 = objName + " Roughness";
+        std::string nameVar4 = objName + " Fresnel Factor";
         const char* nameVar4C = nameVar4.c_str();
 
-        std::string nameVar5 = objName + " Reflectance";
+        std::string nameVar5 = objName + " Roughness";
         const char* nameVar5C = nameVar5.c_str();
+
+        std::string nameVar6 = objName + " Reflectance";
+        const char* nameVar6C = nameVar6.c_str();
 
         //------------ ATB variables
         // ATB Buttons to convert into another Material Type
         TwAddButton(bar, nameLButtonC, lambertButtonCB, scObj, grpNameC);
         TwAddButton(bar, namePButtonC, phongButtonCB, scObj, grpNameC);
-        TwAddButton(bar, namePButtonC, bPButtonCB, scObj, grpNameC);
+        TwAddButton(bar, nameBPButtonC, bPButtonCB, scObj, grpNameC);
         TwAddButton(bar, nameGButtonC, glassButtonCB, scObj, grpNameC);
         TwAddButton(bar, nameASButtonC, aSButtonCB, scObj, grpNameC);
         TwAddButton(bar, nameWButtonC, wardButtonCB, scObj, grpNameC);
 
-        // ATB Variable Diffuse coefficient and Fresnel factor
+        // ATB Variable Diffuse coefficient, Specular coefficient and Fresnel factor
         TwAddVarCB(bar, nameVar2C, TW_TYPE_FLOAT, setCTDiffuseCoeffCB, getCTDiffuseCoeffCB, scObj, grpNameFloat1C);
-        TwAddVarCB(bar, nameVar3C, TW_TYPE_FLOAT, setCTFressnelFactorCB, getCTFressnelFactorCB, scObj, grpNameFloat5C);
+        TwAddVarCB(bar, nameVar3C, TW_TYPE_FLOAT, setCTSpecularCoeffCB, getCTSpecularCoeffCB, scObj, grpNameFloat1C);
+        TwAddVarCB(bar, nameVar4C, TW_TYPE_FLOAT, setCTFressnelFactorCB, getCTFressnelFactorCB, scObj, grpNameFloat5C);
 
         // ATB Variable for Roughness and Reflectance
-        TwAddVarCB(bar, nameVar4C, TW_TYPE_FLOAT, setCTRoughnessCB, getCTRoughnessCB, scObj, grpNameFloat1C);
-        TwAddVarCB(bar, nameVar5C, TW_TYPE_FLOAT, setCTReflectanceCB, getCTReflectanceCB, scObj, grpNameFloat1C);
+        TwAddVarCB(bar, nameVar5C, TW_TYPE_FLOAT, setCTRoughnessCB, getCTRoughnessCB, scObj, grpNameFloat1C);
+        TwAddVarCB(bar, nameVar6C, TW_TYPE_FLOAT, setCTReflectanceCB, getCTReflectanceCB, scObj, grpNameFloat1C);
 
         //---------- ATB subgroups
         // define strings for subgroups
@@ -2225,7 +2280,6 @@ void antTBarReInit_material(std::string oldMat, SceneObject* scObj, TwBar *bar, 
         conversionGroup += " MatBar/'" + nameASButton + "'   group='" + objName +   " Conversion'     \n";
         conversionGroup += " MatBar/'" + nameWButton + "'   group='" + objName +   " Conversion'     \n";
         conversionGroup += " MatBar/'" + objName + " Conversion' opened=false     \n";  //collapse the group
-        conversionGroup += " MatBar/' " + objName + "' opened=false     \n";
         conversionGroup+= " MatBar/'" + objName + " Conversion'  group=' " + objName + "'  ";
         const char* conversionGroupC = conversionGroup.c_str();
 
@@ -2234,6 +2288,7 @@ void antTBarReInit_material(std::string oldMat, SceneObject* scObj, TwBar *bar, 
         propertyGroup += " MatBar/'" + nameVar3 + "'   group='" + objName + " Properties'     \n";
         propertyGroup += " MatBar/'" + nameVar4 + "'   group='" + objName + " Properties'     \n";
         propertyGroup += " MatBar/'" + nameVar5 + "'   group='" + objName + " Properties'     \n";
+        propertyGroup += " MatBar/'" + nameVar6 + "'   group='" + objName + " Properties'     \n";
         propertyGroup += " MatBar/'" + objName + " Properties' opened=false     \n";
         propertyGroup += " MatBar/'" + objName + " Properties'  group=' " + objName + "'  ";
         const char* propertyGroupC = propertyGroup.c_str();
@@ -2249,28 +2304,33 @@ void antTBarReInit_material(std::string oldMat, SceneObject* scObj, TwBar *bar, 
         std::string nameVar2 = objName + " Diffuse Coeff";
         const char* nameVar2C = nameVar2.c_str();
 
-        std::string nameVar3 = objName + " X";
+        std::string nameVar3 = objName + " Specular Coeff";
         const char* nameVar3C = nameVar3.c_str();
 
-        std::string nameVar4 = objName + " Y";
+        std::string nameVar4 = objName + " Anisotropic U";
         const char* nameVar4C = nameVar4.c_str();
+
+        std::string nameVar5 = objName + " Anisotropic V";
+        const char* nameVar5C = nameVar5.c_str();
 
 
         //------------ ATB variables
         // ATB Buttons to convert into another Material Type
         TwAddButton(bar, nameLButtonC, lambertButtonCB, scObj, grpNameC);
         TwAddButton(bar, namePButtonC, phongButtonCB, scObj, grpNameC);
-        TwAddButton(bar, namePButtonC, bPButtonCB, scObj, grpNameC);
+        TwAddButton(bar, nameBPButtonC, bPButtonCB, scObj, grpNameC);
         TwAddButton(bar, nameGButtonC, glassButtonCB, scObj, grpNameC);
         TwAddButton(bar, nameASButtonC, aSButtonCB, scObj, grpNameC);
         TwAddButton(bar, nameCTButtonC, cTButtonCB, scObj, grpNameC);
 
         // ATB Variable Diffuse coefficient
+        // ATB Variable Diffuse coefficient and specular coefficient
         TwAddVarCB(bar, nameVar2C, TW_TYPE_FLOAT, setWardDiffuseCoeffCB, getWardDiffuseCoeffCB, scObj, grpNameFloat1C);
+        TwAddVarCB(bar, nameVar3C, TW_TYPE_FLOAT, setWardSpecularCoeffCB, getWardSpecularCoeffCB, scObj, grpNameFloat1C);
 
-        // ATB Variable X and Y
-        TwAddVarCB(bar, nameVar3C, TW_TYPE_FLOAT, setWardXCB, getWardXCB, scObj, grpNameFloat5C);
-        TwAddVarCB(bar, nameVar4C, TW_TYPE_FLOAT, setWardYCB, getWardYCB, scObj, grpNameFloat1C);
+        // ATB Variable Anisotropic U/V
+        TwAddVarCB(bar, nameVar4C, TW_TYPE_FLOAT, setWardAnisotropicUCB, getWardAnisotropicUCB, scObj, grpNameFloat5C);
+        TwAddVarCB(bar, nameVar5C, TW_TYPE_FLOAT, setWardAnisotropicVCB, getWardAnisotropicVCB, scObj, grpNameFloat1C);
 
         //---------- ATB subgroups
         // define strings for subgroups
@@ -2282,14 +2342,14 @@ void antTBarReInit_material(std::string oldMat, SceneObject* scObj, TwBar *bar, 
         conversionGroup += " MatBar/'" + nameASButton + "'   group='" + objName +   " Conversion'     \n";
         conversionGroup += " MatBar/'" + nameCTButton + "'   group='" + objName +   " Conversion'     \n";
         conversionGroup += " MatBar/'" + objName + " Conversion' opened=false     \n";  //collapse the group
-        conversionGroup += " MatBar/' " + objName + "' opened=false     \n";
-        conversionGroup+= " MatBar/'" + objName + " Conversion'  group=' " + objName + "'  ";
+        conversionGroup += " MatBar/'" + objName + " Conversion'  group=' " + objName + "'  ";
         const char* conversionGroupC = conversionGroup.c_str();
 
         std::string propertyGroup;
         propertyGroup += " MatBar/'" + nameVar2 + "'   group='" + objName + " Properties'     \n";
         propertyGroup += " MatBar/'" + nameVar3 + "'   group='" + objName + " Properties'     \n";
         propertyGroup += " MatBar/'" + nameVar4 + "'   group='" + objName + " Properties'     \n";
+        propertyGroup += " MatBar/'" + nameVar5 + "'   group='" + objName + " Properties'     \n";
         propertyGroup += " MatBar/'" + objName + " Properties' opened=false     \n";
         propertyGroup += " MatBar/'" + objName + " Properties'  group=' " + objName + "'  ";
         const char* propertyGroupC = propertyGroup.c_str();

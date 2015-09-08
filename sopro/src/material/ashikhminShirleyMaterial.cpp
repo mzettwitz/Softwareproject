@@ -38,7 +38,7 @@ float& AshikhminShirleyMaterial::anisotropicFactorU()
     return mAnisotropicFactorU;
 }
 
-void AshikhminShirleyMaterial::setAnistropicFactorU(const float &u)
+void AshikhminShirleyMaterial::setAnisotropicFactorU(const float &u)
 {
     mAnisotropicFactorU = u;
 }
@@ -53,7 +53,7 @@ float& AshikhminShirleyMaterial::anisotropicFactorV()
     return mAnisotropicFactorV;
 }
 
-void AshikhminShirleyMaterial::setAnistropicFactorV(const float &v)
+void AshikhminShirleyMaterial::setAnisotropicFactorV(const float &v)
 {
     mAnisotropicFactorV = v;
 }
@@ -68,9 +68,9 @@ float& AshikhminShirleyMaterial::diffuseCoeff()
     return mDiffuseCoeff;
 }
 
-void AshikhminShirleyMaterial::setRd(const float &rd)
+void AshikhminShirleyMaterial::setDiffuseCoeff(const float &diffuseCoeff)
 {
-    mDiffuseCoeff = rd;
+    mDiffuseCoeff = diffuseCoeff;
 }
 
 const float& AshikhminShirleyMaterial::specularCoeff() const
@@ -83,7 +83,15 @@ float& AshikhminShirleyMaterial::specularCoeff()
     return mSpecularCoeff;
 }
 
-void AshikhminShirleyMaterial::setRs(const float &rs)
+void AshikhminShirleyMaterial::setSpecularCoeff(const float &specularCoeff)
 {
-    mSpecularCoeff = rs;
+    mSpecularCoeff = specularCoeff;
+}
+
+// Operator overload
+bool operator!=(const AshikhminShirleyMaterial &mat1, const AshikhminShirleyMaterial &mat2)
+{
+    return(mat1.anisotropicFactorU() != mat2.anisotropicFactorU() || mat1.anisotropicFactorV() != mat2.anisotropicFactorV() ||
+            mat1.diffuseCoeff() != mat2.diffuseCoeff() || mat1.specularCoeff() != mat2.specularCoeff() ||
+            mat1.color().x != mat2.color().x || mat1.color().y != mat2.color().y || mat1.color().z != mat2.color().z);
 }

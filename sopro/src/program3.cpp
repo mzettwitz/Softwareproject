@@ -6,8 +6,6 @@ using namespace optix;
 
 int program3(int argc, char* argv[])
 {
-
-
     SceneHandle shp3("Program 3");
 
     shp3.setSceneFile("dragonBlender.obj");

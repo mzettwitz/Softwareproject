@@ -101,7 +101,7 @@ public:
             mMaterialType = COOKTORRANCE;
             setPTXPath("cookTorranceMaterial.cu");
             break;
-        case 5:
+        case 5: //specular coeff
             mColor = in->color();
             mDiffuseCoeff = in->diffuseCoeff();
             mFresnelFactor = in->fresnelFactor();

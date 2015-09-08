@@ -305,15 +305,15 @@ void Display::keyPressed(unsigned char key, int x, int y)
         {
             std::shared_ptr<Mesh> m = std::make_shared<Mesh>(mSource,make_float3(0,0,0));
             std::shared_ptr<PhongMaterial> p = std::make_shared<PhongMaterial>(make_float3(1.0f,1.0f,1.0f),0.2f,0.6f,0.2f,5.2f,0.2f);
-            std::shared_ptr<SceneObject> sc = std::make_shared<SceneObject>("mesh" + std::to_string(mScene->getSceneObjectCount()),m,p);
+            std::string name = "Mesh_" + std::to_string(mScene->getSceneObjectCount());
+            std::shared_ptr<SceneObject> sc = std::make_shared<SceneObject>(name,m,p);
 
             mScene->addSceneObject(sc);
-            antTBarInit_material(sc.get(),matBar,"mesh" + std::to_string(mScene->getSceneObjectCount()));
-            antTBarInit_geometry(sc.get(),geomBar,"mesh" + std::to_string(mScene->getSceneObjectCount()));
-
+            antTBarInit_material(sc.get(),matBar,name);
+            antTBarInit_geometry(sc.get(),geomBar,name);
         }
 
-        //new groudPlane, just a box , but to be modified to a 'plane'
+        //new groudPlane, just a box, but modified to a 'plane'
         if(key == '9')
         {
             std::shared_ptr<Mesh> groundPlane = std::make_shared<Mesh>("cube.obj",make_float3(0.0f,-2.0f,0.0f));

@@ -42,7 +42,7 @@ void WardMaterial::setDiffuseCoeff(const float &diffuseCoeff)
     mDiffuseCoeff = diffuseCoeff;
 }
 
-const float& WardMaterial::anistropicFactorU() const
+const float& WardMaterial::anisotropicFactorU() const
 {
     return mAnisotropicFactorU;
 }
@@ -62,7 +62,7 @@ const float& WardMaterial::anisotropicFactorV() const
     return mAnisotropicFactorV;
 }
 
-float& WardMaterial::anistropicFactorV()
+float& WardMaterial::anisotropicFactorV()
 {
     return mAnisotropicFactorV;
 }
@@ -87,3 +87,11 @@ void WardMaterial::setSpecularCoeff(const float &specularCoeff)
     mSpecularCoeff = specularCoeff;
 }
 
+
+// Operator overload
+bool operator!=(const WardMaterial &mat1, const WardMaterial &mat2)
+{
+    return(mat1.anisotropicFactorU() != mat2.anisotropicFactorU() || mat1.anisotropicFactorV() != mat2.anisotropicFactorV() ||
+            mat1.diffuseCoeff() != mat2.diffuseCoeff() || mat1.specularCoeff() != mat2.specularCoeff() ||
+            mat1.color().x != mat2.color().x || mat1.color().y != mat2.color().y || mat1.color().z != mat2.color().z);
+}

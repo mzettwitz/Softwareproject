@@ -19,8 +19,8 @@ private:
     float3  mColor;
     float   mAnisotropicFactorU;
     float   mAnisotropicFactorV;
-    float   mSpecularCoeff;    //specularCoefficient
-    float   mDiffuseCoeff;    //diffuseCoefficient
+    float   mSpecularCoeff;
+    float   mDiffuseCoeff;
 
 public:
 
@@ -219,19 +219,19 @@ AshikhminShirleyMaterial(const float3 &col, float diffuseC, float specC) : mColo
 
     const float& anisotropicFactorU() const;
     float& anisotropicFactorU();
-    void setAnistropicFactorU(const float &u);
+    void setAnisotropicFactorU(const float &u);
 
     const float& anisotropicFactorV() const;
     float& anisotropicFactorV();
-    void setAnistropicFactorV(const float &v);
+    void setAnisotropicFactorV(const float &v);
 
     const float& specularCoeff() const;
     float& specularCoeff();
-    void setRs(const float &specularCoeff);
+    void setSpecularCoeff(const float &specularCoeff);
 
     const float& diffuseCoeff() const;
     float& diffuseCoeff();
-    void setRd(const float &diffuseCoeff);
+    void setDiffuseCoeff(const float &diffuseCoeff);
 };
 
 #endif
