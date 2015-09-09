@@ -2,7 +2,7 @@
 #include <../cuda/commonStructs.h>
 #include <optixu_math_namespace.h>
 #include <stdio.h>
-#include <string>
+#include <string.h>
 #include <iostream>
 #include <cstring>
 #include "../sutil/sutil.h"
@@ -15,9 +15,13 @@
 #include "../include/material/cookTorranceMaterial.h"
 #include "../include/material/wardMaterial.h"
 #include "../include/geometry/sphere.h"
+#include "../include/random.h"
+
+void genRndSeeds(unsigned int width, unsigned int height, Buffer &b);
 
 Scene::Scene()
 {
+    mFrameNumber = 0u;
     mContext = optix::Context::create();
     mGroup = mContext->createGroup();
     mSceneObjects = std::make_shared<std::vector<std::shared_ptr<SceneObject>>>();
@@ -63,7 +67,7 @@ void Scene::initScene(const Scene::Camera &camera,int width, int height)
     mContext["radianceRayType"]->setUint(0u);
     mContext["shadowRayType"]->setUint(1u);
   //  mContext["reflectanceRayType"]->setUint(2u);
-    mContext["maxDepth"]->setUint(10u);
+    mContext["maxDepth"]->setUint(5u);
     mContext["sceneEpsilon"]->setFloat(1.5e-3f);
     mContext->setStackSize(4096);
 
@@ -89,10 +93,44 @@ void Scene::initScene(const Scene::Camera &camera,int width, int height)
     lightBuffer->unmap();
     mContext["lights"]->set(lightBuffer);
 
+    /********************AA*********************************/
+
+    mContext["frameNumber"]->setUint(mFrameNumber);
+
+    Buffer variance_sum_buffer = mContext->createBuffer(RT_BUFFER_INPUT_OUTPUT | RT_BUFFER_GPU_LOCAL,RT_FORMAT_FLOAT4,mWidth,mHeight);
+    std::memset(variance_sum_buffer->map(),0,mWidth * mHeight * sizeof(float4));
+    variance_sum_buffer->unmap();
+    mContext["varianceSumBuffer"]->set( variance_sum_buffer );
+
+    Buffer variance_sum2_buffer = mContext->createBuffer( RT_BUFFER_INPUT_OUTPUT | RT_BUFFER_GPU_LOCAL,
+                                                          RT_FORMAT_FLOAT4,
+                                                          mWidth, mHeight );
+    std::memset( variance_sum2_buffer->map(), 0, mWidth*mHeight*sizeof(float4) );
+    variance_sum2_buffer->unmap();
+    mContext["varianceSum2Buffer"]->set( variance_sum2_buffer );
+
+    // Sample count buffer
+    Buffer num_samples_buffer = mContext->createBuffer( RT_BUFFER_INPUT_OUTPUT | RT_BUFFER_GPU_LOCAL,
+                                                        RT_FORMAT_UNSIGNED_INT,
+                                                        mWidth, mHeight );
+    std::memset( num_samples_buffer->map(), 0, mWidth*mHeight*sizeof(unsigned int) );
+    num_samples_buffer->unmap();
+    mContext["numSamplesBuffer"]->set( num_samples_buffer);
+
+    // RNG seed buffer
+    Buffer m_rnd_seeds = mContext->createBuffer( RT_BUFFER_INPUT_OUTPUT | RT_BUFFER_GPU_LOCAL,
+                                         RT_FORMAT_UNSIGNED_INT,
+                                         mWidth, mHeight );
+    genRndSeeds( mWidth, mHeight,m_rnd_seeds );
+    mContext["randomSeeds"]->set( m_rnd_seeds );
+
+    /*****************************AA***************************/
 
 
-    mContext["outputBuffer"]->setBuffer(mContext->createBuffer(RT_BUFFER_INPUT_OUTPUT,RT_FORMAT_FLOAT4,mWidth,mHeight));
-    std::string usedPTXPath(ptxPath("pinholeCamera.cu"));
+
+
+    mContext["outputBuffer"]->setBuffer(mContext->createBuffer(RT_BUFFER_OUTPUT,RT_FORMAT_UNSIGNED_BYTE4,mWidth,mHeight));
+    std::string usedPTXPath(ptxPath("pinholeCamera_AA.cu"));
 
     Program rayGenerationProgram = mContext->createProgramFromPTXFile(usedPTXPath,"pinholeCamera");
     mContext->setRayGenerationProgram(0,rayGenerationProgram);
@@ -158,9 +196,11 @@ void Scene::initScene(const Scene::Camera &camera,int width, int height)
 
 void Scene::updateScene(const Scene::Camera &camera)
 {
+    mContext["frameNumber"]->setUint(mFrameNumber);
     updateCamera(camera);
     updateSceneObjects();
     updateLights();
+    mFrameNumber++;
 }
 
 void Scene::addSceneObject(std::shared_ptr<SceneObject> object)
@@ -185,6 +225,7 @@ void Scene::addSceneObject(std::shared_ptr<SceneObject> object)
 
     gi->getGeometry()->markDirty();
     mGroup->getAcceleration()->markDirty();
+    resetFrameNumber();
 }
 
 void Scene::addSceneObject(std::shared_ptr<BaseGeometry> geometry, std::shared_ptr<BaseMaterial> material, const std::string &name)
@@ -210,6 +251,7 @@ void Scene::addSceneObject(std::shared_ptr<BaseGeometry> geometry, std::shared_p
 
     gi->getGeometry()->markDirty();
     mGroup->getAcceleration()->markDirty();
+    resetFrameNumber();
 }
 
 void Scene::removeObject(const std::string &object)
@@ -221,6 +263,7 @@ void Scene::removeObject(const std::string &object)
             mSceneObjects->erase(mSceneObjects->begin()+i);
             mGroup->removeChild(i);
             mGroup->getAcceleration()->markDirty();
+            resetFrameNumber();
             return;
         }
     }
@@ -233,6 +276,7 @@ void Scene::removeObject(const unsigned int index)
         mSceneObjects->erase(mSceneObjects->begin()+index);
         mGroup->removeChild(index);
         mGroup->getAcceleration()->markDirty();
+        resetFrameNumber();
         return;
     }
 
@@ -370,6 +414,7 @@ void Scene::updateSceneObjects()
                 mGroup->getChild<Transform>(i)->getChild<GeometryGroup>()->getChild(0)->setMaterial(0,mSceneObjects->at(i)->getMaterial()->createMaterial(mContext));
 
             }
+            resetFrameNumber();
         }
         mSceneObjects->at(i)->updateGeometry();
 
@@ -415,6 +460,7 @@ void Scene::updateSceneObjects()
                //mark dirty, otherwise no update
                mGroup->getAcceleration()->markDirty();
                t->getChild<GeometryGroup>()->getAcceleration()->markDirty();
+               resetFrameNumber();
         }
     }
 
@@ -479,11 +525,17 @@ void Scene::resizeBuffer(int width,int height)
     mWidth = width;
     mHeight = height;
     mContext["outputBuffer"]->getBuffer()->setSize(mWidth,mHeight);
+    mContext["varianceSumBuffer"]->getBuffer()->setSize(mWidth,mHeight);
+    mContext["varianceSum2Buffer"]->getBuffer()->setSize(mWidth,mHeight);
+    mContext["numSamplesBuffer"]->getBuffer()->setSize(mWidth,mHeight);
+    mContext["randomSeeds"]->getBuffer()->setSize(mWidth,mHeight);
+    resetFrameNumber();
 }
 
 void Scene::setSceneEpsilon(float amount)
 {
     mContext["sceneEpsilon"]->setFloat(amount + mContext["sceneEpsilon"]->getFloat());
+    resetFrameNumber();
 }
 
 void Scene::updateLights()
@@ -504,12 +556,13 @@ void Scene::updateLights()
     }
 
     lightBuffer->unmap();
-
+    resetFrameNumber();
 }
 
 void Scene::addLight(PointLight &light)
 {
     mLights->push_back(light);
+    resetFrameNumber();
 }
 
 void Scene::addLight(const float3 &position, const float3 &color, const float intensity)
@@ -520,6 +573,7 @@ void Scene::addLight(const float3 &position, const float3 &color, const float in
     l.position = position;
     l.intensity = intensity;
     mLights->push_back(l);
+    resetFrameNumber();
 }
 
 void Scene::removeLight(const unsigned int index)
@@ -528,6 +582,7 @@ void Scene::removeLight(const unsigned int index)
     {
         mLights->erase(mLights->begin()+index);
     }
+    resetFrameNumber();
 }
 
 PointLight Scene::getLight(const unsigned int index)
@@ -538,4 +593,26 @@ PointLight Scene::getLight(const unsigned int index)
 int Scene::getLightCount()
 {
     return mLights->size();
+}
+
+
+void genRndSeeds( unsigned int width, unsigned int height,Buffer &b )
+{
+  unsigned int* seeds = static_cast<unsigned int*>( b->map() );
+  fillRandBuffer( seeds, width*height );
+  b->unmap();
+}
+
+void Scene::passFrameNumber(bool &changed)
+{
+    if(changed)
+    {
+        resetFrameNumber();
+        changed = false;
+    }
+}
+
+void Scene::resetFrameNumber()
+{
+    mFrameNumber = 0u;
 }

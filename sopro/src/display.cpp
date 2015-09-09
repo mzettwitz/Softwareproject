@@ -29,6 +29,7 @@ int                 Display::oldx = 0;
 int                 Display::oldy = 0;
 float               Display::deltaTime = 0.0f;
 int                 Display::mState = Display::mouseState::IDLE;
+bool                Display::cameraChanged = false;
 // Declare ATB
 TwBar *matBar;
 TwBar *geomBar;
@@ -145,6 +146,7 @@ void Display::display()
     Scene::Camera c(cameraPosition,cameraDirection,cameraRight);
 
     //call for optix trace
+    mScene->passFrameNumber(cameraChanged);
     mScene->trace(c);
 
     //transfer optix buffer to opengl buffer
@@ -329,6 +331,7 @@ void Display::keyPressed(unsigned char key, int x, int y)
             antTBarInit_geometry(sc.get(),geomBar,"groundPlane");
         }
     }
+    cameraChanged = true;
     //needs to be called, to update change
     glutPostRedisplay();
 
@@ -414,6 +417,7 @@ void Display::mouseMotion(int x, int y)
     oldx = x;
     oldy = y;
 
+    cameraChanged = true;
     glutPostRedisplay();
 }
 

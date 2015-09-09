@@ -48,4 +48,3 @@ struct PointLight
     float intensity;        //28
     int padding;            //32 :)
 };
-

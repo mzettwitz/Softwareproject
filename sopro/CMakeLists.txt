@@ -29,6 +29,7 @@ OPTIX_add_sample_executable(sopro
 
 	#Material Cuda/Raytracing
 	src/pinholeCamera.cu
+	src/pinholeCamera_AA.cu
 	src/miss.cu
 	src/entrypoint.cu
 	src/material/brdf/lambertMaterial.cu
@@ -68,6 +69,8 @@ OPTIX_add_sample_executable(sopro
 
 	#Data
 	include/structs.h
+	include/random.h
+	include/helpers.h
 
 	#GUI/AntTweakBar
         include/ATB/antTBar.h

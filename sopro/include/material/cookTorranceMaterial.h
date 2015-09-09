@@ -63,7 +63,7 @@ public:
         {
         case 1: //diffuse Coefficient
             mColor = in->color();
-            mDiffuseCoeff = value;
+            value + mSpecularCoeff <= 1 ? mDiffuseCoeff = value : mDiffuseCoeff = in->diffuseCoeff();
             mFresnelFactor = in->fresnelFactor();
             mRoughness = in->roughness();
             mReflectance = in->reflectance();
@@ -107,7 +107,7 @@ public:
             mFresnelFactor = in->fresnelFactor();
             mRoughness = in->roughness();
             mReflectance = in->reflectance();
-            mSpecularCoeff = value;
+            value + mDiffuseCoeff <= 1 ? mSpecularCoeff = value : mSpecularCoeff = in->specularCoeff();
             mMaterialType = COOKTORRANCE;
             setPTXPath("cookTorranceMaterial.cu");
             break;

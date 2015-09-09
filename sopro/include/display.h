@@ -20,6 +20,7 @@ private:
     static float3               cameraPosition;
     static float3               cameraDirection;
     static float3               cameraRight;
+    static bool                 cameraChanged;
     static int                  oldx;
     static int                  oldy;
     static float                deltaTime;

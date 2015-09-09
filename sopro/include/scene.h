@@ -32,6 +32,7 @@ private:
     unsigned int                    mWidth;
     unsigned int                    mHeight;
     Camera                          mCamera;
+    unsigned int                    mFrameNumber;
 
 public:
                                     Scene();
@@ -55,6 +56,7 @@ public:
     optix::Buffer                   getOutputBuffer();
     void                            resizeBuffer(int width, int height);
     void                            setSceneEpsilon(float amount);
+    void                            passFrameNumber(bool &changed);
 
 private:
     void                            updateScene(const Scene::Camera &camera);
@@ -62,6 +64,7 @@ private:
     void                            updateLights();
     void                            updateCamera(const Scene::Camera &camera);
     optix::Buffer                   createOutputBuffer(RTformat format);
+    void                            resetFrameNumber();
 
 };
 
