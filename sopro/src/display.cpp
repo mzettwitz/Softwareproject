@@ -8,6 +8,7 @@
 #include "../include/geometry/sphere.h"
 #include "../include/geometry/infinitePlane.h"
 #include "../include/geometry/mesh.h"
+#include "../include/geometry/meshgroup.h"
 
 
 using namespace optix;
@@ -309,6 +310,7 @@ void Display::keyPressed(unsigned char key, int x, int y)
         if(key == '5')
         {
             std::shared_ptr<Mesh> m = std::make_shared<Mesh>(mSource,make_float3(0,0,0));
+            m->load();
             std::shared_ptr<PhongMaterial> p = std::make_shared<PhongMaterial>(make_float3(1.0f,1.0f,1.0f),0.2f,0.6f,0.2f,5.2f,0.2f);
             std::string name = "Mesh_" + std::to_string(mScene->getSceneObjectCount());
             std::shared_ptr<SceneObject> sc = std::make_shared<SceneObject>(name,m,p);
@@ -317,11 +319,27 @@ void Display::keyPressed(unsigned char key, int x, int y)
             antTBarInit_material(sc.get(),matBar,name);
             antTBarInit_geometry(sc.get(),geomBar,name);
         }
+        if(key == '6')
+        {
+
+            std::shared_ptr<MeshGroup> g = std::make_shared<MeshGroup>(mSource);
+            g->load();
+            std::shared_ptr<LambertMaterial> m = std::make_shared<LambertMaterial>(make_float3(1,1,1));
+            for(unsigned int i = 0;i < g->data()->size();++i)
+            {
+                std::string name = g->data(i)->objectname();
+                std::shared_ptr<SceneObject> sc = std::make_shared<SceneObject>(name,g->data(i),m);
+                mScene->addSceneObject(sc);
+                antTBarInit_material(sc.get(),matBar,name);
+                antTBarInit_geometry(sc.get(),geomBar,name);
+            }
+        }
 
         //new groudPlane, just a box, but modified to a 'plane'
         if(key == '9')
         {
             std::shared_ptr<Mesh> groundPlane = std::make_shared<Mesh>("cube.obj",make_float3(0.0f,-2.0f,0.0f));
+            groundPlane->load();
             groundPlane->setScale(make_float3(100.0f,0.2f,100.0f));
             std::shared_ptr<LambertMaterial> p = std::make_shared<LambertMaterial>(make_float3(1.0f,1.0f,1.0f));
             std::shared_ptr<SceneObject> sc = std::make_shared<SceneObject>("groundPlane",groundPlane,p);

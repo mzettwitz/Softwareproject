@@ -8,7 +8,7 @@ int program3(int argc, char* argv[])
 {
     SceneHandle shp3("Program 3");
 
-    shp3.setSceneFile("dragonBlender.obj");
+    shp3.setSceneFile("madScienceBlender.obj");
 
     shp3.setFOV(45.0f);
     shp3.setSize(1024,768);

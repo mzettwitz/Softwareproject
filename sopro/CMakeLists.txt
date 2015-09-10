@@ -48,6 +48,7 @@ OPTIX_add_sample_executable(sopro
 	src/geometry/infinitePlane.cpp
 	src/geometry/mesh.cpp
 	src/geometry/meshLoader.cpp
+	src/geometry/meshgroup.cpp
 	src/geometry/sphere.cpp
 
 	#Geometry Cuda/Raytracing
@@ -97,4 +98,5 @@ OPTIX_add_sample_executable(sopro
 	include/geometry/mesh.h
 	include/geometry/sphere.h
 	include/geometry/meshLoader.h 
+	include/geometry/meshgroup.h
 )

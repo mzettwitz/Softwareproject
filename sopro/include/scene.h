@@ -65,6 +65,7 @@ private:
     void                            updateCamera(const Scene::Camera &camera);
     optix::Buffer                   createOutputBuffer(RTformat format);
     void                            resetFrameNumber();
+    void                            genRandomSeeds(unsigned int width, unsigned int height, Buffer &b);
 
 };
 
