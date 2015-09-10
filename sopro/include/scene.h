@@ -5,6 +5,7 @@
 #include <optixpp_namespace.h>
 #include <memory>
 #include <vector>
+#include "pointlight.h"
 
 class Scene
 {
@@ -20,12 +21,13 @@ public:
     };
 
     const float IdentityMatrix[16] = {1,0,0,0,
-                         0,1,0,0,
-                         0,0,1,0,
-                         0,0,0,1};
+                                      0,1,0,0,
+                                      0,0,1,0,
+                                      0,0,0,1};
 
 private:
     std::shared_ptr<std::vector<std::shared_ptr<SceneObject>>>      mSceneObjects;
+    std::shared_ptr<std::vector<std::shared_ptr<PointLightClass>>>      mClassLights;
     std::shared_ptr<std::vector<PointLight>>       mLights;
     optix::Group                    mGroup;
     optix::Context                  mContext;
@@ -35,14 +37,16 @@ private:
     unsigned int                    mFrameNumber;
 
 public:
-                                    Scene();
-                                    ~Scene();
+    Scene();
+    ~Scene();
     void                            trace(const Scene::Camera &camera);
     void                            initScene(const Scene::Camera &camera,int width, int height);
     void                            addSceneObject(std::shared_ptr<SceneObject> object);
     void                            addSceneObject(std::shared_ptr<BaseGeometry> geometry, std::shared_ptr<BaseMaterial> material, const std::string &name);
     void                            addLight(PointLight &light);
+    void                            addLight(PointLight &light, std::string name);
     void                            addLight(const float3 &position, const float3 &color,const float intensity);
+    void                            addLight(const float3 &position, const float3 &color,const float intensity, std::string name);
     void                            removeObject(const std::string &object);
     void                            removeObject(const unsigned int index);
     void                            removeLight(const unsigned int index);
@@ -51,6 +55,7 @@ public:
     std::shared_ptr<SceneObject>    getSceneObject(const std::string &name);
     std::shared_ptr<SceneObject>    getSceneObject(const unsigned int index);
     PointLight                      getLight(const unsigned int index);
+    std::shared_ptr<PointLightClass>     getClassLight(const unsigned int index);
     int                             getSceneObjectCount();
     int                             getLightCount();
     optix::Buffer                   getOutputBuffer();

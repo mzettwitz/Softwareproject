@@ -33,6 +33,7 @@ bool                Display::cameraChanged = false;
 // Declare ATB
 TwBar *matBar;
 TwBar *geomBar;
+TwBar *lightBar;
 
 //dummy purpose
 int                 count = 0;
@@ -67,6 +68,8 @@ void Display::init(int &argc, char **argv,const unsigned int width,const unsigne
     geomBar = TwNewBar("GeomBar");
     TwDefine(" GeomBar size='270 300' color='118 185 0' alpha=160 position='10 320'");
 
+    lightBar = TwNewBar("LightBar");
+    TwDefine(" LightBar size='270 115' color='118 185 0' alpha=160 position='10 630'");
 }
 
 void Display::run(const std::string &title, std::shared_ptr<Scene> scene)
@@ -129,7 +132,7 @@ void Display::run(const std::string &title, std::shared_ptr<Scene> scene)
     glutDisplayFunc(display);
     glutKeyboardFunc(keyPressed);
 
-    antTBar(scene, matBar, geomBar);
+    antTBar(scene, matBar, geomBar, lightBar);
 
     glutMainLoop();
 
