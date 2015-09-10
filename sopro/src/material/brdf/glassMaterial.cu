@@ -198,7 +198,6 @@ static __device__ void shade()
     {
         rtTrace(topObject,refractedRay,prd_refracted);
     }
-    result = result / lights.size();
     result += make_float4(color,1.f) * ( r1 * prd_reflected.result + (1-r1) * prd_refracted.result);
 
 

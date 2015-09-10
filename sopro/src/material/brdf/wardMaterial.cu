@@ -110,8 +110,6 @@ static __device__ void shade()
         irradiance += fr * fmaxf(dot(N,L),0) * radiance * lights[i].color;
     }
 
-    irradiance = irradiance/lights.size();
-
     float4 result = make_float4(irradiance,1);
 
     prd_radiance.result = result;

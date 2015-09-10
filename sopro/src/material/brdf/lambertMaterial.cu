@@ -105,5 +105,5 @@ static __device__ void shade()
 
     }
     result = make_float4(irradiance,1);
-    prd_radiance.result = result/lights.size();
+    prd_radiance.result = result;
 }
