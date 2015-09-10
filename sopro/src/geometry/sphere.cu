@@ -9,6 +9,7 @@ using namespace optix;
 rtDeclareVariable(Ray,      ray,        rtCurrentRay    ,);
 rtDeclareVariable(float3,   geometricNormal, attribute geometricNormal,);
 rtDeclareVariable(float3,   shadingNormal, attribute shadingNormal,);
+rtDeclareVariable(unsigned int , frameNumber,,);
 
 
 RT_PROGRAM void sphereIntersectionProgram(int primIdx)

@@ -1,4 +1,5 @@
 #include "../../include/geometry/mesh.h"
+#include "../../include/geometry/meshLoader.h"
 
 using namespace optix;
 
@@ -54,11 +55,43 @@ Geometry Mesh::createGeometry(Context context) const
     return geometry;
 }
 
-void Mesh::setFilename(std::string filename)
+void Mesh::setFilename(const std::string &filename)
 {
-    if(!filename.empty())
+    mFilename = filename;
+}
+
+void Mesh::setObjectname(const std::string &objectname)
+{
+    mObjectname = objectname;
+}
+
+void Mesh::clear()
+{
+    mVertices.clear();
+    mVertexIndices.clear();
+    mNormals.clear();
+    mNormalIndices.clear();
+    mUVs.clear();
+    mUVIndices.clear();
+    mNumPrimitives = 0u;
+}
+
+void Mesh::setData(std::vector<float3> &v, std::vector<int3> &vI, std::vector<float3> &n, std::vector<int3> &nI, std::vector<float2> &uv, std::vector<int3> &uvI, unsigned int numPrimitives)
+{
+    mVertices = v;
+    mVertexIndices = vI;
+    mNormals = n;
+    mNormalIndices = nI;
+    mUVs = uv;
+    mUVIndices = uvI;
+    mNumPrimitives = numPrimitives;
+}
+
+void Mesh::load()
+{
+    if(!mFilename.empty())
     {
-        std::cout << "loading obj : " << filename << std::endl;
+        std::cout << "loading obj : " << mFilename << std::endl;
         std::string file = std::string(sutilSamplesDir()) + "/sopro/assets/" + mFilename;
         bool loaded = MeshLoader::loadOBJ(file.c_str(),mVertices,mNormals,mUVs,mVertexIndices,mNormalIndices,mUVIndices,mNumPrimitives);
         if(loaded)
@@ -66,4 +99,14 @@ void Mesh::setFilename(std::string filename)
             std::cout << "loading successful." << std::endl;
         }
     }
+}
+
+const std::string& Mesh::objectname() const
+{
+    return mObjectname;
+}
+
+std::string& Mesh::objectname()
+{
+    return mObjectname;
 }
