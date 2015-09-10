@@ -668,3 +668,16 @@ void Scene::resetFrameNumber()
 {
     mFrameNumber = 0u;
 }
+
+void Scene::addClassLight(std::shared_ptr<PointLightClass> l)
+{
+    mClassLights->push_back(l);
+}
+
+void Scene::removeClassLight(const unsigned int index)
+{
+    if(index < mClassLights->size())
+    {
+        mClassLights->erase(mClassLights->begin()+index);
+    }
+}

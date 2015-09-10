@@ -47,9 +47,11 @@ public:
     void                            addLight(PointLight &light, std::string name);
     void                            addLight(const float3 &position, const float3 &color,const float intensity);
     void                            addLight(const float3 &position, const float3 &color,const float intensity, std::string name);
+    void                            addClassLight(std::shared_ptr<PointLightClass> l);
     void                            removeObject(const std::string &object);
     void                            removeObject(const unsigned int index);
     void                            removeLight(const unsigned int index);
+    void                            removeClassLight(const unsigned int index);
     std::shared_ptr<std::vector<std::shared_ptr<SceneObject>>>   getSceneObjects();
     std::shared_ptr<std::vector<PointLight>>    getLights();
     std::shared_ptr<SceneObject>    getSceneObject(const std::string &name);

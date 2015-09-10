@@ -351,6 +351,25 @@ void Display::keyPressed(unsigned char key, int x, int y)
             antTBarInit_material(sc.get(),matBar,"groundPlane");
             antTBarInit_geometry(sc.get(),geomBar,"groundPlane");
         }
+        if(key == 'l')
+        {
+            PointLight l;
+            l.color = make_float3(1,1,1);
+            l.intensity = 1000.0f;
+            l.padding = 0;
+            l.position = cameraPosition + 10 * cameraDirection;
+            mScene->addLight(l);
+            std::string name = "light_" + std::to_string(mScene->getLightCount());
+            std::shared_ptr<PointLightClass> lc = std::make_shared<PointLightClass>(&l,name);
+            mScene->addClassLight(lc);
+            antTBarInit_light(lc,lightBar,name);
+        }
+        if(key == 'o')
+        {
+            antTBarRemoveVariable_light(lightBar,mScene->getClassLight(mScene->getLightCount())->name());
+            mScene->removeClassLight(mScene->getLightCount());
+            mScene->removeLight(mScene->getLightCount());
+        }
     }
     cameraChanged = true;
     //needs to be called, to update change
