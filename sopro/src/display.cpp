@@ -9,6 +9,7 @@
 #include "../include/geometry/infinitePlane.h"
 #include "../include/geometry/mesh.h"
 #include "../include/geometry/meshgroup.h"
+#include "../include/sceneLoader.h"
 
 
 using namespace optix;
@@ -31,16 +32,17 @@ int                 Display::oldy = 0;
 float               Display::deltaTime = 0.0f;
 int                 Display::mState = Display::mouseState::IDLE;
 bool                Display::cameraChanged = false;
+bool                Display::loaded = false;
 // Declare ATB
 TwBar *matBar;
 TwBar *geomBar;
+TwBar *lightBar;
 
 //dummy purpose
 int                 count = 0;
 
 void Display::init(int &argc, char **argv,const unsigned int width,const unsigned int height)
 {
-
     mWidth = width;
     mHeight = height;
     glutInit(&argc, argv);
@@ -68,11 +70,63 @@ void Display::init(int &argc, char **argv,const unsigned int width,const unsigne
     geomBar = TwNewBar("GeomBar");
     TwDefine(" GeomBar size='270 300' color='118 185 0' alpha=160 position='10 320'");
 
+    lightBar = TwNewBar("LightBar");
+    TwDefine(" LightBar size='270 115' color='118 185 0' alpha=160 position='10 630'");
+}
+
+void Display::init(int &argc, char **argv, const std::string &scenename)
+{
+    mScene = std::make_shared<Scene>();
+    std::vector<float> settings;
+    SceneLoader::loadScene(scenename,mScene,settings);
+    cameraPosition.x = settings.at(0);
+    cameraPosition.y = settings.at(1);
+    cameraPosition.z = settings.at(2);
+    cameraDirection.x = settings.at(3);
+    cameraDirection.y = settings.at(4);
+    cameraDirection.z = settings.at(5);
+    cameraRight.x = settings.at(6);
+    cameraRight.y = settings.at(7);
+    cameraRight.z = settings.at(8);
+    horizontalAngle = settings.at(9);
+    verticalAngle = settings.at(10);
+    mWidth = settings.at(12);
+    mHeight = settings.at(13);
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
+    glutInitWindowSize(mWidth,mHeight);
+
+    // AntTweakBar
+    //redirect GLUT events to ATB
+    glutMouseFunc((GLUTmousebuttonfun)TwEventMouseButtonGLUT);
+    glutMotionFunc((GLUTmousemotionfun)TwEventMouseMotionGLUT);
+    glutPassiveMotionFunc((GLUTmousemotionfun)TwEventMouseMotionGLUT); // same as MouseMotion
+    glutKeyboardFunc((GLUTkeyboardfun)TwEventKeyboardGLUT);
+    glutSpecialFunc((GLUTspecialfun)TwEventSpecialGLUT);
+
+    // send the "glutGetModifers" function pointer to ATB
+    TwGLUTModifiersFunc(glutGetModifiers);
+
+    // Init ATB
+    TwInit(TW_OPENGL, NULL);
+
+    // Create ATB
+    matBar = TwNewBar("MatBar");
+    TwDefine(" MatBar size='270 300' color='118 185 0' alpha=160 position='10 10'");
+
+    geomBar = TwNewBar("GeomBar");
+    TwDefine(" GeomBar size='270 300' color='118 185 0' alpha=160 position='10 320'");
+
+    lightBar = TwNewBar("LightBar");
+    TwDefine(" LightBar size='270 115' color='118 185 0' alpha=160 position='10 630'");
 }
 
 void Display::run(const std::string &title, std::shared_ptr<Scene> scene)
 {
-    mScene = scene;
+    if(scene != nullptr)
+    {
+        mScene = scene;
+    }
     mTitle = title;
 
     glutCreateWindow(title.c_str());
@@ -130,7 +184,7 @@ void Display::run(const std::string &title, std::shared_ptr<Scene> scene)
     glutDisplayFunc(display);
     glutKeyboardFunc(keyPressed);
 
-    antTBar(scene, matBar, geomBar);
+    antTBar(mScene, matBar, geomBar, lightBar);
 
     glutMainLoop();
 
@@ -306,7 +360,7 @@ void Display::keyPressed(unsigned char key, int x, int y)
         {
             mScene->setSceneEpsilon(0.1e-3f);
         }
-        // 5 - load mesh from assets directory and programm file
+        // 5 - load mesh group from assets directory and programm file
         if(key == '5')
         {
             std::shared_ptr<Mesh> m = std::make_shared<Mesh>(mSource,make_float3(0,0,0));
@@ -319,6 +373,7 @@ void Display::keyPressed(unsigned char key, int x, int y)
             antTBarInit_material(sc.get(),matBar,name);
             antTBarInit_geometry(sc.get(),geomBar,name);
         }
+        // load meshgroup as single mesh objects
         if(key == '6')
         {
 
@@ -347,6 +402,73 @@ void Display::keyPressed(unsigned char key, int x, int y)
             mScene->addSceneObject(sc);
             antTBarInit_material(sc.get(),matBar,"groundPlane");
             antTBarInit_geometry(sc.get(),geomBar,"groundPlane");
+        }
+        // add a pointlight
+        if(key == 'l')
+        {
+            PointLight l;
+            l.color = make_float3(1,1,1);
+            l.intensity = 1000.0f;
+            l.padding = 0;
+            l.position = cameraPosition + 10 * cameraDirection;
+            mScene->addLight(l);
+            antTBarInit_light(mScene->getClassLight(mScene->getLightCount()-1),lightBar,mScene->getClassLight(mScene->getLightCount()-1)->name());
+        }
+        // a pointlight
+        if(key == 'o')
+        {
+            antTBarRemoveVariable_light(lightBar,mScene->getClassLight(mScene->getLightCount()-1)->name());
+            mScene->removeLight(mScene->getLightCount()-1);
+        }
+        // save scene
+        if(key == 'b')
+        {
+            std::vector<float> settings;
+            settings.push_back(cameraPosition.x);
+            settings.push_back(cameraPosition.y);
+            settings.push_back(cameraPosition.z);
+            settings.push_back(cameraDirection.x);
+            settings.push_back(cameraDirection.y);
+            settings.push_back(cameraDirection.z);
+            settings.push_back(cameraRight.x);
+            settings.push_back(cameraRight.y);
+            settings.push_back(cameraRight.z);
+            settings.push_back(horizontalAngle);
+            settings.push_back(verticalAngle);
+            settings.push_back(45.0f);
+            settings.push_back(static_cast<float>(mWidth));
+            settings.push_back(static_cast<float>(mHeight));
+            SceneLoader::saveScene("madScience",mScene,settings);
+        }
+        // load scene
+        if(key == '1')
+        {
+
+            std::vector<float> settings;
+            SceneLoader::loadScene(mSource,mScene,settings);
+            cameraPosition.x = settings.at(0);
+            cameraPosition.y = settings.at(1);
+            cameraPosition.z = settings.at(2);
+            cameraDirection.x = settings.at(3);
+            cameraDirection.y = settings.at(4);
+            cameraDirection.z = settings.at(5);
+            cameraRight.x = settings.at(6);
+            cameraRight.y = settings.at(7);
+            cameraRight.z = settings.at(8);
+            horizontalAngle = settings.at(9);
+            verticalAngle = settings.at(10);
+            mWidth = settings.at(12);
+            mHeight = settings.at(13);
+
+            for(unsigned int i = 0;i < mScene->getSceneObjectCount();++i)
+            {
+                antTBarInit_material(mScene->getSceneObject(i).get(),matBar,std::dynamic_pointer_cast<Mesh>(mScene->getSceneObject(i)->getGeometry())->objectname());
+                antTBarInit_geometry(mScene->getSceneObject(i).get(),geomBar,std::dynamic_pointer_cast<Mesh>(mScene->getSceneObject(i)->getGeometry())->objectname());
+            }
+            for(unsigned int i = 0;i < mScene->getLightCount();++i)
+            {
+                antTBarInit_light(mScene->getClassLight(i),lightBar,mScene->getClassLight(i)->name());
+            }
         }
     }
     cameraChanged = true;
@@ -434,8 +556,8 @@ void Display::mouseMotion(int x, int y)
 
     oldx = x;
     oldy = y;
-
     cameraChanged = true;
+
     glutPostRedisplay();
 }
 
@@ -451,7 +573,7 @@ void Display::setFOV(float fov)
     initialFOV = fov;
 }
 
-void Display::setMeshSource(const std::string &src)
+void Display::setSceneSource(const std::string &src)
 {
     mSource = src;
 }

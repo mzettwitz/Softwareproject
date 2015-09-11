@@ -8,8 +8,7 @@ void MeshGroup::load()
     if(!mFilename.empty())
     {
         std::cout << "loading obj : " << mFilename << std::endl;
-        std::string file = std::string(sutilSamplesDir()) + "/sopro/assets/" + mFilename;
-        bool loaded = MeshLoader::loadOBJScene(file.c_str(),mMesh);
+        bool loaded = MeshLoader::loadOBJScene(mFilename.c_str(),mMesh);
         if(loaded)
         {
             std::cout << "loading successful." << std::endl;

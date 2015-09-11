@@ -32,7 +32,7 @@ bool MeshLoader::loadOBJ(const char* path, std::vector <float3>& outVertices, st
     while(true)
     {
         char lineHeader[128];
-        //reead first the first word of the line
+        //read first the first word of the line
         int res = fscanf(file, "%s", lineHeader);
         if(res == EOF)
         {
@@ -145,6 +145,7 @@ bool MeshLoader::loadOBJ(const char* path, std::vector <float3>& outVertices, st
 bool MeshLoader::loadOBJScene(const char *path,std::shared_ptr<std::vector<std::shared_ptr<Mesh>>> meshes)
 {
     //clear mesh
+    std::string f = std::string(sutilSamplesDir()) + "/sopro/assets/" + std::string(path);
     bool firstObject = true;
     Mesh tempMesh = Mesh("",make_float3(0,0,0));
     std::vector<float3> tempVertices;
@@ -157,15 +158,15 @@ bool MeshLoader::loadOBJScene(const char *path,std::shared_ptr<std::vector<std::
     unsigned int offsetV = 0;
     unsigned int offsetUV = 0;
     unsigned int offsetN = 0;
-
+    tempMesh.setFilename(std::string(path));
     char objectname[256];
     char groupname[256];
     //open file
-    FILE * file = fopen(path,"r");
+    FILE * file = fopen(f.c_str(),"r");
 
     if(file == NULL)
     {
-        std::cout << "Could NOT open file!\n" << std::endl;
+        std::cout << "Could NOT open file!" << std::endl;
         return false;
     }
 
@@ -307,6 +308,7 @@ bool MeshLoader::loadOBJScene(const char *path,std::shared_ptr<std::vector<std::
             firstObject = false;
             fscanf(file,"%s\n",objectname);
             tempMesh.setObjectname(objectname);
+
         }
         //group
         else if(strcmp(lineHeader,"g") == 0)

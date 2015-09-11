@@ -11,7 +11,7 @@
 #include "../include/geometry/mesh.h"
 #include "../include/geometry/infinitePlane.h"
 #include "../include/geometry/areaPlane.h"
-#include  "../include/structs.h"
+#include "../include/structs.h"
 
 
 

@@ -124,8 +124,6 @@ static __device__ void shade()
 
     }
 
-    irradiance = irradiance/lights.size();
-
     float4 result = make_float4(irradiance,1);
 
     // recursive reflections

@@ -16,15 +16,31 @@
 #include "../include/material/wardMaterial.h"
 #include "../include/geometry/sphere.h"
 #include "../include/random.h"
+#include "../include/pointlight.h"
 
 
 Scene::Scene()
 {
     mFrameNumber = 0u;
+
+    //initialize context
     mContext = optix::Context::create();
+    mContext->setRayTypeCount(2);
+    mContext->setEntryPointCount(1);
+    mContext["radianceRayType"]->setUint(0u);
+    mContext["shadowRayType"]->setUint(1u);
+    mContext["maxDepth"]->setUint(6u);
+    mContext["sceneEpsilon"]->setFloat(1.5e-3f);
+    mContext->setStackSize(4096);
+
+    //one group to rule them all
     mGroup = mContext->createGroup();
+    mGroup->setAcceleration(mContext->createAcceleration("Trbvh","Bvh"));
+    mGroup->getAcceleration()->setProperty("chunk_size","-1");
+
     mSceneObjects = std::make_shared<std::vector<std::shared_ptr<SceneObject>>>();
     mLights = std::make_shared<std::vector<PointLight>>();
+    mClassLights = std::make_shared<std::vector<std::shared_ptr<PointLightClass>>>();
 }
 
 Scene::~Scene()
@@ -60,41 +76,20 @@ void Scene::trace(const Scene::Camera &camera)
     }
     else
     {
-        mContext["maxDepth"]->setUint(10u);
+        mContext["maxDepth"]->setUint(6u);
     }
+    std::cout << "Framenumber" << mFrameNumber << std::endl;
+
     mContext->launch(0,bufferWidth,bufferHeight);
 }
 
 void Scene::initScene(const Scene::Camera &camera,int width, int height)
 {
-    //specify context
-    mContext->setRayTypeCount(2);
-    mContext->setEntryPointCount(1);
-    mContext["radianceRayType"]->setUint(0u);
-    mContext["shadowRayType"]->setUint(1u);
-    mContext["maxDepth"]->setUint(10u);
-    mContext["sceneEpsilon"]->setFloat(1.5e-3f);
-    mContext->setStackSize(4096);
-
+    //dimensions
     mWidth  = width;
     mHeight = height;
 
-
-    //set light
-    PointLight l1;
-    l1.color = make_float3(1.0f,1.0f,1.0f);
-    l1.intensity = 40000.0f;
-    l1.padding = 0;
-    l1.position = make_float3(10.0f,200.0f,-30.0f);
-    mLights->push_back(l1);
-
-    PointLight l2;
-    l2.color = make_float3(1.0f,1.0f,0.8f);
-    l2.intensity = 35000.0f;
-    l2.padding = 0;
-    l2.position = make_float3(10.0f,200.0f,60.0f);
-    mLights->push_back(l2);
-
+    //init lightBuffer
     optix::Buffer lightBuffer = mContext->createBuffer(RT_BUFFER_INPUT);
     lightBuffer->setFormat(RT_FORMAT_USER);
     lightBuffer->setElementSize(sizeof(PointLight));
@@ -140,8 +135,7 @@ void Scene::initScene(const Scene::Camera &camera,int width, int height)
     /*****************************AA***************************/
 
 
-
-
+    //
     mContext["outputBuffer"]->setBuffer(mContext->createBuffer(RT_BUFFER_OUTPUT,RT_FORMAT_UNSIGNED_BYTE4,mWidth,mHeight));
     std::string usedPTXPath(ptxPath("pinholeCamera_AA.cu"));
 
@@ -171,36 +165,6 @@ void Scene::initScene(const Scene::Camera &camera,int width, int height)
     mContext["V"]->setFloat(v);
     mContext["W"]->setFloat(w);
 
-    //create dummy for whatever
-    std::shared_ptr<Sphere> dummyGeom = std::make_shared<Sphere>(make_float3(0.0f,0.0f,0.0f));
-    dummyGeom->setScale(make_float3(0.1f,0.1f,0.1f));
-    std::shared_ptr<LambertMaterial> dummyMat = std::make_shared<LambertMaterial>(make_float3(1.0f,0.0f,0.0f));
-    std::shared_ptr<SceneObject> dummy = std::make_shared<SceneObject>("dummy",dummyGeom,dummyMat);
-    mSceneObjects->push_back(dummy);
-
-    //pass geometry/material to optix
-    mGroup->setChildCount(mSceneObjects->size());
-
-    for(unsigned int i = 0;i < mSceneObjects->size();++i)
-    {
-        Transform t = mContext->createTransform();
-        t->setMatrix(false,IdentityMatrix,IdentityMatrix);
-        GeometryInstance gi = mContext->createGeometryInstance();
-        gi->setMaterialCount(1);
-        gi->setGeometry(mSceneObjects->at(i)->getGeometry()->createGeometry(mContext));
-        gi->setMaterial(0,mSceneObjects->at(i)->getMaterial()->createMaterial(mContext));
-        GeometryGroup gg = mContext->createGeometryGroup();
-        gg->setChildCount(1);
-        gg->setChild(0,gi);
-        gg->setAcceleration(mContext->createAcceleration("Trbvh","Bvh"));
-        t->setChild(gg);
-        mGroup->setChild(0,t);
-
-    }
-
-    mGroup->setAcceleration(mContext->createAcceleration("Trbvh","Bvh"));
-    mGroup->getAcceleration()->setProperty("chunk_size","-1");
-
     mContext["topObject"]->set(mGroup);
     mContext["topShadower"]->set(mGroup);
 
@@ -215,6 +179,7 @@ void Scene::updateScene(const Scene::Camera &camera)
     updateSceneObjects();
     updateLights();
     mFrameNumber++;
+
 }
 
 void Scene::addSceneObject(std::shared_ptr<SceneObject> object)
@@ -249,11 +214,8 @@ void Scene::addSceneObject(std::shared_ptr<BaseGeometry> geometry, std::shared_p
     mGroup->setChildCount(mSceneObjects->size());
     GeometryInstance gi = mContext->createGeometryInstance();
     gi->setGeometry(object->getGeometry()->createGeometry(mContext));
-    gi->setMaterialCount(2);
+    gi->setMaterialCount(1);
     gi->setMaterial(0,object->getMaterial()->createMaterial(mContext));
-    std::shared_ptr<LambertMaterial> l = std::make_shared<LambertMaterial>(make_float3(1,1,1));
-    gi->setMaterial(1,l->createMaterial(mContext));
-
 
     GeometryGroup gg = mContext->createGeometryGroup();
     gg->setChildCount(1);
@@ -480,7 +442,6 @@ void Scene::updateSceneObjects()
                resetFrameNumber();
         }
     }
-                resetFrameNumber();
 }
 
 void Scene::updateCamera(const Scene::Camera &camera)
@@ -556,7 +517,7 @@ void Scene::setSceneEpsilon(float amount)
 }
 
 void Scene::updateLights()
-{
+{    
     Buffer lightBuffer = mContext["lights"]->getBuffer();
     RTsize numLights;
     lightBuffer->getSize(numLights);
@@ -565,20 +526,37 @@ void Scene::updateLights()
         lightBuffer->setSize(mLights->size());
     }
     PointLight* lBufferdata = static_cast<PointLight*>(lightBuffer->map());
+
     for(unsigned int i = 0;i < mLights->size();++i)
     {
+        //check if LighClass has been changed
+        if(mClassLights->at(i)->isLightChanged())
+        {
+            mLights->at(i).position = mClassLights->at(i)->position();
+            mLights->at(i).color = mClassLights->at(i)->color();
+            mLights->at(i).intensity = mClassLights->at(i)->intensity();
+
+        }
+
         lBufferdata[i].position = mLights->at(i).position;
         lBufferdata[i].color = mLights->at(i).color;
         lBufferdata[i].intensity = mLights->at(i).intensity;
     }
 
     lightBuffer->unmap();
-    resetFrameNumber();
 }
 
 void Scene::addLight(PointLight &light)
 {
     mLights->push_back(light);
+    mClassLights ->push_back(std::make_shared<PointLightClass>(&light, "light_" + std::to_string(mLights->size())));
+    resetFrameNumber();
+}
+
+void Scene::addLight(PointLight &light, std::string name)
+{
+    mLights->push_back(light);
+    mClassLights->push_back(std::make_shared<PointLightClass>(&light, name));
     resetFrameNumber();
 }
 
@@ -590,6 +568,19 @@ void Scene::addLight(const float3 &position, const float3 &color, const float in
     l.position = position;
     l.intensity = intensity;
     mLights->push_back(l);
+    mClassLights->push_back(std::make_shared<PointLightClass>(&l, "light_" + std::to_string(mLights->size())));
+    resetFrameNumber();
+}
+
+void Scene::addLight(const float3 &position, const float3 &color, const float intensity, std::string name)
+{
+    PointLight l;
+    l.color = color;
+    l.padding = 0;
+    l.position = position;
+    l.intensity = intensity;
+    mLights->push_back(l);
+    mClassLights->push_back(std::make_shared<PointLightClass>(&l, name));
     resetFrameNumber();
 }
 
@@ -598,6 +589,7 @@ void Scene::removeLight(const unsigned int index)
     if(index < mLights->size())
     {
         mLights->erase(mLights->begin()+index);
+        mClassLights->erase(mClassLights->begin()+index);
     }
     resetFrameNumber();
 }
@@ -605,6 +597,11 @@ void Scene::removeLight(const unsigned int index)
 PointLight Scene::getLight(const unsigned int index)
 {
     return mLights->at(index);
+}
+
+std::shared_ptr<PointLightClass> Scene::getClassLight(const unsigned int index)
+{
+    return mClassLights->at(index);
 }
 
 int Scene::getLightCount()
@@ -632,4 +629,9 @@ void Scene::passFrameNumber(bool &changed)
 void Scene::resetFrameNumber()
 {
     mFrameNumber = 0u;
+}
+
+void Scene::addClassLight(std::shared_ptr<PointLightClass> l)
+{
+    mClassLights->push_back(l);
 }

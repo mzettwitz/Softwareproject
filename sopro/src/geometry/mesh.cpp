@@ -110,3 +110,13 @@ std::string& Mesh::objectname()
 {
     return mObjectname;
 }
+
+const std::string& Mesh::filename() const
+{
+    return mFilename;
+}
+
+std::string& Mesh::filename()
+{
+    return mFilename;
+}

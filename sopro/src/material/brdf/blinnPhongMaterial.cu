@@ -119,14 +119,14 @@ static __device__ void shade()
 
 
         // ambient outside to lighten shadowed parts
-        Ka = color *  ambientCoefficient;
+        Ka = color * ambientCoefficient;
         fr = Ka;
 
         // if not in shadow
         if(fmaxf(shadowPrd.attenuation) > 0.0f)
         {
             // material color * coeff * (positive)surface angle * lightintensity at hitpoint
-            Kd = color * diffuseCoefficient / M_PIf;
+            Kd = color * (diffuseCoefficient / M_PIf);
             float3 V = normalize(-ray.direction);
             float3 H = (V + L) / length(V+L);
             H = normalize(H);
@@ -135,13 +135,11 @@ static __device__ void shade()
                     pow(fmaxf(dot(N,H),0.f), shininess));
 
             fr += Kd + Ks;
-
         }
 
         irradiance += fr * fmaxf(dot(N,L),0) * radiance * lights[i].color;
     }
 
-    irradiance = irradiance/lights.size();
     float4 result = make_float4(irradiance,1);
     // recursive reflections
     if(specularity > 0.0f && prd_radiance.depth < maxDepth)
