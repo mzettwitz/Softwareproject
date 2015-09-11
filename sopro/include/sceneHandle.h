@@ -26,6 +26,7 @@ public:
     void setSize(const unsigned int width, const unsigned int height);
     void setScene(std::shared_ptr<Scene> scene);
     void setSceneFile(const std::string &scenefile);
+    void loadScene(const std::string &scene);
     void run(int &argc, char** argv);
 private:
 };

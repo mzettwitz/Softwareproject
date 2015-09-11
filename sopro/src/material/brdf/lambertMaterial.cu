@@ -22,6 +22,7 @@ rtDeclareVariable(float3, shadingNormal, attribute shadingNormal,);
 
 static __device__ void shadowed();
 static __device__ void shade();
+static __device__ void simpleShade();
 
 RT_PROGRAM void anyhit_shadow()
 {
@@ -30,7 +31,9 @@ RT_PROGRAM void anyhit_shadow()
 
 RT_PROGRAM void closesthit_radiance()
 {
-    shade();
+
+        shade();
+
 }
 
 
@@ -71,6 +74,7 @@ static __device__ void shade()
     float4 result = make_float4(0.0f,0.0f,0.0f,1.0f);
     float3 irradiance = make_float3(0,0,0);
     float3 fr = make_float3(0.0f,0.0f,0.0f);
+
 
     //iterate over every light source
     for(unsigned int i = 0;i < lights.size();++i)

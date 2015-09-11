@@ -40,6 +40,7 @@ public:
         std::shared_ptr<AshikhminShirleyMaterial> in = std::dynamic_pointer_cast<AshikhminShirleyMaterial>(in1);
         mColor = in->color();
         mAnisotropicFactorU =in->anisotropicFactorU();
+
         mAnisotropicFactorV = in->anisotropicFactorV();
         mSpecularCoeff = in->specularCoeff();
         mDiffuseCoeff = in->diffuseCoeff();

@@ -39,7 +39,7 @@ void SceneHandle::setSceneFile(const std::string &scenefile)
 void SceneHandle::run(int &argc,char **argv)
 {
     Display::init(argc,argv,mWidth,mHeight);
-    Display::setMeshSource(mSceneFile);
+    Display::setSceneSource(mSceneFile);
     Display::setFOV(mFOV);
     Display::setInitialCamera(mInitialCamera);
     Display::run(mTitle,mScene);

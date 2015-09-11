@@ -1,6 +1,7 @@
 #include "../include/program3.h"
 #include "../include/sceneHandle.h"
 #include <optixu/optixpp_namespace.h>
+#include "../include/display.h"
 
 using namespace optix;
 
@@ -8,7 +9,7 @@ int program3(int argc, char* argv[])
 {
     SceneHandle shp3("Program 3");
 
-    shp3.setSceneFile("madScienceBlender.obj");
+    shp3.setSceneFile("madScience.ssf");
 
     shp3.setFOV(45.0f);
     shp3.setSize(1024,768);
@@ -16,7 +17,10 @@ int program3(int argc, char* argv[])
     float3 direction = make_float3(0,0,1);
     float3 right = make_float3(-1,0,0);
     shp3.setInitialCamera(Scene::Camera(position,direction,right));
-
     shp3.run(argc,argv);
+
+   //Display::init(argc,argv,"madScience.ssf");
+   //Display::run("madScience",nullptr);
+
     return 0;
 }

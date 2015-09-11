@@ -25,6 +25,7 @@ private:
     static int                  oldy;
     static float                deltaTime;
     static int                  mState;
+    static bool                 loaded;
 
     enum mouseState
     {
@@ -36,10 +37,11 @@ private:
 
 public:
     static void                 init(int &argc, char** argv,const unsigned int width,const unsigned int height);
+    static void                 init(int &argc, char** argv, const std::string &scenename);
     static void                 run(const std::string &title, std::shared_ptr<Scene> scene);
     static void                 setInitialCamera(const Scene::Camera &camera);
     static void                 setFOV(float fov);
-    static void                 setMeshSource(const std::string &src);
+    static void                 setSceneSource(const std::string &src);
 
 private:
     static void                 displayFrame();
