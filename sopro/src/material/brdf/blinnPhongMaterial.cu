@@ -119,14 +119,14 @@ static __device__ void shade()
 
 
         // ambient outside to lighten shadowed parts
-        Ka = color *  ambientCoefficient;
+        Ka = color * ambientCoefficient;
         fr = Ka;
 
         // if not in shadow
         if(fmaxf(shadowPrd.attenuation) > 0.0f)
         {
             // material color * coeff * (positive)surface angle * lightintensity at hitpoint
-            Kd = make_float3(diffuseCoefficient / M_PIf);
+            Kd = color * (diffuseCoefficient / M_PIf);
             float3 V = normalize(-ray.direction);
             float3 H = (V + L) / length(V+L);
             H = normalize(H);
@@ -134,8 +134,7 @@ static __device__ void shade()
             Ks = make_float3(specularCoefficient * ((shininess + 2.f)/(2.f*M_PIf)) *
                     pow(fmaxf(dot(N,H),0.f), shininess));
 
-            fr += color * (Kd + Ks);
-
+            fr += Kd + Ks;
         }
 
         irradiance += fr * fmaxf(dot(N,L),0) * radiance * lights[i].color;

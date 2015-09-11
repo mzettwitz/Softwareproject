@@ -80,6 +80,11 @@ static void TW_CALL setColorCB(const void* value, void* clientData)
         std::shared_ptr<CTM> cookMat = std::make_shared<CTM>(tmpSO->getMaterial(), col);
         tmpSO->setMaterial(cookMat);
     }
+    else if(tmpSO->getMaterial()->getMaterialType() == BaseMaterial::WARD)
+    {
+        std::shared_ptr<WardMaterial> wardMat = std::make_shared<WardMaterial>(tmpSO->getMaterial(), col);
+        tmpSO->setMaterial(wardMat);
+    }
 }
 
 //------------------------- Lambert
@@ -921,11 +926,15 @@ void antTBarInit_material(SceneObject* scObj, TwBar *bar, std::string objName)
 
     //-----name for object group + float steps extension
     // [0,1]
-    std::string grpNameFloat1 = grpName + " min=0 max=1 step=0.025 ";
+    std::string grpNameFloat1 = grpName + " min=0 max=1 step=0.01 ";
     const char* grpNameFloat1C = grpNameFloat1.c_str();
 
+    // [0.x,1]
+    std::string grpNameFloat01 = grpName + " min=0.001 max=1 step=0.01 ";
+    const char* grpNameFloat01C = grpNameFloat01.c_str();
+
     // [0,5]
-    std::string grpNameFloat5 = grpName + " min=0 max=5 step=0.025 ";
+    std::string grpNameFloat5 = grpName + " min=0 max=5 step=0.01 ";
     const char* grpNameFloat5C = grpNameFloat5.c_str();
 
     // [0,)
@@ -1351,8 +1360,8 @@ void antTBarInit_material(SceneObject* scObj, TwBar *bar, std::string objName)
         TwAddVarCB(bar, nameVar3C, TW_TYPE_FLOAT, setWardSpecularCoeffCB, getWardSpecularCoeffCB, scObj, grpNameFloat1C);
 
         // ATB Variable Anisotropic U/V
-        TwAddVarCB(bar, nameVar4C, TW_TYPE_FLOAT, setWardAnisotropicUCB, getWardAnisotropicUCB, scObj, grpNameFloat5C);
-        TwAddVarCB(bar, nameVar5C, TW_TYPE_FLOAT, setWardAnisotropicVCB, getWardAnisotropicVCB, scObj, grpNameFloat1C);
+        TwAddVarCB(bar, nameVar4C, TW_TYPE_FLOAT, setWardAnisotropicUCB, getWardAnisotropicUCB, scObj, grpNameFloat01C);
+        TwAddVarCB(bar, nameVar5C, TW_TYPE_FLOAT, setWardAnisotropicVCB, getWardAnisotropicVCB, scObj, grpNameFloat01C);
 
         //---------- ATB subgroups
         // define strings for subgroups
@@ -1730,6 +1739,10 @@ void antTBarReInit_material(std::string oldMat, SceneObject* scObj, TwBar *bar, 
     // [0,1]
     std::string grpNameFloat1 = grpName + " min=0 max=1 step=0.025 ";
     const char* grpNameFloat1C = grpNameFloat1.c_str();
+
+    // [0.x,1]
+    std::string grpNameFloat01 = grpName + " min=0.001 max=1 step=0.01 ";
+    const char* grpNameFloat01C = grpNameFloat01.c_str();
 
     // [0,5]
     std::string grpNameFloat5 = grpName + " min=0 max=5 step=0.025 ";
@@ -2329,8 +2342,8 @@ void antTBarReInit_material(std::string oldMat, SceneObject* scObj, TwBar *bar, 
         TwAddVarCB(bar, nameVar3C, TW_TYPE_FLOAT, setWardSpecularCoeffCB, getWardSpecularCoeffCB, scObj, grpNameFloat1C);
 
         // ATB Variable Anisotropic U/V
-        TwAddVarCB(bar, nameVar4C, TW_TYPE_FLOAT, setWardAnisotropicUCB, getWardAnisotropicUCB, scObj, grpNameFloat5C);
-        TwAddVarCB(bar, nameVar5C, TW_TYPE_FLOAT, setWardAnisotropicVCB, getWardAnisotropicVCB, scObj, grpNameFloat1C);
+        TwAddVarCB(bar, nameVar4C, TW_TYPE_FLOAT, setWardAnisotropicUCB, getWardAnisotropicUCB, scObj, grpNameFloat01C);
+        TwAddVarCB(bar, nameVar5C, TW_TYPE_FLOAT, setWardAnisotropicVCB, getWardAnisotropicVCB, scObj, grpNameFloat01C);
 
         //---------- ATB subgroups
         // define strings for subgroups
