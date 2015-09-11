@@ -29,7 +29,7 @@ Scene::Scene()
     mContext->setEntryPointCount(1);
     mContext["radianceRayType"]->setUint(0u);
     mContext["shadowRayType"]->setUint(1u);
-    mContext["maxDepth"]->setUint(10u);
+    mContext["maxDepth"]->setUint(6u);
     mContext["sceneEpsilon"]->setFloat(1.5e-3f);
     mContext->setStackSize(4096);
 
@@ -76,7 +76,7 @@ void Scene::trace(const Scene::Camera &camera)
     }
     else
     {
-        mContext["maxDepth"]->setUint(10u);
+        mContext["maxDepth"]->setUint(6u);
     }
     std::cout << "Framenumber" << mFrameNumber << std::endl;
 

@@ -360,7 +360,7 @@ void Display::keyPressed(unsigned char key, int x, int y)
         {
             mScene->setSceneEpsilon(0.1e-3f);
         }
-        // 5 - load mesh from assets directory and programm file
+        // 5 - load mesh group from assets directory and programm file
         if(key == '5')
         {
             std::shared_ptr<Mesh> m = std::make_shared<Mesh>(mSource,make_float3(0,0,0));
@@ -373,6 +373,7 @@ void Display::keyPressed(unsigned char key, int x, int y)
             antTBarInit_material(sc.get(),matBar,name);
             antTBarInit_geometry(sc.get(),geomBar,name);
         }
+        // load meshgroup as single mesh objects
         if(key == '6')
         {
 
@@ -402,6 +403,7 @@ void Display::keyPressed(unsigned char key, int x, int y)
             antTBarInit_material(sc.get(),matBar,"groundPlane");
             antTBarInit_geometry(sc.get(),geomBar,"groundPlane");
         }
+        // add a pointlight
         if(key == 'l')
         {
             PointLight l;
@@ -412,12 +414,14 @@ void Display::keyPressed(unsigned char key, int x, int y)
             mScene->addLight(l);
             antTBarInit_light(mScene->getClassLight(mScene->getLightCount()-1),lightBar,mScene->getClassLight(mScene->getLightCount()-1)->name());
         }
+        // a pointlight
         if(key == 'o')
         {
             antTBarRemoveVariable_light(lightBar,mScene->getClassLight(mScene->getLightCount()-1)->name());
             mScene->removeLight(mScene->getLightCount()-1);
         }
-        if(key == '1')
+        // save scene
+        if(key == 'b')
         {
             std::vector<float> settings;
             settings.push_back(cameraPosition.x);
@@ -436,7 +440,8 @@ void Display::keyPressed(unsigned char key, int x, int y)
             settings.push_back(static_cast<float>(mHeight));
             SceneLoader::saveScene("madScience",mScene,settings);
         }
-        if(key == '2')
+        // load scene
+        if(key == '1')
         {
 
             std::vector<float> settings;

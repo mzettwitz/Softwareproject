@@ -673,7 +673,7 @@ static void TW_CALL cTButtonCB(void* clientData)
     }
     else if(tmpSO->getMaterial()->getMaterialType() == BaseMaterial::WARD)
     {
-        oldMat = "WARD";
+        oldMat = "Ward";
         WardMaterial* p = (WardMaterial*)tmpSO->getMaterial().get();
         std::shared_ptr<CTM> CookTorranceMat = std::make_shared<CTM>(p->color(), p->diffuseCoeff());
         tmpSO->setMaterial(CookTorranceMat);

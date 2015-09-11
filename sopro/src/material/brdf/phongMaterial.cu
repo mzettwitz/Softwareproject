@@ -155,9 +155,5 @@ static __device__ void shade()
         result = (1.0f-specularity) * result + prd_radiance_reflect.result * specularity;
     }
 
-
-
     prd_radiance.result = result;
-
-
 }
