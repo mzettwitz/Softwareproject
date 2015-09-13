@@ -197,7 +197,7 @@ static void TW_CALL phongButtonCB(void* clientData)
     }
     else if(tmpSO->getMaterial()->getMaterialType() == BaseMaterial::WARD)
     {
-        oldMat = "WARD";
+        oldMat = "Ward";
         WardMaterial* p = (WardMaterial*)tmpSO->getMaterial().get();
         std::shared_ptr<PhongMaterial> phongMat = std::make_shared<PhongMaterial>(p->color(), p->diffuseCoeff());
         tmpSO->setMaterial(phongMat);
