@@ -1212,7 +1212,7 @@ void antTBarInit_material(SceneObject* scObj, TwBar *bar, std::string objName)
         // ATB Buttons to convert into another Material Type
         TwAddButton(bar, nameLButtonC, lambertButtonCB, scObj, grpNameC);
         TwAddButton(bar, namePButtonC, phongButtonCB, scObj, grpNameC);
-        TwAddButton(bar, namePButtonC, bPButtonCB, scObj, grpNameC);
+        TwAddButton(bar, nameBPButtonC, bPButtonCB, scObj, grpNameC);
         TwAddButton(bar, nameGButtonC, glassButtonCB, scObj, grpNameC);
         TwAddButton(bar, nameCTButtonC, cTButtonCB, scObj, grpNameC);
         TwAddButton(bar, nameWButtonC, wardButtonCB, scObj, grpNameC);
@@ -1281,7 +1281,7 @@ void antTBarInit_material(SceneObject* scObj, TwBar *bar, std::string objName)
         // ATB Buttons to convert into another Material Type
         TwAddButton(bar, nameLButtonC, lambertButtonCB, scObj, grpNameC);
         TwAddButton(bar, namePButtonC, phongButtonCB, scObj, grpNameC);
-        TwAddButton(bar, namePButtonC, bPButtonCB, scObj, grpNameC);
+        TwAddButton(bar, nameBPButtonC, bPButtonCB, scObj, grpNameC);
         TwAddButton(bar, nameGButtonC, glassButtonCB, scObj, grpNameC);
         TwAddButton(bar, nameASButtonC, aSButtonCB, scObj, grpNameC);
         TwAddButton(bar, nameWButtonC, wardButtonCB, scObj, grpNameC);
@@ -1350,7 +1350,7 @@ void antTBarInit_material(SceneObject* scObj, TwBar *bar, std::string objName)
         // ATB Buttons to convert into another Material Type
         TwAddButton(bar, nameLButtonC, lambertButtonCB, scObj, grpNameC);
         TwAddButton(bar, namePButtonC, phongButtonCB, scObj, grpNameC);
-        TwAddButton(bar, namePButtonC, bPButtonCB, scObj, grpNameC);
+        TwAddButton(bar, nameBPButtonC, bPButtonCB, scObj, grpNameC);
         TwAddButton(bar, nameGButtonC, glassButtonCB, scObj, grpNameC);
         TwAddButton(bar, nameASButtonC, aSButtonCB, scObj, grpNameC);
         TwAddButton(bar, nameCTButtonC, cTButtonCB, scObj, grpNameC);
@@ -1439,8 +1439,8 @@ void antTBarRemoveVariable_material(SceneObject *scObj, TwBar *bar, std::string 
 
         //---------- ATB variables
         // ATB Buttons to convert into another Material Type
-        TwRemoveVar(bar, nameBPButtonC);
         TwRemoveVar(bar, namePButtonC);
+        TwRemoveVar(bar, nameBPButtonC);
         TwRemoveVar(bar, nameGButtonC);
         TwRemoveVar(bar, nameASButtonC);
         TwRemoveVar(bar, nameCTButtonC);
@@ -2207,7 +2207,7 @@ void antTBarReInit_material(std::string oldMat, SceneObject* scObj, TwBar *bar, 
         // ATB Buttons to convert into another Material Type
         TwAddButton(bar, nameLButtonC, lambertButtonCB, scObj, grpNameC);
         TwAddButton(bar, namePButtonC, phongButtonCB, scObj, grpNameC);
-        TwAddButton(bar, namePButtonC, bPButtonCB, scObj, grpNameC);
+        TwAddButton(bar, nameBPButtonC, bPButtonCB, scObj, grpNameC);
         TwAddButton(bar, nameGButtonC, glassButtonCB, scObj, grpNameC);
         TwAddButton(bar, nameCTButtonC, cTButtonCB, scObj, grpNameC);
         TwAddButton(bar, nameWButtonC, wardButtonCB, scObj, grpNameC);

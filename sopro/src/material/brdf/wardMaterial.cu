@@ -3,8 +3,6 @@
 #include <optix.h>
 #include <optixu/optixu_math_namespace.h>
 #include <optixu/optixu_matrix_namespace.h>
-#include <curand.h>
-#include <curand_kernel.h>
 #include <math.h>
 
 using namespace optix;
@@ -55,12 +53,9 @@ static __device__ void shade()
 
     float3 geometricWorldNormal = normalize(rtTransformNormal(RT_OBJECT_TO_WORLD,geometricNormal));
     float3 shadingWorldNormal = normalize(rtTransformNormal(RT_OBJECT_TO_WORLD,shadingNormal));
-    float3 N = faceforward(shadingWorldNormal,-ray.direction,geometricWorldNormal);
+    float3 n = faceforward(shadingWorldNormal,-ray.direction,geometricWorldNormal);
 
     float3 V = normalize(-ray.direction);
-
-    float3 Ks = make_float3(0,0,0);
-    float3 Kd = make_float3(0,0,0);
 
     float3 fr = make_float3(0,0,0);
     float3 irradiance = make_float3(0,0,0);
@@ -82,33 +77,33 @@ static __device__ void shade()
         Ray shadowRay = make_Ray(hitPoint,L,shadowRayType,sceneEpsilon,maxLambda);
         rtTrace(topShadower,shadowRay,shadowPrd);
 
-        //F fresnel term
+        // fr
         if(fmaxf(shadowPrd.attenuation) > 0.0f)
         {
             // approximation
-            float3 H = (L + V);
-            H = normalize(H);
+            float3 h = (L + V);
+            h = normalize(h);
 
             // first term
-            float ks = specularCoeff;
+            float ps = specularCoeff;
 
             float alphaX = anisotropicFactorU;
             float alphaY = anisotropicFactorV;
 
-            float VdotN = dot(V,N);
-            float LdotN = dot(L,N);
+            float VdotN = dot(V,n);
+            float LdotN = dot(L,n);
 
-            float ks1 = ks/(4.f * M_PIf * alphaX * alphaY * sqrtf(VdotN*LdotN));
+            float ks1 = ps/(4.f * M_PIf * alphaX * alphaY * sqrtf(VdotN*LdotN));
 
             // second term
-            float3 X = orthoVector(N);
-            X = normalize(X);
-            float3 Y = cross(N,X);
-            Y = normalize(Y);
+            float3 x = orthoVector(n);
+            x = normalize(x);
+            float3 y = cross(n,x);
+            y = normalize(y);
 
-            float HdotX = dot(H,X);
-            float HdotY = dot(H,Y);
-            float HdotN = dot(H,N);
+            float HdotX = dot(h,x);
+            float HdotY = dot(h,y);
+            float HdotN = dot(h,n);
 
             float HdX_aX_2 = (HdotX/alphaX) * (HdotX/alphaX);
             float HdY_aY_2 = (HdotY/alphaY) * (HdotY/alphaY);
@@ -120,7 +115,7 @@ static __device__ void shade()
             fr = diffuseCoeff * color / M_PI + ks1 * powf(M_Ef, ks2);
         }
 
-        irradiance += fr * fmaxf(dot(N,L),0) * radiance * lights[i].color;
+        irradiance += fr * fmaxf(dot(n,L),0) * radiance * lights[i].color;
     }
 
     float4 result = make_float4(irradiance,1);
