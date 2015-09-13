@@ -92,7 +92,7 @@ static __device__ void shade()
             float LdotH = dot(L,h);
 
             // diffuse term Kd
-            float pd = ((28*rd)/(23*M_PIf))*(1.f-rs) * (1.f-(1.f-powf((LdotN/2),5)))*(1.f-(1.f-powf(VdotN,5)));
+            float pd = ((28*rd)/(23*M_PIf))*(1.f-rs) * (1.f-powf(1.f-LdotN/2,5))*(1.f-powf(1.f-VdotN/2,5));
 
             // Fresnel term F by Schlick's approximation
             float F = rs + (1.f - rs)*(1.f-powf(LdotH,5));
