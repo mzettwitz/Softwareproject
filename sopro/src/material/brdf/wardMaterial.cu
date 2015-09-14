@@ -115,7 +115,7 @@ static __device__ void shade()
             // specular term ks
             float ks = 0;
 
-            float ks1 = ps/(4.f * M_PIf * alphaX * alphaY *sqrtf(thetaV*thetaL));
+            float ks1 = ps/(4.f * M_PIf * alphaX * alphaY *sqrtf(fmaxf(LdotN*VdotN,1.f)));
             float ks2 = (HdX_aX_2 + HdY_aY_2) / (HdotN * HdotN);
 
             ks = ks1 * powf(M_Ef, -ks2);
