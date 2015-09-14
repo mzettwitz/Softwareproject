@@ -84,26 +84,13 @@ static __device__ void shade()
         if(fmaxf(shadowPrd.attenuation) > 0.0f)
         {
             //----------- approximation
-            float3 h = (L + V);
-            h = normalize(h);
-
-            // diffuse term kd
-            float kd = diffuseCoeff / M_PIf;
-
-            // specular term ks
-            float ks = 0;
-            // first term
             float ps = specularCoeff;
 
             float alphaX = anisotropicFactorU;
             float alphaY = anisotropicFactorV;
 
-            float VdotN = dot(V,n);
-            float LdotN = dot(L,n);
-
-            float ks1 = ps/(4.f * M_PIf * alphaX * alphaY * sqrtf(VdotN*LdotN));
-
-            // second term
+            float3 h = (L + V);
+            h = normalize(h);
             float3 x = orthoVector(n);
             x = normalize(x);
             float3 y = cross(n,x);
@@ -113,13 +100,25 @@ static __device__ void shade()
             float HdotY = dot(h,y);
             float HdotN = dot(h,n);
 
+            float VdotN = dot(V,n);
+            float LdotN = dot(L,n);
+
+            float thetaV = cosf(VdotN);
+            float thetaL = cosf(LdotN);
+
             float HdX_aX_2 = (HdotX/alphaX) * (HdotX/alphaX);
             float HdY_aY_2 = (HdotY/alphaY) * (HdotY/alphaY);
 
-            float ks2 = (HdX_aX_2 + HdY_aY_2) / (HdotN * HdotN);
-            ks2 = -1.f*ks2;
+            // diffuse term kd
+            float kd = diffuseCoeff / M_PIf;
 
-            ks = ks1 * powf(M_Ef, ks2);
+            // specular term ks
+            float ks = 0;
+
+            float ks1 = ps/(4.f * M_PIf * alphaX * alphaY *sqrtf(thetaV*thetaL));
+            float ks2 = (HdX_aX_2 + HdY_aY_2) / (HdotN * HdotN);
+
+            ks = ks1 * powf(M_Ef, -ks2);
 
             // final
             fr = color * kd + ks;
