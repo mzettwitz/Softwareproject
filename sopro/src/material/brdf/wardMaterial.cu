@@ -103,8 +103,8 @@ static __device__ void shade()
             float VdotN = dot(V,n);
             float LdotN = dot(L,n);
 
-            float thetaV = cosf(VdotN);
-            float thetaL = cosf(LdotN);
+            float thetaV = acosf(VdotN);
+            float thetaL = acosf(LdotN);
 
             float HdX_aX_2 = (HdotX/alphaX) * (HdotX/alphaX);
             float HdY_aY_2 = (HdotY/alphaY) * (HdotY/alphaY);
