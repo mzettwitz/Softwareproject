@@ -62,6 +62,12 @@ static __device__ void shade()
 
     float3 hitPoint = ray.origin + intersectionDistance * ray.direction;
 
+    float rd = diffuseCoeff;
+    float rs = specularCoeff;
+
+    float nU = anisotropicFactorU;
+    float nV = anisotropicFactorV;
+
     // iterate over lights
     for(unsigned int i = 0;i < lights.size();++i)
     {
@@ -83,12 +89,6 @@ static __device__ void shade()
         // fr
         if(fmaxf(shadowPrd.attenuation) > 0.0f)
         {
-            float rd = diffuseCoeff;
-            float rs = specularCoeff;
-
-            float nU = anisotropicFactorU;
-            float nV = anisotropicFactorV;
-
             float3 h = (L + V);
             h = normalize(h);
 
