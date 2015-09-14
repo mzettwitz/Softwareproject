@@ -62,17 +62,20 @@ static __device__ void shade()
 
     float3 hitPoint = ray.origin + intersectionDistance * ray.direction;
 
+    // iterate over lights
     for(unsigned int i = 0;i < lights.size();++i)
     {
         shadowPrd.attenuation = make_float3(1.0f);
 
+        // light values
         float3 L = lights[i].position - hitPoint;
         float maxLambda = length(L);
         L = normalize(L);
 
-
-
         float radiance = lights[i].intensity / (maxLambda * maxLambda);
+
+        // offset
+        hitPoint += n * sceneEpsilon;
 
         Ray shadowRay = make_Ray(hitPoint,L,shadowRayType,sceneEpsilon,maxLambda);
         rtTrace(topShadower,shadowRay,shadowPrd);
@@ -80,10 +83,15 @@ static __device__ void shade()
         // fr
         if(fmaxf(shadowPrd.attenuation) > 0.0f)
         {
-            // approximation
+            //----------- approximation
             float3 h = (L + V);
             h = normalize(h);
 
+            // diffuse term kd
+            float kd = diffuseCoeff / M_PIf;
+
+            // specular term ks
+            float ks = 0;
             // first term
             float ps = specularCoeff;
 
@@ -108,11 +116,13 @@ static __device__ void shade()
             float HdX_aX_2 = (HdotX/alphaX) * (HdotX/alphaX);
             float HdY_aY_2 = (HdotY/alphaY) * (HdotY/alphaY);
 
-            float ks2 = (HdX_aX_2 + HdY_aY_2) / (1 + HdotN);
-            ks2 = -2.f*ks2;
+            float ks2 = (HdX_aX_2 + HdY_aY_2) / (HdotN * HdotN);
+            ks2 = -1.f*ks2;
+
+            ks = ks1 * powf(M_Ef, ks2);
 
             // final
-            fr = diffuseCoeff * color / M_PI + ks1 * powf(M_Ef, ks2);
+            fr = color * kd + ks;
         }
 
         irradiance += fr * fmaxf(dot(n,L),0) * radiance * lights[i].color;

@@ -53,7 +53,7 @@ static __device__ void shade()
 
     float3 geometricWorldNormal = normalize(rtTransformNormal(RT_OBJECT_TO_WORLD,geometricNormal));
     float3 shadingWorldNormal = normalize(rtTransformNormal(RT_OBJECT_TO_WORLD,shadingNormal));
-    float3 N = faceforward(shadingWorldNormal,-ray.direction,geometricWorldNormal);
+    float3 n = faceforward(shadingWorldNormal,-ray.direction,geometricWorldNormal);
 
     float3 V = normalize(-ray.direction);
 
@@ -62,15 +62,20 @@ static __device__ void shade()
 
     float3 hitPoint = ray.origin + intersectionDistance * ray.direction;
 
+    // iterate over lights
     for(unsigned int i = 0;i < lights.size();++i)
     {
         shadowPrd.attenuation = make_float3(1.0f);
 
+        // light values
         float3 L = lights[i].position - hitPoint;
         float maxLambda = length(L);
         L = normalize(L);
 
         float radiance = lights[i].intensity / (maxLambda * maxLambda);
+
+        // offset
+        hitPoint += n * sceneEpsilon;
 
         Ray shadowRay = make_Ray(hitPoint,L,shadowRayType,sceneEpsilon,maxLambda);
         rtTrace(topShadower,shadowRay,shadowPrd);
@@ -87,26 +92,27 @@ static __device__ void shade()
             float3 h = (L + V);
             h = normalize(h);
 
-            float VdotN = dot(V,N);
-            float LdotN = dot(L,N);
+            float VdotN = dot(V,n);
+            float LdotN = dot(L,n);
             float LdotH = dot(L,h);
 
-            // diffuse term Kd
+            // diffuse term pd
             float pd = ((28*rd)/(23*M_PIf))*(1.f-rs) * (1.f-powf(1.f-LdotN/2,5))*(1.f-powf(1.f-VdotN/2,5));
 
             // Fresnel term F by Schlick's approximation
             float F = rs + (1.f - rs)*(1.f-powf(LdotH,5));
 
             // base vectors
-            float3 u = orthoVector(N);
+            float3 u = orthoVector(n);
             u = normalize(u);
-            float3 v = cross(N,u);
+            float3 v = cross(n,u);
             v = normalize(v);
 
             float HdotU = dot(h,u);
             float HdotV = dot(h,v);
-            float HdotN = dot(h,N);
+            float HdotN = dot(h,n);
 
+            // specular term ps
             float ps1 = sqrtf((nU+1.f)*(nV+1.f))/(8*M_PIf);
             float ps2 = powf(HdotN, (nU * HdotU * HdotU + nV * HdotV * HdotV)/(1.f - HdotN * HdotN));
             float ps3 = LdotH * fmaxf(LdotN, VdotN);
@@ -117,7 +123,7 @@ static __device__ void shade()
             fr = color * pd + ps;
         }
 
-        irradiance += fr * fmaxf(dot(N,L),0) * radiance * lights[i].color;
+        irradiance += fr * fmaxf(dot(n,L),0) * radiance * lights[i].color;
     }
 
     float4 result = make_float4(irradiance,1);
