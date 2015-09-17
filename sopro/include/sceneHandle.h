@@ -17,6 +17,7 @@ private:
     Scene::Camera           mInitialCamera;
     std::string             mTitle;
     std::shared_ptr<Scene>  mScene;
+    std::string             mSceneFile;
 
 public:
     SceneHandle(const std::string &title);
@@ -24,6 +25,8 @@ public:
     void setFOV(float fov);
     void setSize(const unsigned int width, const unsigned int height);
     void setScene(std::shared_ptr<Scene> scene);
+    void setSceneFile(const std::string &scenefile);
+    void loadScene(const std::string &scene);
     void run(int &argc, char** argv);
 private:
 };

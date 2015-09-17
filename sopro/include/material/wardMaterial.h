@@ -11,13 +11,15 @@ private:
 
     float3  mColor;
     float   mDiffuseCoeff;
-    float   mX;
-    float   mY;
+    float   mSpecularCoeff;
+    float   mAnisotropicFactorU;
+    float   mAnisotropicFactorV;
 
 public:
     // ------------------------CTor
     // ------------ Advanced CTor
-    WardMaterial(float3 color, float diffuseCoeff, float x, float y) : mColor(color),mDiffuseCoeff(diffuseCoeff), mX(x), mY(y)
+    WardMaterial(float3 color, float diffuseCoeff, float specularCoeff, float u, float v) :
+        mColor(color),mDiffuseCoeff(diffuseCoeff),mSpecularCoeff(specularCoeff), mAnisotropicFactorU(u), mAnisotropicFactorV(v)
     {
         mMaterialType = WARD;
         setPTXPath("wardMaterial.cu");
@@ -30,8 +32,9 @@ public:
         std::shared_ptr<WardMaterial> in = std::dynamic_pointer_cast<WardMaterial>(in1);
         mColor = in->color();
         mDiffuseCoeff = in->diffuseCoeff();
-        mX = in->x();
-        mY = in->y();
+        mSpecularCoeff = in->specularCoeff();
+        mAnisotropicFactorU = in->anisotropicFactorU();
+        mAnisotropicFactorV = in->anisotropicFactorV();
         mMaterialType = WARD;
         setPTXPath("wardMaterial.cu");
     }
@@ -40,9 +43,10 @@ public:
     WardMaterial(const std::shared_ptr<BaseMaterial> in1, const float3 &newColor) : mColor(newColor)
     {
         std::shared_ptr<WardMaterial> in = std::dynamic_pointer_cast<WardMaterial>(in1);
-        mX = in->x();
-        mY = in->y();
+        mAnisotropicFactorU = in->anisotropicFactorU();
+        mAnisotropicFactorV = in->anisotropicFactorV();
         mDiffuseCoeff = in->diffuseCoeff();
+        mSpecularCoeff = in->specularCoeff();
         mMaterialType = WARD;
         setPTXPath("wardMaterial.cu");
     }
@@ -53,33 +57,46 @@ public:
         std::shared_ptr<WardMaterial> in = std::dynamic_pointer_cast<WardMaterial>(in1);
         switch(pos)
         {
-        case 1 : //x
+        case 1 : // anisotropic U
             mColor = in->color();
-            mX = value;
-            mY = in->y();
+            mAnisotropicFactorU = value;
+            mAnisotropicFactorV = in->anisotropicFactorV();
             mDiffuseCoeff = in->diffuseCoeff();
+            mSpecularCoeff = in->specularCoeff();
             mMaterialType = WARD;
             setPTXPath("wardMaterial.cu");
             break;
-        case 2 : // y
+        case 2 : // anisotropic V
             mColor = in->color();
-            mX = in->x();
-            mY = value;
+            mAnisotropicFactorU = in->anisotropicFactorU();
+            mAnisotropicFactorV = value;
             mDiffuseCoeff = in->diffuseCoeff();
+            mSpecularCoeff = in->specularCoeff();
             mMaterialType = WARD;
             setPTXPath("wardMaterial.cu");
             break;
         case 3 : // diffuseCoeff
             mColor = in->color();
-            mX = in->x();
-            mY = in->y();
-            mDiffuseCoeff = value;
+            mAnisotropicFactorU = in->anisotropicFactorU();
+            mAnisotropicFactorV = in->anisotropicFactorV();
+            mSpecularCoeff = in->specularCoeff();
+            value + mSpecularCoeff < 1.f ? mDiffuseCoeff = value: mDiffuseCoeff = in->diffuseCoeff();
             mMaterialType = WARD;
             setPTXPath("wardMaterial.cu");
+            break;
+        case 4: // specular coeff
+            mColor = in->color();
+            mAnisotropicFactorU = in->anisotropicFactorU();
+            mAnisotropicFactorV = in->anisotropicFactorV();
+            mDiffuseCoeff = in->diffuseCoeff();
+            mDiffuseCoeff + value < 1.f ? mSpecularCoeff = value: mSpecularCoeff = in->specularCoeff();
+            mMaterialType = WARD;
+            setPTXPath("wardMaterial.cu");
+            break;
         default : // pass through
             mColor = in->color();
-            mX = in->x();
-            mY = in->y();
+            mAnisotropicFactorU = in->anisotropicFactorU();
+            mAnisotropicFactorV = in->anisotropicFactorV();
             mDiffuseCoeff = in->diffuseCoeff();
             mMaterialType = WARD;
             setPTXPath("wardMaterial.cu");
@@ -98,9 +115,10 @@ public:
      */
     WardMaterial(const float3 &col) : mColor(col)
     {
-        mDiffuseCoeff = 1.0f;
-        mX = 0.5f;
-        mY = 0.5f;
+        mDiffuseCoeff = 0.49f;
+        mSpecularCoeff = 0.5f;
+        mAnisotropicFactorU = 0.5f;
+        mAnisotropicFactorV = 0.5f;
         mMaterialType = WARD;
         setPTXPath("wardMaterial.cu");
     }
@@ -116,27 +134,9 @@ public:
     WardMaterial(const float3 &col, float diffuseC) : mColor(col)
     {
         mDiffuseCoeff = diffuseC;
-        mX = 0.5f;
-        mY = 0.5f;
-        mMaterialType = WARD;
-        setPTXPath("wardMaterial.cu");
-    }
-    // Ashikhmin-Shirley
-    /*!
-     * \brief CTor to generate a \class WardMaterial object based on given attributes.
-     *
-     * \note Useful for conversion from \class AshikhminShirleyMaterial.
-     *
-     * \param col RGB color information for mColor.
-     * \param diffuseC FLoat value for mDiffuseCoeff.
-     * \param u Float value for mX;
-     * \param v Float value for mY;
-     */
-    WardMaterial(const float3 &col, float diffuseC, float u, float v) : mColor(col)
-    {
-        mDiffuseCoeff = diffuseC;
-        mX = u / fmaxf(u,v);
-        mY = v / fmaxf(u,v);
+        mSpecularCoeff = 1.f-diffuseC;
+        mAnisotropicFactorU = 0.5f;
+        mAnisotropicFactorV = 0.5f;
         mMaterialType = WARD;
         setPTXPath("wardMaterial.cu");
     }
@@ -153,13 +153,17 @@ public:
     float& diffuseCoeff();
     void setDiffuseCoeff(const float& diffuseCoeff);
 
-    const float& x() const;
-    float& x();
-    void setX(const float &x);
+    const float& anisotropicFactorU() const;
+    float& anisotropicFactorU();
+    void setAnisotropicFactorU(const float &u);
 
-    const float& y() const;
-    float& y();
-    void setY(const float &y);
+    const float& anisotropicFactorV() const;
+    float& anisotropicFactorV();
+    void setAnistropicFactorV(const float &v);
+
+    const float& specularCoeff() const;
+    float& specularCoeff();
+    void setSpecularCoeff(const float &specularCoeff);
 };
 
 

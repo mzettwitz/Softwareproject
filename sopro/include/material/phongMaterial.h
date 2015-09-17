@@ -26,7 +26,6 @@
 #pragma once
 
 #include "baseMaterial.h"
-#include "blinnPhongMaterial.h"
 
 using namespace optix;
 
@@ -250,25 +249,6 @@ public:
         }
 
 
-    }
-    // Blinn-Phong
-    /*!
-     * \brief CTor to generate a \class PhongMaterial object based on a given attributes.
-     *
-     * \note Useful for conversion from \class BlinnPhongMaterial.
-     *
-     * \param in BlinnPhong object to copy.
-     */
-    PhongMaterial(const BlinnPhongMaterial* in)
-    {
-        mColor = in->color();
-        mAmbientCoeff = in->ambientCoeff();
-        mDiffuseCoeff = in->diffuseCoeff();
-        mSpecularCoeff = in->specularCoeff();
-        mShininess = in->shininess();
-        mSpecularity = in->specularity();
-        mMaterialType = PHONG;
-        setPTXPath("phongMaterial.cu");
     }
     // Ward
     /*!

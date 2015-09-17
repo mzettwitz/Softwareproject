@@ -8,12 +8,15 @@
 #include "../include/geometry/sphere.h"
 #include "../include/geometry/infinitePlane.h"
 #include "../include/geometry/mesh.h"
+#include "../include/geometry/meshgroup.h"
+#include "../include/sceneLoader.h"
 
 
 using namespace optix;
 
 std::shared_ptr<Scene>        Display::mScene = 0;
 std::string         Display::mTitle = "";
+std::string         Display::mSource = "";
 int                 Display::mWidth = 0;
 int                 Display::mHeight = 0;
 float               Display::horizontalAngle = 0.0f;
@@ -28,16 +31,18 @@ int                 Display::oldx = 0;
 int                 Display::oldy = 0;
 float               Display::deltaTime = 0.0f;
 int                 Display::mState = Display::mouseState::IDLE;
+bool                Display::cameraChanged = false;
+bool                Display::loaded = false;
 // Declare ATB
 TwBar *matBar;
 TwBar *geomBar;
+TwBar *lightBar;
 
 //dummy purpose
 int                 count = 0;
 
 void Display::init(int &argc, char **argv,const unsigned int width,const unsigned int height)
 {
-
     mWidth = width;
     mHeight = height;
     glutInit(&argc, argv);
@@ -65,14 +70,69 @@ void Display::init(int &argc, char **argv,const unsigned int width,const unsigne
     geomBar = TwNewBar("GeomBar");
     TwDefine(" GeomBar size='270 300' color='118 185 0' alpha=160 position='10 320'");
 
+    lightBar = TwNewBar("LightBar");
+    TwDefine(" LightBar size='270 115' color='118 185 0' alpha=160 position='10 630'");
+}
+
+void Display::init(int &argc, char **argv, const std::string &scenename)
+{
+    mScene = std::make_shared<Scene>();
+    std::vector<float> settings;
+    SceneLoader::loadScene(scenename,mScene,settings);
+    cameraPosition.x = settings.at(0);
+    cameraPosition.y = settings.at(1);
+    cameraPosition.z = settings.at(2);
+    cameraDirection.x = settings.at(3);
+    cameraDirection.y = settings.at(4);
+    cameraDirection.z = settings.at(5);
+    cameraRight.x = settings.at(6);
+    cameraRight.y = settings.at(7);
+    cameraRight.z = settings.at(8);
+    horizontalAngle = settings.at(9);
+    verticalAngle = settings.at(10);
+    mWidth = settings.at(12);
+    mHeight = settings.at(13);
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
+    glutInitWindowSize(mWidth,mHeight);
+
+    // AntTweakBar
+    //redirect GLUT events to ATB
+    glutMouseFunc((GLUTmousebuttonfun)TwEventMouseButtonGLUT);
+    glutMotionFunc((GLUTmousemotionfun)TwEventMouseMotionGLUT);
+    glutPassiveMotionFunc((GLUTmousemotionfun)TwEventMouseMotionGLUT); // same as MouseMotion
+    glutKeyboardFunc((GLUTkeyboardfun)TwEventKeyboardGLUT);
+    glutSpecialFunc((GLUTspecialfun)TwEventSpecialGLUT);
+
+    // send the "glutGetModifers" function pointer to ATB
+    TwGLUTModifiersFunc(glutGetModifiers);
+
+    // Init ATB
+    TwInit(TW_OPENGL, NULL);
+
+    // Create ATB
+    matBar = TwNewBar("MatBar");
+    TwDefine(" MatBar size='270 300' color='118 185 0' alpha=160 position='10 10'");
+
+    geomBar = TwNewBar("GeomBar");
+    TwDefine(" GeomBar size='270 300' color='118 185 0' alpha=160 position='10 320'");
+
+    lightBar = TwNewBar("LightBar");
+    TwDefine(" LightBar size='270 115' color='118 185 0' alpha=160 position='10 630'");
 }
 
 void Display::run(const std::string &title, std::shared_ptr<Scene> scene)
 {
-    mScene = scene;
+    if(scene != nullptr)
+    {
+        mScene = scene;
+    }
     mTitle = title;
 
     glutCreateWindow(title.c_str());
+
+    cameraDirection = make_float3(cos(verticalAngle) * sin(horizontalAngle),sin(verticalAngle),cos(verticalAngle) * cos(horizontalAngle));
+    cameraRight = make_float3(sin(horizontalAngle - 3.14f/2.0f),0,cos(horizontalAngle - 3.14f/2.0f));
 
     float3 pos = cameraPosition;
     float3 dir = cameraDirection;
@@ -124,7 +184,7 @@ void Display::run(const std::string &title, std::shared_ptr<Scene> scene)
     glutDisplayFunc(display);
     glutKeyboardFunc(keyPressed);
 
-    antTBar(scene, matBar, geomBar);
+    antTBar(mScene, matBar, geomBar, lightBar);
 
     glutMainLoop();
 
@@ -141,6 +201,7 @@ void Display::display()
     Scene::Camera c(cameraPosition,cameraDirection,cameraRight);
 
     //call for optix trace
+    mScene->passFrameNumber(cameraChanged);
     mScene->trace(c);
 
     //transfer optix buffer to opengl buffer
@@ -205,9 +266,6 @@ void Display::displayFrame()
     glDrawPixels(static_cast<GLsizei>(bufferWidth),static_cast<GLsizei>(bufferHeight),glFormat,glDataType,imageData);
     buffer->unmap();
 
-
-
-
     TwDraw();   // draw ATB
 
     glutPostRedisplay();
@@ -231,41 +289,42 @@ void Display::keyPressed(unsigned char key, int x, int y)
     // send event to GLUT
     else
     {
-        //space
+        // w : upward
         if(key == 'w')
         {
             cameraPosition += moveSpeed * normalize(cross(cameraRight,cameraDirection)) * deltaTime * 0.25f;
         }
-        //1
+        // s : downward
         if(key == 's')
         {
             cameraPosition -= moveSpeed * normalize(cross(cameraRight,cameraDirection)) * deltaTime * 0.25f;
         }
-        //2
+        // a : left
         if(key == 'a')
         {
             cameraPosition -= moveSpeed * cameraRight * deltaTime * 0.25f;
         }
-        //3
+        // d : right
         if(key == 'd')
         {
             cameraPosition += moveSpeed * cameraRight * deltaTime * 0.25f;
         }
-        //4
+        // e : zoom in
         if(key == 'e')
         {
             cameraPosition += moveSpeed * cameraDirection * deltaTime * 0.25f;
         }
+        // q : zoom out
         if(key == 'q')
         {
             cameraPosition -= moveSpeed * cameraDirection * deltaTime * 0.25f;
         }
-        //5, dummy purpose, add dummy sphere
+        // + : dummy purpose, add dummy sphere
         if(key == '+')
         {
 
             std::shared_ptr<LambertMaterial> l = std::make_shared<LambertMaterial>(make_float3(0.3f,0.5f,0.9f));
-            std::shared_ptr<Sphere> s = std::make_shared<Sphere>(make_float3(0.0f,0.0f,0.0f),1.0f);
+            std::shared_ptr<Sphere> s = std::make_shared<Sphere>(make_float3(0.0f,0.0f,0.0f));
             std::string name = "Sphere_" + std::to_string(mScene->getSceneObjectCount());
             std::shared_ptr<SceneObject> obj = std::make_shared<SceneObject>(name,s,l);
             mScene->addSceneObject(obj);
@@ -276,52 +335,143 @@ void Display::keyPressed(unsigned char key, int x, int y)
             antTBarInit_geometry(obj.get(), geomBar, name);
 
         }
-        //7 dummy purpose, delete dummy sphere
+        // - : dummy purpose, delete dummy sphere
         if(key == '-')
         {
             if(mScene->getSceneObjectCount() > 0)
             {
                 // delete ATB variable
                 antTBarRemoveVariable_material(mScene->getSceneObject(mScene->getSceneObjectCount()-1).get(),
-                                      matBar, mScene->getSceneObject(mScene->getSceneObjectCount()-1)->getName());
+                                               matBar, mScene->getSceneObject(mScene->getSceneObjectCount()-1)->getName());
                 antTBarRemoveVariable_geometry(mScene->getSceneObject(mScene->getSceneObjectCount()-1).get(),
-                                      geomBar, mScene->getSceneObject(mScene->getSceneObjectCount()-1)->getName());
+                                               geomBar, mScene->getSceneObject(mScene->getSceneObjectCount()-1)->getName());
 
                 mScene->removeObject(mScene->getSceneObjectCount()-1);
 
             }
         }
-        // 9 dummy purpose, add infinity plane
+        // y : set increase sceneEpsilon
+        if(key == 'y')
+        {
+            mScene->setSceneEpsilon(-0.1e-3f);
+        }
+        // x : set decrease sceneEpsilon
+        if(key == 'x')
+        {
+            mScene->setSceneEpsilon(0.1e-3f);
+        }
+        // 5 - load mesh group from assets directory and programm file
+        if(key == '5')
+        {
+            std::shared_ptr<Mesh> m = std::make_shared<Mesh>("dragonBlender.obj",make_float3(0,0,0));
+            m->load();
+            std::shared_ptr<PhongMaterial> p = std::make_shared<PhongMaterial>(make_float3(1.0f,1.0f,1.0f),0.2f,0.6f,0.2f,5.2f,0.2f);
+            std::string name = "Mesh_" + std::to_string(mScene->getSceneObjectCount());
+            std::shared_ptr<SceneObject> sc = std::make_shared<SceneObject>(name,m,p);
+
+            mScene->addSceneObject(sc);
+            antTBarInit_material(sc.get(),matBar,name);
+            antTBarInit_geometry(sc.get(),geomBar,name);
+        }
+        // load meshgroup as single mesh objects
+        if(key == '6')
+        {
+
+            std::shared_ptr<MeshGroup> g = std::make_shared<MeshGroup>(mSource);
+            g->load();
+            std::shared_ptr<LambertMaterial> m = std::make_shared<LambertMaterial>(make_float3(1,1,1));
+            for(unsigned int i = 0;i < g->data()->size();++i)
+            {
+                std::string name = g->data(i)->objectname();
+                std::shared_ptr<SceneObject> sc = std::make_shared<SceneObject>(name,g->data(i),m);
+                mScene->addSceneObject(sc);
+                antTBarInit_material(sc.get(),matBar,name);
+                antTBarInit_geometry(sc.get(),geomBar,name);
+            }
+        }
+
+        //new groudPlane, just a box, but modified to a 'plane'
         if(key == '9')
         {
+            std::shared_ptr<Mesh> groundPlane = std::make_shared<Mesh>("cube.obj",make_float3(0.0f,-2.0f,0.0f));
+            groundPlane->load();
+            groundPlane->setScale(make_float3(100.0f,0.2f,100.0f));
             std::shared_ptr<LambertMaterial> p = std::make_shared<LambertMaterial>(make_float3(1.0f,1.0f,1.0f));
-            std::shared_ptr<InfinitePlane> plane = std::make_shared<InfinitePlane>(-2.0f);
-            std::shared_ptr<SceneObject> sc = std::make_shared<SceneObject>("groundPlane",plane,p);
+            std::shared_ptr<SceneObject> sc = std::make_shared<SceneObject>("groundPlane",groundPlane,p);
+
             mScene->addSceneObject(sc);
             antTBarInit_material(sc.get(),matBar,"groundPlane");
             antTBarInit_geometry(sc.get(),geomBar,"groundPlane");
         }
-
-        if(key == 'y')
+        // add a pointlight
+        if(key == 'l')
         {
-                mScene->setSceneEpsilon(-0.1e-3f);
+            PointLight l;
+            l.color = make_float3(1,1,1);
+            l.intensity = 1000.0f;
+            l.padding = 0;
+            l.position = cameraPosition + 10 * cameraDirection;
+            mScene->addLight(l);
+            antTBarInit_light(mScene->getClassLight(mScene->getLightCount()-1),lightBar,mScene->getClassLight(mScene->getLightCount()-1)->name());
         }
-        if(key == 'x')
+        // a pointlight
+        if(key == 'o')
         {
-                mScene->setSceneEpsilon(0.1e-3f);
+            antTBarRemoveVariable_light(lightBar,mScene->getClassLight(mScene->getLightCount()-1)->name());
+            mScene->removeLight(mScene->getLightCount()-1);
         }
-        if(key == '5')
+        // save scene
+        if(key == 'b')
         {
-           std::shared_ptr<Mesh> m = std::make_shared<Mesh>("dragonBlender.obj",make_float3(0,0,0));
-          // std::shared_ptr<LambertMaterial> p = std::make_shared<LambertMaterial>(make_float3(1.0f,1.0f,1.0f));
-          // std::shared_ptr<SceneObject> sc = std::make_shared<SceneObject>("mesh",m,p);
+            std::vector<float> settings;
+            settings.push_back(cameraPosition.x);
+            settings.push_back(cameraPosition.y);
+            settings.push_back(cameraPosition.z);
+            settings.push_back(cameraDirection.x);
+            settings.push_back(cameraDirection.y);
+            settings.push_back(cameraDirection.z);
+            settings.push_back(cameraRight.x);
+            settings.push_back(cameraRight.y);
+            settings.push_back(cameraRight.z);
+            settings.push_back(horizontalAngle);
+            settings.push_back(verticalAngle);
+            settings.push_back(45.0f);
+            settings.push_back(static_cast<float>(mWidth));
+            settings.push_back(static_cast<float>(mHeight));
+            SceneLoader::saveScene("madScience",mScene,settings);
+        }
+        // load scene
+        if(key == '1')
+        {
 
-          //mScene->addSceneObject(sc);
-           //antTBarInit_material(sc.get(),matBar,"mesh");
-           //antTBarInit_geometry(sc.get(),geombar,"mesh");
+            std::vector<float> settings;
+            SceneLoader::loadScene(mSource,mScene,settings);
+            cameraPosition.x = settings.at(0);
+            cameraPosition.y = settings.at(1);
+            cameraPosition.z = settings.at(2);
+            cameraDirection.x = settings.at(3);
+            cameraDirection.y = settings.at(4);
+            cameraDirection.z = settings.at(5);
+            cameraRight.x = settings.at(6);
+            cameraRight.y = settings.at(7);
+            cameraRight.z = settings.at(8);
+            horizontalAngle = settings.at(9);
+            verticalAngle = settings.at(10);
+            mWidth = settings.at(12);
+            mHeight = settings.at(13);
 
+            for(unsigned int i = 0;i < mScene->getSceneObjectCount();++i)
+            {
+                antTBarInit_material(mScene->getSceneObject(i).get(),matBar,std::dynamic_pointer_cast<Mesh>(mScene->getSceneObject(i)->getGeometry())->objectname());
+                antTBarInit_geometry(mScene->getSceneObject(i).get(),geomBar,std::dynamic_pointer_cast<Mesh>(mScene->getSceneObject(i)->getGeometry())->objectname());
+            }
+            for(unsigned int i = 0;i < mScene->getLightCount();++i)
+            {
+                antTBarInit_light(mScene->getClassLight(i),lightBar,mScene->getClassLight(i)->name());
+            }
         }
     }
+    cameraChanged = true;
     //needs to be called, to update change
     glutPostRedisplay();
 
@@ -406,6 +556,7 @@ void Display::mouseMotion(int x, int y)
 
     oldx = x;
     oldy = y;
+    cameraChanged = true;
 
     glutPostRedisplay();
 }
@@ -422,4 +573,7 @@ void Display::setFOV(float fov)
     initialFOV = fov;
 }
 
-
+void Display::setSceneSource(const std::string &src)
+{
+    mSource = src;
+}

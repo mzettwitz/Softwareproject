@@ -27,6 +27,8 @@ class DisneyMaterial : public BaseMaterial
 {
 private:
     float3  mColor;
+    float   mDiffuseCoeff;
+    float   mSpecularCoeff;
     float   mMetallic;
     float   mSubsurface;
     float   mSpecular;

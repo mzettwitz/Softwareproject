@@ -106,7 +106,8 @@ void BlinnPhongMaterial::setSpecularity(const float &specularity)
 // Operator overload
 bool operator!=(const BlinnPhongMaterial &mat1, const BlinnPhongMaterial &mat2)
 {
-    return(mat1.ambientCoeff() != mat2.ambientCoeff() || mat1.specularCoeff() != mat2.specularCoeff() || mat1.diffuseCoeff() != mat2.diffuseCoeff() ||
+    return(mat1.ambientCoeff() != mat2.ambientCoeff() || mat1.specularCoeff() != mat2.specularCoeff() ||
+            mat1.diffuseCoeff() != mat2.diffuseCoeff() ||
             mat1.color().x != mat2.color().x || mat1.color().y != mat2.color().y || mat1.color().z != mat2.color().z ||
             mat1.shininess() != mat2.shininess() || mat1.specularity() != mat2.specularity());
 }

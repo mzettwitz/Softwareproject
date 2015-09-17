@@ -3,6 +3,7 @@
 
 #include "material/baseMaterial.h"
 #include "geometry/baseGeometry.h"
+#include "geometry/mesh.h"
 #include <memory>
 #include <vector>
 
@@ -33,6 +34,12 @@ private:
     //called, after material has changed
     void            markMaterialAsChanged();
     void            markGeometryAsChanged();
+
+    //only for meshes!!!
+    bool operator <(const std::shared_ptr<SceneObject> so) const
+    {
+        return strcmp(std::dynamic_pointer_cast<Mesh>(mGeometry)->objectname().c_str(),std::dynamic_pointer_cast<Mesh>(so->getGeometry())->objectname().c_str()) < 0;
+    }
 };
 
 #endif //SCENEOBJECT_H

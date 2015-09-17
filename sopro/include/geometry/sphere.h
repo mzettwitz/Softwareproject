@@ -5,7 +5,6 @@
 
 class Sphere : public BaseGeometry
 {
-    float mRadius;
 
 public:
     // ------------------------CTor
@@ -15,8 +14,6 @@ public:
      *
      * \param pos
      * specifies position of Sphere
-     * \param radius
-     * specifies radius of Sphere
      * \param intersect
      * specifies interectionProgram for areaPlane
      * \param boundingbox
@@ -24,7 +21,7 @@ public:
      * \param path
      * specifies path to ptx files
      */
-    Sphere(float3 pos,float r) : mRadius(r),BaseGeometry(pos,"sphereIntersectionProgram","sphereBoundingBoxProgram","sphere.cu")
+    Sphere(float3 pos) : BaseGeometry(pos,"sphereIntersectionProgram","sphereBoundingBoxProgram","sphere.cu")
     {
         mGeometryType = SPHERE;
     }
@@ -39,7 +36,6 @@ public:
     Sphere(const std::shared_ptr<BaseGeometry> in1) : BaseGeometry(in1->position(),"sphereIntersectionProgram","sphereBoundingBoxProgram","sphere.cu")
     {
         std::shared_ptr<Sphere> in = std::dynamic_pointer_cast<Sphere>(in1);
-        mRadius = in->radius();
         mGeometryType = SPHERE;
     }
     // change position
@@ -53,29 +49,11 @@ public:
         BaseGeometry(newPos,"sphereIntersectionProgram","sphereBoundingBoxProgram","sphere.cu")
     {
         std::shared_ptr<Sphere> in = std::dynamic_pointer_cast<Sphere>(in1);
-        mRadius = in->radius();
-        mGeometryType = SPHERE;
-    }
-    // change radius
-    /*!
-     * \brief Copy CTor to copy an existing \class Sphere object and change it's radius.
-     *
-     * \param in1 Smartpointer to the object you want to copy.
-     * \param newDim The new radius you want to setup in your new object
-     */
-    Sphere(const std::shared_ptr<BaseGeometry> in1, float newRadius) :
-        mRadius(newRadius), BaseGeometry(in1->position(),"sphereIntersectionProgram","sphereBoundingBoxProgram","sphere.cu")
-    {
         mGeometryType = SPHERE;
     }
 
     Geometry createGeometry(Context context) const;
 
-    // Setter
-    void setRadius(float r);
-    // Special getter for ATB
-    const float& radius() const;
-    float& radius();
 };
 
 #endif //SPHERE_H

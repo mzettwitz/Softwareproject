@@ -52,7 +52,8 @@ public:
 
 
     //Copy CTor, change color
-    BlinnPhongMaterial(const std::shared_ptr<BaseMaterial> in1,const float3 &newColor) : mColor(newColor)
+    BlinnPhongMaterial(const std::shared_ptr<BaseMaterial> in1, const float3 &newColor) :
+        mColor(newColor)
     {
         std::shared_ptr<BlinnPhongMaterial> in = std::dynamic_pointer_cast<BlinnPhongMaterial>(in1);
         mAmbientCoeff = in->ambientCoeff();
@@ -65,7 +66,7 @@ public:
     }
 
     //Copy CTor, change attributes
-    BlinnPhongMaterial(const std::shared_ptr<BaseMaterial> in1,float value, short pos)
+    BlinnPhongMaterial(const std::shared_ptr<BaseMaterial> in1, float value, short pos)
     {
         std::shared_ptr<BlinnPhongMaterial> in = std::dynamic_pointer_cast<BlinnPhongMaterial>(in1);
         switch(pos)
@@ -200,25 +201,6 @@ public:
             setPTXPath("blinnPhongMaterial.cu");
             break;
         }
-    }
-    // Blinn-Phong
-    /*!
-     * \brief CTor to generate a \class BlinnPhongMaterial object based on a given attributes.
-     *
-     * \note Useful for conversion from \class BlinnPhongMaterial.
-     *
-     * \param in BlinnPhong object to copy.
-     */
-    BlinnPhongMaterial(const std::shared_ptr<BlinnPhongMaterial> in)
-    {
-        mColor = in->color();
-        mAmbientCoeff = in->ambientCoeff();
-        mDiffuseCoeff = in->diffuseCoeff();
-        mSpecularCoeff = in->specularCoeff();
-        mShininess = in->shininess();
-        mSpecularity = in->specularity();
-        mMaterialType = BLINNPHONG;
-        setPTXPath("blinnPhongMaterial.cu");
     }
     // Ward
     /*!

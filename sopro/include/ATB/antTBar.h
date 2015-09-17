@@ -12,12 +12,13 @@
 #include "../AntTweakBar/include/AntTweakBar.h"
 #include "../ATB/antTBar_material.h"
 #include "../ATB/antTBar_geometry.h"
+#include "../ATB/antTBar_light.h"
 #include "../sopro/include/scene.h"
 #include <memory>
 #include <iostream>
 
 
-void antTBar(std::shared_ptr<Scene> scene, TwBar *matBar, TwBar *geomBar);
+void antTBar(std::shared_ptr<Scene> scene, TwBar *matBar, TwBar *geomBar, TwBar *lightBar);
 
 
 

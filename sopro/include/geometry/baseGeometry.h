@@ -28,6 +28,8 @@ public:
     } GeometryType;
 protected:
     float3 mPos;
+    float4 mRot;
+    float3 mScale;
     bool changed;
     std::string mIntersectionProgram;
     std::string mBoundingBoxProgram;
@@ -46,13 +48,26 @@ public:
     void setPosition(const float3 &pos);
     void setPosition(const float value, const short pos);
 
+    void setRotation(const float4 &rot);
+
+    void setScale(const float3 &scale);
+    void setScale(const float value, const short pos);
+
     // Special getter for ATB
     const float3& position() const;
     float3& position();
 
+    const float4& rotation() const;
+    float4& rotation();
+
+    const float3& scale() const;
+    float3& scale();
+
 
 protected:
-    BaseGeometry(float3 pos, std::string intersect, std::string boundingbox,std::string path) : mPos(pos),mIntersectionProgram(intersect),mBoundingBoxProgram(boundingbox),changed(false)
+    BaseGeometry(float3 pos, std::string intersect, std::string boundingbox,std::string path) :
+        mPos(pos),mRot(make_float4(0,0,1,0)),mScale(make_float3(1,1,1)),
+        mIntersectionProgram(intersect),mBoundingBoxProgram(boundingbox),changed(false)
     {
         setPTXpath(path);
     }

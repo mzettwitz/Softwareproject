@@ -7,12 +7,12 @@ using namespace optix;
 
 rtBuffer<float3>    vertexBuffer;
 rtBuffer<float3>    normalBuffer;
-//rtBuffer<float2>    uvBuffer;
+rtBuffer<float2>    uvBuffer;
 rtBuffer<int3>      vertexIndexBuffer;
 rtBuffer<int3>      normalIndexBuffer;
-//rtBuffer<int3>      uvIndexBuffer;
+rtBuffer<int3>      uvIndexBuffer;
 
-//rtDeclareVariable(float3,texCoord, attribute texCoord,);
+rtDeclareVariable(float3,texCoord, attribute texCoord,);
 
 rtDeclareVariable(float3,   geometricNormal,    attribute geometricNormal,);
 rtDeclareVariable(float3,   shadingNormal,      attribute shadingNormal,);
@@ -52,7 +52,7 @@ RT_PROGRAM void meshIntersectionProgram(int primIdx)
             }
             geometricNormal = normalize(normal);
 
-           /* //check for texture
+            //check for texture
             int3 uvIndex = uvIndexBuffer[primIdx];
             if(uvBuffer.size() == 0 || uvIndex.x < 0 || uvIndex.y < 0 || uvIndex.z < 0)
             {
@@ -61,11 +61,11 @@ RT_PROGRAM void meshIntersectionProgram(int primIdx)
             }
             else
             {
-                float t0 = uvBuffer[uvIndex.x];
-                float t1 = uvBuffer[uvIndex.y];
-                float t2 = uvBuffer[uvIndex.z];
-                texCoord = make_float3(t1*beta+t2*gamma * t0(1.0f-beta-gamma));
-            }*/
+                float2 t0 = uvBuffer[uvIndex.x];
+                float2 t1 = uvBuffer[uvIndex.y];
+                float2 t2 = uvBuffer[uvIndex.z];
+                texCoord = make_float3(t1*beta+t2*gamma + t0 * (1.0f-beta-gamma));
+            }
 
             rtReportIntersection(0);
 
