@@ -93,6 +93,8 @@ static __device__ void shade()
 
         //G geometric attenuation
 
+        // TODO:  add specific geometric term
+
         float HdotN = dot(H,N);
         float VdotN = dot(V,N);
         float VdotH = dot(V,H);

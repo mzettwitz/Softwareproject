@@ -12,6 +12,7 @@
 #include "../include/material/disneyMaterial.h"
 #include "../include/material/glassMaterial.h"
 #include "../include/geometry/meshgroup.h"
+#include <algorithm>
 
 bool SceneLoader::loadScene(const std::string &filename, std::shared_ptr<Scene> scene,std::vector<float> &settings)
 {
@@ -215,10 +216,12 @@ bool SceneLoader::loadScene(const std::string &filename, std::shared_ptr<Scene> 
     std::cout << "loading successful. start processing." << std::endl;
     //process data
 
+
     for(unsigned int i = 0;i < tempMeshGroup->data()->size();++i)
     {
         std::shared_ptr<SceneObject> sc = std::make_shared<SceneObject>(tempMeshGroup->data(i)->objectname(),tempMeshGroup->data(i),tempMaterials.at(i));
-        scene->addSceneObject(sc);
+
+         scene->addSceneObject(sc);
     }
     fclose(file);
     return true;
@@ -275,6 +278,9 @@ bool SceneLoader::saveScene(const std::string &filename, std::shared_ptr<Scene> 
     float4 rotation = make_float4(0,0,0,0);
     float3 scale = make_float3(0,0,0);
     fprintf(file,"#objects\n");
+
+    //sort objects
+
     for(unsigned int i = 0;i < scene->getSceneObjectCount();++i)
     {
         position = scene->getSceneObject(i)->getGeometry()->position();

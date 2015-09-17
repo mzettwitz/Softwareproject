@@ -3,8 +3,6 @@
 #include <optix.h>
 #include <optixu/optixu_math_namespace.h>
 #include <optixu/optixu_matrix_namespace.h>
-#include <curand.h>
-#include <curand_kernel.h>
 #include <math.h>
 
 using namespace optix;
@@ -55,131 +53,95 @@ static __device__ void shade()
 
     float3 geometricWorldNormal = normalize(rtTransformNormal(RT_OBJECT_TO_WORLD,geometricNormal));
     float3 shadingWorldNormal = normalize(rtTransformNormal(RT_OBJECT_TO_WORLD,shadingNormal));
-    float3 N = faceforward(shadingWorldNormal,-ray.direction,geometricWorldNormal);
+    float3 n = faceforward(shadingWorldNormal,-ray.direction,geometricWorldNormal);
 
     float3 V = normalize(-ray.direction);
-
-    float3 Ks = make_float3(0,0,0);
-    float3 Kd = make_float3(0,0,0);
 
     float3 fr = make_float3(0,0,0);
     float3 irradiance = make_float3(0,0,0);
 
     float3 hitPoint = ray.origin + intersectionDistance * ray.direction;
 
+    float ps = specularCoeff;
+
+    float alphaX = anisotropicFactorU;
+    float alphaY = anisotropicFactorV;
+
+    // iterate over lights
     for(unsigned int i = 0;i < lights.size();++i)
     {
         shadowPrd.attenuation = make_float3(1.0f);
 
+        // light values
         float3 L = lights[i].position - hitPoint;
         float maxLambda = length(L);
         L = normalize(L);
 
-
-
         float radiance = lights[i].intensity / (maxLambda * maxLambda);
+
+        // offset
+        hitPoint += n * sceneEpsilon;
 
         Ray shadowRay = make_Ray(hitPoint,L,shadowRayType,sceneEpsilon,maxLambda);
         rtTrace(topShadower,shadowRay,shadowPrd);
 
-        //F fresnel term
+        // fr
         if(fmaxf(shadowPrd.attenuation) > 0.0f)
         {
-            /*
-            // Monte-Carlo correct
-            //------------------------------------computing ward, based on: http://www.graphics.cornell.edu/~bjw/wardnotes.pdf
-            //------------------- alphaX and alphaY
-            float alphaX = anisotropicFactorU;
-            float alphaY = anisotropicFactorV;
-            float alphaX_2 = alphaX*alphaX;
-            float alphaY_2 = alphaY*alphaY;
+            //----------- approximation
+            float3 h = (L + V);
+            //h = normalize(h);
+            float3 x = orthoVector(n);
+            x = normalize(x);
+            float3 y = cross(n,x);
+            y = normalize(y);
 
-            //------------------- random normal directions u,v using cuRAND http://docs.nvidia.com/cuda/curand/device-api-overview.html#distributions
-            float u, v;
-            curandState_t state;
-            u = curand_uniform(&state);
-            v = curand_uniform(&state);
 
-            //----------------- computing angles for directions
-            // phiH = arctan((alphaY/alphaX)*tan(2*Pi*v))
-            float phiH = atanf((alphaY/alphaX)*tanf(2*M_PIf*v));
-            float cos_PhiH = cosf(phiH);
-            float cos_2_PhiH = cos_PhiH * cos_PhiH;
-            float sin_PhiH = sinf(phiH);
-            float sin_2_PhiH = sin_PhiH * sin_PhiH;
 
-            // thetaH = arctan(sqrt((-logU)/(cos²phiH/alpaX²)+(sin²phiH)/alphaY²)
-            float thetaH = atanf(sqrtf((-1.f*logf(u))/(cos_2_PhiH/alphaX_2)+(sin_2_PhiH/alphaY_2)));
-            float cos_ThetaH = cosf(thetaH);
-            float cos_2_ThetaH = cos_ThetaH * cos_ThetaH;
-            float sin_ThetaH = sinf(thetaH);
+            // diffuse term kd
+            float kd = diffuseCoeff / M_PIf;
 
-            //------------------ half vector h
-            // h = [sin thetaH * cos phiH, sin thetaH * sin phiH, cos thetaH]
-            float3 h = make_float3(sin_ThetaH * cos_PhiH, sin_ThetaH * sin_PhiH, cos_ThetaH);
+            // specular term ks
+            // refered to Dür
+            float ks = 0;
+#if 0
+            float HdotN = dot(h,n);
+
+            float factor1 = dot(h,h) / (M_PIf * alphaX * alphaY * powf(HdotN,4));
+
+            h = normalize(h);
+            HdotN = dot(h,n);
+            float HdotX = dot(h,x);
+            float HdotY = dot(h,y);
+
+            float factor2 = (HdotX/alphaX) * (HdotX/alphaX);
+            float factor3 = (HdotY/alphaY) * (HdotY/alphaY);
+            float exponent = -(factor2 + factor3)/(HdotN*HdotN);
+            float specRef = factor1 * expf(exponent);
+#else
+            float HdotX = dot(h,x);
+            float HdotY = dot(h,y);
+
+            float factor1 =  (1.f/(M_PIf*alphaX*alphaY));
+            float factor2 = (-1.f/powf(dot(h, n),2));
+            float factor3 = (HdotX/alphaX) * (HdotX/alphaX);
+            float factor4 = (HdotY/alphaY) * (HdotY/alphaY);
+
             h = normalize(h);
 
-            float hdotV = dot(h,V);
+            float factor5 = 1.f/(4*powf(dot(L,h),2)*powf(dot(h,n),4));
 
-            //------------------ outgoing O
-            // O = 2( V(ingoing) dot h)*h - V
-            float3 O = 2 * (hdotV)*h - V;
-            O = normalize(O);
+            float specRef = factor1 * expf(factor2 * (factor3+factor4))*factor5;
 
-            //----------------- density function pO
-            // s = -tan² thetaH * ((cos² phiH)/alphaX² + (sin² phiH)/alphaY²)
-            float s = -1.f * powf(tanf(thetaH),2) * ((cos_2_PhiH / alphaX_2) + ((sin_2_PhiH / alphaY_2)));
-            // (1/(4 * pi * alphaX * alphaY * (h dot V) * cos³ thetaH)) * e^s
-            float pO = (1.f / ( 4 * M_PIf * alphaX * alphaY * hdotV * cos_2_ThetaH * cos_ThetaH)) * powf(M_Ef, s);
-
-            //----------------- weighted function w
-            float hdotN = dot(h,N);
-            float OdotN = dot(O,N);
-            //float OdotN = dot(L,N);
-            float VdotN = dot(V,N);
-
-            //w = specularCoeff*(h dot V)*(h dot N)³ * sqrt((O dot N)/(V dot N))
-            float w = specularCoeff * hdotV * powf(hdotN,3) * sqrtf((OdotN)/(VdotN));
-
-            fr = pO*w + diffuseCoeff * color / M_PI;    // ??????????
-            */
-
-            // approximated
-            float3 H = (L + V);
-            H = normalize(H);
-
-            // first term
-            float ks = specularCoeff;
-
-            float alphaX = anisotropicFactorU;
-            float alphaY = anisotropicFactorV;
-
-            float VdotN = dot(V,N);
-            float LdotN = dot(L,N);
-
-            float ks1 = ks/(4.f * M_PIf * alphaX * alphaY * sqrtf(VdotN*LdotN));
-
-            // second term
-            float3 X = orthoVector(N);
-            X = normalize(X);
-            float3 Y = cross(N,X);
-            Y = normalize(Y);
-
-            float HdotX = dot(H,X);
-            float HdotY = dot(H,Y);
-            float HdotN = dot(H,N);
-
-            float HdX_aX_2 = (HdotX/alphaX) * (HdotX/alphaX);
-            float HdY_aY_2 = (HdotY/alphaY) * (HdotY/alphaY);
-
-            float ks2 = (HdX_aX_2 + HdY_aY_2) / (HdotN * HdotN);
-            ks2 = -ks2;
+#endif
+            if (specRef > 1e-10f)
+                ks = ps * specRef;
 
             // final
-            fr = diffuseCoeff * color / M_PI + ks1 * powf(M_Ef, ks2);
+            fr = color * kd + ks;
         }
 
-        irradiance += fr * fmaxf(dot(N,L),0) * radiance * lights[i].color;
+        irradiance += fr * fmaxf(dot(n,L),0) * radiance * lights[i].color;
     }
 
     float4 result = make_float4(irradiance,1);

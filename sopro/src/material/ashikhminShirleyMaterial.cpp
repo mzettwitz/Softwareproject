@@ -6,10 +6,10 @@ Material AshikhminShirleyMaterial::createMaterial(Context context) const
     material->setAnyHitProgram(1,context->createProgramFromPTXFile(mPTXpath,"anyhit_shadow"));
     material->setClosestHitProgram(0,context->createProgramFromPTXFile(mPTXpath,"closesthit_radiance"));
     material["color"]->setFloat(mColor.x,mColor.y,mColor.z);
-    material["au"]->setFloat(mAnisotropicFactorU);
-    material["av"]->setFloat(mAnisotropicFactorV);
-    material["rs"]->setFloat(mSpecularCoeff);
-    material["rd"]->setFloat(mDiffuseCoeff);
+    material["anisotropicFactorU"]->setFloat(mAnisotropicFactorU);
+    material["anisotropicFactorV"]->setFloat(mAnisotropicFactorV);
+    material["specularCoeff"]->setFloat(mSpecularCoeff);
+    material["diffuseCoeff"]->setFloat(mDiffuseCoeff);
     return material;
 }
 

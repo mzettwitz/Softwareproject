@@ -363,7 +363,7 @@ void Display::keyPressed(unsigned char key, int x, int y)
         // 5 - load mesh group from assets directory and programm file
         if(key == '5')
         {
-            std::shared_ptr<Mesh> m = std::make_shared<Mesh>(mSource,make_float3(0,0,0));
+            std::shared_ptr<Mesh> m = std::make_shared<Mesh>("dragonBlender.obj",make_float3(0,0,0));
             m->load();
             std::shared_ptr<PhongMaterial> p = std::make_shared<PhongMaterial>(make_float3(1.0f,1.0f,1.0f),0.2f,0.6f,0.2f,5.2f,0.2f);
             std::string name = "Mesh_" + std::to_string(mScene->getSceneObjectCount());
