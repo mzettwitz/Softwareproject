@@ -96,9 +96,7 @@ static __device__ void shade()
             float3 y = cross(n,x);
             y = normalize(y);
 
-            float HdotX = dot(h,x);
-            float HdotY = dot(h,y);
-            float HdotN = dot(h,n);
+
 
             // diffuse term kd
             float kd = diffuseCoeff / M_PIf;
@@ -106,16 +104,38 @@ static __device__ void shade()
             // specular term ks
             // refered to Dür
             float ks = 0;
+#if 0
+            float HdotN = dot(h,n);
 
             float factor1 = dot(h,h) / (M_PIf * alphaX * alphaY * powf(HdotN,4));
+
+            h = normalize(h);
+            HdotN = dot(h,n);
+            float HdotX = dot(h,x);
+            float HdotY = dot(h,y);
+
             float factor2 = (HdotX/alphaX) * (HdotX/alphaX);
             float factor3 = (HdotY/alphaY) * (HdotY/alphaY);
             float exponent = -(factor2 + factor3)/(HdotN*HdotN);
             float specRef = factor1 * expf(exponent);
+#else
+            float HdotX = dot(h,x);
+            float HdotY = dot(h,y);
 
+            float factor1 =  (1.f/(M_PIf*alphaX*alphaY));
+            float factor2 = (-1.f/powf(dot(h, n),2));
+            float factor3 = (HdotX/alphaX) * (HdotX/alphaX);
+            float factor4 = (HdotY/alphaY) * (HdotY/alphaY);
+
+            h = normalize(h);
+
+            float factor5 = 1.f/(4*powf(dot(L,h),2)*powf(dot(h,n),4));
+
+            float specRef = factor1 * expf(factor2 * (factor3+factor4))*factor5;
+
+#endif
             if (specRef > 1e-10f)
                 ks = ps * specRef;
-
 
             // final
             fr = color * kd + ks;
