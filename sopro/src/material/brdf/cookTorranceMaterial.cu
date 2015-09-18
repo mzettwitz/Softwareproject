@@ -91,7 +91,7 @@ static __device__ void shade()
         {
         F = pow((1 + dot(V,N)),fresnelFactor);
 
-        //G geometric attenuation
+        //G geometric attenuation, Cook Torrance Geometric Term
 
         // TODO:  add specific geometric term
 
