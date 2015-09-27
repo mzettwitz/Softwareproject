@@ -131,7 +131,7 @@ static __device__ void shade()
             float3 H = (V + L) / length(V+L);
             H = normalize(H);
             // lightcolor * coeff * normalized shininess * (positive)angle between normak and halfvector ^ shininess * lightintensity at hitpoint
-            Ks = make_float3(specularCoefficient * ((shininess + 2.f)/(2.f*M_PIf)) *
+            Ks = make_float3(specularCoefficient * ((shininess + 8.f)/(8.f*M_PIf)) *
                     pow(fmaxf(dot(N,H),0.f), shininess));
 
             fr += Kd + Ks;

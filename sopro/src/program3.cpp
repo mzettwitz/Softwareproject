@@ -9,7 +9,7 @@ int program3(int argc, char* argv[])
 {
     SceneHandle shp3("Program 3");
 
-    shp3.setSceneFile("madScience.ssf");
+    shp3.setSceneFile("testscene.ssf");
 
     shp3.setFOV(45.0f);
     shp3.setSize(1024,768);
