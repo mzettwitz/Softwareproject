@@ -89,37 +89,42 @@ static __device__ void shade()
         //F fresnel term
         if(fmaxf(shadowPrd.attenuation) > 0.0f)
         {
-        F = pow((1 + dot(V,N)),fresnelFactor);
+            float n = (1.f+sqrtf(fresnelFactor))/(1.f-sqrtf(fresnelFactor));
+            float c = dot(V,H);
+            float b = sqrtf(n*n + c*c - 1.f);
+            //F = (((b-c)*(b-c))/(2*(b+c)*(b+c)))*(1.f+(powf((c*(b+c)-1.f),2))/(powf((c*(b+c)-1.f),2)));
+            //F = pow((1 + dot(V,N)),fresnelFactor);
 
-        //G geometric attenuation, Cook Torrance Geometric Term
+            // Fresnel from Ashikhmin Shirley
+            F = fresnelFactor + (1.f - fresnelFactor)*(powf(1.f-dot(L,H),5));
 
-        // TODO:  add specific geometric term
+            //G geometric attenuation, Torrance Sparrow geometric term
 
-        float HdotN = dot(H,N);
-        float VdotN = dot(V,N);
-        float VdotH = dot(V,H);
-        float LdotN = dot(L,N);
+            float HdotN = dot(H,N);
+            float VdotN = dot(V,N);
+            float VdotH = dot(V,H);
+            float LdotN = dot(L,N);
 
-        float g1 = (2 * HdotN * VdotN)/VdotH;
-        float g2 = (2 * HdotN * LdotN)/VdotH;
+            float g1 = (2 * HdotN * VdotN)/VdotH;
+            float g2 = (2 * HdotN * LdotN)/VdotH;
 
-        G = fminf(1,fminf(g1,g2));
+            G = fminf(1,fminf(g1,g2));
 
-        //D Beckmann distribution
+            //D Beckmann distribution
 
-        float alpha = acos(HdotN);
-        float cosSqalpha = cos(alpha) * cos(alpha);
+            float alpha = acos(HdotN);
+            float cosSqalpha = cos(alpha) * cos(alpha);
 
-        float d1 = (1-cosSqalpha)/(cosSqalpha* roughness * roughness);
+            float d1 = (1-cosSqalpha)/(cosSqalpha* roughness * roughness);
 
 
-        D = exp(-d1)/(M_PIf * roughness * roughness * cosSqalpha*cosSqalpha);
+            D = exp(-d1)/(M_PIf * roughness * roughness * cosSqalpha*cosSqalpha);
 
-        Ks = (D * F * G)/(4 * VdotN * LdotN) * color * specularCoefficient;
+            Ks = (D * F * G)/(4 * VdotN * LdotN) * color * specularCoefficient;
 
-        Kd = color * diffuseCoefficient / M_PI;
+            Kd = color * diffuseCoefficient / M_PI;
 
-        fr += Kd + Ks;
+            fr += Kd + Ks;
         }
 
         irradiance += fr * fmaxf(dot(N,L),0) * radiance * lights[i].color;
