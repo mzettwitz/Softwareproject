@@ -86,20 +86,15 @@ static __device__ void shade()
         Ray shadowRay = make_Ray(hitPoint,L,shadowRayType,sceneEpsilon,maxLambda);
         rtTrace(topShadower,shadowRay,shadowPrd);
 
-        //F fresnel term
         if(fmaxf(shadowPrd.attenuation) > 0.0f)
         {
-            float n = (1.f+sqrtf(fresnelFactor))/(1.f-sqrtf(fresnelFactor));
+            //F fresnel term
+            float n = fresnelFactor;
             float c = dot(V,H);
             float b = sqrtf(n*n + c*c - 1.f);
-            //F = (((b-c)*(b-c))/(2*(b+c)*(b+c)))*(1.f+(powf((c*(b+c)-1.f),2))/(powf((c*(b+c)-1.f),2)));
-            //F = pow((1 + dot(V,N)),fresnelFactor);
-
-            // Fresnel from Ashikhmin Shirley
-            F = fresnelFactor + (1.f - fresnelFactor)*(powf(1.f-dot(L,H),5));
+            F = (((b-c)*(b-c))/(2*(b+c)*(b+c)))*(1.f+(powf((c*(b+c)-1.f),2))/(powf((c*(b+c)-1.f),2)));
 
             //G geometric attenuation, Torrance Sparrow geometric term
-
             float HdotN = dot(H,N);
             float VdotN = dot(V,N);
             float VdotH = dot(V,H);
