@@ -33,6 +33,7 @@ float               Display::deltaTime = 0.0f;
 int                 Display::mState = Display::mouseState::IDLE;
 bool                Display::cameraChanged = false;
 bool                Display::loaded = false;
+bool                Display::locked = false;
 // Declare ATB
 TwBar *matBar;
 TwBar *geomBar;
@@ -395,7 +396,7 @@ void Display::keyPressed(unsigned char key, int x, int y)
         {
             std::shared_ptr<Mesh> groundPlane = std::make_shared<Mesh>("cube.obj",make_float3(0.0f,-2.0f,0.0f));
             groundPlane->load();
-            groundPlane->setScale(make_float3(100.0f,0.2f,100.0f));
+            groundPlane->setScale(make_float3(100.0f,1.0f,100.0f));
             std::shared_ptr<LambertMaterial> p = std::make_shared<LambertMaterial>(make_float3(1.0f,1.0f,1.0f));
             std::shared_ptr<SceneObject> sc = std::make_shared<SceneObject>("groundPlane",groundPlane,p);
 
@@ -470,6 +471,58 @@ void Display::keyPressed(unsigned char key, int x, int y)
                 antTBarInit_light(mScene->getClassLight(i),lightBar,mScene->getClassLight(i)->name());
             }
         }
+        //load cg testscene
+        if(key == 'c')
+        {
+            PointLight light1, light2, light3;
+            light1.position = make_float3(5.0,2.0,6.0);
+            light1.color = make_float3(200,170,150);
+            light2.position = make_float3(5.0,-7.0,3.0);
+            light2.color = make_float3(200,170,150);
+            light3.position = make_float3(-10.0,4.0,5.0);
+            light3.color = make_float3(130,160,200);
+            light1.intensity = 1;
+            light2.intensity = 1;
+            light3.intensity = 1;
+            light1.padding = 0;
+            light2.padding = 0;
+            light2.padding = 0;
+            mScene->addLight(light1);
+            mScene->addLight(light2);
+            mScene->addLight(light3);
+
+            std::shared_ptr<PhongMaterial> l = std::make_shared<PhongMaterial>(make_float3(1.0f,0.4f,0.1f),0.0f,1.0f,1.0f,1000.0,0.8);
+            std::shared_ptr<Sphere> s = std::make_shared<Sphere>(make_float3(1.1f,1.1f,1.1f));
+            std::string name = "Sphere_" + std::to_string(mScene->getSceneObjectCount());
+            std::shared_ptr<SceneObject> obj = std::make_shared<SceneObject>(name,s,l);
+            mScene->addSceneObject(obj);
+
+            std::shared_ptr<PhongMaterial> l2 = std::make_shared<PhongMaterial>(make_float3(0.0f,0.0f,0.0f),0.0f,1.0f,1.0f,1000.0,0.2);
+            std::shared_ptr<Sphere> s2 = std::make_shared<Sphere>(make_float3(-1.1f,1.1f,1.1f));
+            std::string name2 = "Sphere_" + std::to_string(mScene->getSceneObjectCount());
+            std::shared_ptr<SceneObject> obj2 = std::make_shared<SceneObject>(name2,s2,l2);
+            mScene->addSceneObject(obj2);
+
+            std::shared_ptr<PhongMaterial> l3 = std::make_shared<PhongMaterial>(make_float3(0.2f,0.3f,0.8f),0.0f,1.0f,1.0f,10.0,0.1);
+            std::shared_ptr<Sphere> s3 = std::make_shared<Sphere>(make_float3(-1.1f,1.1f,1.1f));
+            std::string name3 = "Sphere_" + std::to_string(mScene->getSceneObjectCount());
+            std::shared_ptr<SceneObject> obj3 = std::make_shared<SceneObject>(name3,s3,l3);
+            mScene->addSceneObject(obj3);
+
+            // add ATB variable
+            // init new variables
+            antTBarInit_material(obj.get(), matBar, name);
+            antTBarInit_geometry(obj.get(), geomBar, name);
+            antTBarInit_material(obj2.get(), matBar, name2);
+            antTBarInit_geometry(obj2.get(), geomBar, name2);
+            antTBarInit_material(obj3.get(), matBar, name3);
+            antTBarInit_geometry(obj3.get(), geomBar, name3);
+
+        }
+        if(key == 'y')
+        {
+            locked = !locked;
+        }
     }
     cameraChanged = true;
     //needs to be called, to update change
@@ -535,7 +588,7 @@ void Display::mouseMotion(int x, int y)
 
     }
     // else set camera
-    else if(mState ==  mouseState::ROTATE)
+    else if(mState ==  mouseState::ROTATE && !locked)
     {
 
         horizontalAngle += mouseSpeed *  deltaTime * float(mWidth/2 - x) * 0.2f;
@@ -544,14 +597,15 @@ void Display::mouseMotion(int x, int y)
         cameraDirection = make_float3(cos(verticalAngle) * sin(horizontalAngle),sin(verticalAngle),cos(verticalAngle) * cos(horizontalAngle));
         cameraRight = make_float3(sin(horizontalAngle - 3.14f/2.0f),0,cos(horizontalAngle - 3.14f/2.0f));
     }
-    else if (mState == mouseState::MOVE)
+    else if (mState == mouseState::MOVE && !locked)
     {
-        cameraPosition -= cameraRight * deltaTime * mouseSpeed * 5.0f * float(mWidth/2 - x);
-        cameraPosition += cross(cameraRight,cameraDirection) * deltaTime * mouseSpeed * 5.0f * float(mHeight/2 - y);
+
+        cameraPosition -= cameraRight * deltaTime * mouseSpeed * 2.0f * float(mWidth/2 -x);
+        cameraPosition += cross(cameraRight,cameraPosition) * deltaTime * mouseSpeed * 2.0f * float(mHeight/2 - y);
     }
     else if(mState == mouseState::ZOOM)
     {
-        cameraPosition += cameraDirection * deltaTime * mouseSpeed * 10.0f * float(mHeight/2 -y);
+        cameraPosition += cameraDirection * deltaTime * mouseSpeed * 10.0f * float(mHeight/2 - y);
     }
 
     oldx = x;

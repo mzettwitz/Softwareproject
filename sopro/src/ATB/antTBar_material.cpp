@@ -945,6 +945,10 @@ void antTBarInit_material(SceneObject* scObj, TwBar *bar, std::string objName)
     std::string grpNameFloatL = grpName + " min=0 step=5 ";
     const char* grpNameFloatLC = grpNameFloatL.c_str();
 
+    //[1,)
+    std::string grpNameFloat20 = grpName + " min=1 step=0.25 ";
+    const char* grpNameFloat20C = grpNameFloat20.c_str();
+
     //----------------- Material is Lambert
     if(scObj->getMaterial()->getMaterialType() == BaseMaterial::LAMBERT)
     {
@@ -1289,7 +1293,7 @@ void antTBarInit_material(SceneObject* scObj, TwBar *bar, std::string objName)
         // ATB Variable Diffuse coefficient, Specular coefficient and Fresnel factor
         TwAddVarCB(bar, nameVar2C, TW_TYPE_FLOAT, setCTDiffuseCoeffCB, getCTDiffuseCoeffCB, scObj, grpNameFloat1C);
         TwAddVarCB(bar, nameVar3C, TW_TYPE_FLOAT, setCTSpecularCoeffCB, getCTSpecularCoeffCB, scObj, grpNameFloat1C);
-        TwAddVarCB(bar, nameVar4C, TW_TYPE_FLOAT, setCTFressnelFactorCB, getCTFressnelFactorCB, scObj, grpNameFloat5C);
+        TwAddVarCB(bar, nameVar4C, TW_TYPE_FLOAT, setCTFressnelFactorCB, getCTFressnelFactorCB, scObj, grpNameFloat20C);
 
         // ATB Variable for Roughness and Reflectance
         TwAddVarCB(bar, nameVar5C, TW_TYPE_FLOAT, setCTRoughnessCB, getCTRoughnessCB, scObj, grpNameFloat1C);
@@ -1756,6 +1760,9 @@ void antTBarReInit_material(std::string oldMat, SceneObject* scObj, TwBar *bar, 
     std::string grpNameFloatL = grpName + " min=0 step=5 ";
     const char* grpNameFloatLC = grpNameFloatL.c_str();
 
+    //[1,)
+    std::string grpNameFloat20 = grpName + " min=1 step=0.25 ";
+    const char* grpNameFloat20C = grpNameFloat20.c_str();
     //------------------------ Clear variables
     //----------------- Material was Lambert
     if(oldMat == "Lambert")
@@ -2277,7 +2284,7 @@ void antTBarReInit_material(std::string oldMat, SceneObject* scObj, TwBar *bar, 
         // ATB Variable Diffuse coefficient, Specular coefficient and Fresnel factor
         TwAddVarCB(bar, nameVar2C, TW_TYPE_FLOAT, setCTDiffuseCoeffCB, getCTDiffuseCoeffCB, scObj, grpNameFloat1C);
         TwAddVarCB(bar, nameVar3C, TW_TYPE_FLOAT, setCTSpecularCoeffCB, getCTSpecularCoeffCB, scObj, grpNameFloat1C);
-        TwAddVarCB(bar, nameVar4C, TW_TYPE_FLOAT, setCTFressnelFactorCB, getCTFressnelFactorCB, scObj, grpNameFloat5C);
+        TwAddVarCB(bar, nameVar4C, TW_TYPE_FLOAT, setCTFressnelFactorCB, getCTFressnelFactorCB, scObj, grpNameFloat20C);
 
         // ATB Variable for Roughness and Reflectance
         TwAddVarCB(bar, nameVar5C, TW_TYPE_FLOAT, setCTRoughnessCB, getCTRoughnessCB, scObj, grpNameFloat1C);

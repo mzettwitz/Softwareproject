@@ -149,12 +149,12 @@ void Scene::initScene(const Scene::Camera &camera,int width, int height)
     usedPTXPath = ptxPath("miss.cu");
     Program missProgram = mContext->createProgramFromPTXFile(usedPTXPath,"miss");
     mContext->setMissProgram(0,missProgram);
-    mContext["missColor"]->setFloat(0.3f,0.5f,0.8f,1.0f);
+    mContext["missColor"]->setFloat(0.0f,0.0f,0.0f,1.0f);
 
     float3 eye = mCamera.position;
-    float3 lookat = mCamera.direction+mCamera.position;
+    float3 lookat = make_float3(0,0,0);
     float3 up = make_float3(0,1,0);
-    float fov = 45.0f;
+    float fov = 60.0f;
     float aspectRatio = float(mWidth)/float(mHeight);
     float3 u,v,w;
 

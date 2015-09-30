@@ -123,16 +123,17 @@ static __device__ void shade()
     bool totalReflection = false;
 
     float3 beer_attenuation;
-    float3 extinction = make_float3(log(color.x),log(color.y),log(color.z));
-    if(dot(N, ray.direction) > 0) {
+
+    if(dot(N, D) > 0) {
       // Beer's law attenuation
+            float3 extinction = make_float3(log(color.x),log(color.y),log(color.z));
       beer_attenuation = exp(extinction * intersectionDistance);
     } else {
       beer_attenuation = make_float3(1);
     }
     //Glass part
     //outside of object
-    if(dot(D,N) < 0)
+    if(dot(D,N) <= 0)
     {
         R = reflect(D,N);
         offset1 = hitPoint + sceneEpsilon * N;
@@ -194,8 +195,9 @@ static __device__ void shade()
         }
     }
 
-    float r0 = ((1.f-refractiveIdx)*(1.f-refractiveIdx))/((1.f+refractiveIdx)*(1.f+refractiveIdx));
-    float r1 = r0 + (1.f-r0) * powGPU(1.f-dotD,5.f);
+    float r0 = (1.f-refractiveIdx)/(1.f+refractiveIdx);
+    r0 *= r0;
+    float r1 = r0 + (1.f-r0) * (1.f-dotD)* (1.f-dotD)* (1.f-dotD)* (1.f-dotD)* (1.f-dotD);
 
     Ray reflectedRay = make_Ray(offset1,R,radianceRayType,sceneEpsilon,10000.0f);
     Ray refractedRay = make_Ray(offset2,T,radianceRayType,sceneEpsilon,10000.0f);
@@ -238,7 +240,7 @@ static __device__ void shade()
  */
 static __device__ bool refract(const float3 &D, const float3 &N, float n1, float n2,float3 &T)
 {
-    float d = (1 - ((powGPU(n1,2) * (1- powGPU(dot(D,N),2))) / powGPU(n2,2)));
+    float d = (1 - ((n1*n1 * (1- dot(D,N)*dot(D,N))) / (n2*n2)));
     if(d >= 0)
     {
         T = D - N * dot(D,N) * (n1/n2) - N * sqrt(d);

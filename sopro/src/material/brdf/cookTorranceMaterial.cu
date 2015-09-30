@@ -90,9 +90,10 @@ static __device__ void shade()
         {
             //F fresnel term
             float n = fresnelFactor;
-            float c = dot(V,H);
-            float b = sqrtf(n*n + c*c - 1.f);
-            F = (((b-c)*(b-c))/(2*(b+c)*(b+c)))*(1.f+(powf((c*(b+c)-1.f),2))/(powf((c*(b+c)-1.f),2)));
+            float F0 = (1-n)/(1+n);
+            F0 *= F0;
+
+            F= F0 + (1-F0) * (1-dot(L,H))* (1-dot(L,H))* (1-dot(L,H))* (1-dot(L,H))* (1-dot(L,H));
 
             //G geometric attenuation, Torrance Sparrow geometric term
             float HdotN = dot(H,N);
@@ -115,7 +116,7 @@ static __device__ void shade()
 
             D = exp(-d1)/(M_PIf * roughness * roughness * cosSqalpha*cosSqalpha);
 
-            Ks = (D * F * G)/(4 * VdotN * LdotN) * color * specularCoefficient;
+            Ks = make_float3((D * F * G)/(4 * VdotN * LdotN) * specularCoefficient);
 
             Kd = color * diffuseCoefficient / M_PI;
 
