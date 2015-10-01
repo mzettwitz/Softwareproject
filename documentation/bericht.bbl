@@ -1,0 +1,47 @@
+\begin{thebibliography}{GMA10}
+
+\bibitem[AS00]{AS00}
+Michael Ashikhmin and Peter Shirley.
+\newblock An anisotropic phong brdf model.
+\newblock 2000.
+
+\bibitem[Bli77]{Bli77}
+James~F. Blinn.
+\newblock Models of light reflection for computer synthesized pictures.
+\newblock 1977.
+
+\bibitem[CT82]{CT82}
+Robert~L. Cook and Kenneth~E. Torrance.
+\newblock A reflectance model for computer graphics.
+\newblock 1(1), 1982.
+
+\bibitem[GMA10]{GMD10}
+D.~Geisler-Moroder and A.Dür.
+\newblock Bounding the albedo of the ward reflectance model.
+\newblock 2010.
+
+\bibitem[Kaj86]{Kaj86}
+James~T. Kajiya.
+\newblock The rendering equation.
+\newblock 20(4), 1986.
+
+\bibitem[LC]{LC}
+http://www.3drender.com/challenges/.
+\newblock [Online; accessed 30-September-2015].
+
+\bibitem[Pho75]{Pho75}
+Bùi~Tuòng Phong.
+\newblock Illumination for computer generated pictures.
+\newblock 18(6), 1975.
+
+\bibitem[Sch94]{Sch94}
+Christophe Schlick.
+\newblock An inexpensive brdf model for physically-based rendering.
+\newblock 13(3), 1994.
+
+\bibitem[Uni]{SU}
+Stanford University.
+\newblock http://graphics.stanford.edu/data/3Dscanrep/.
+\newblock [Online; accessed 30-September-2015].
+
+\end{thebibliography}
