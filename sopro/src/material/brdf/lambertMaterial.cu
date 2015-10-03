@@ -22,7 +22,6 @@ rtDeclareVariable(float3, shadingNormal, attribute shadingNormal,);
 
 static __device__ void shadowed();
 static __device__ void shade();
-static __device__ void simpleShade();
 
 RT_PROGRAM void anyhit_shadow()
 {

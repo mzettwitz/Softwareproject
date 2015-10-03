@@ -82,16 +82,6 @@ static __device__ void shadowed()
  *
  */
 
-static __device__ float powGPU(float x,float p)
-{
-    float r = 1;
-    while(p >= 1)
-    {
-        r *=x;
-        --p;
-    }
-    return r;
-}
 
 static __device__ __inline__ float3 exp( const float3& x )
 {
