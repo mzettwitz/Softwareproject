@@ -8,8 +8,8 @@
 \beamer@subsectionintoc {4}{2}{Phong}{10}{0}{4}
 \beamer@subsectionintoc {4}{3}{Blinn Phong}{13}{0}{4}
 \beamer@subsectionintoc {4}{4}{Cook Torrance}{15}{0}{4}
-\beamer@subsectionintoc {4}{5}{Ward}{16}{0}{4}
-\beamer@subsectionintoc {4}{6}{Ashikhmin Shirley}{17}{0}{4}
-\beamer@subsectionintoc {4}{7}{Glas}{18}{0}{4}
-\beamer@sectionintoc {5}{Ergebnisse}{19}{0}{5}
-\beamer@sectionintoc {6}{Demo}{20}{0}{6}
+\beamer@subsectionintoc {4}{5}{Ward}{19}{0}{4}
+\beamer@subsectionintoc {4}{6}{Ashikhmin Shirley}{20}{0}{4}
+\beamer@subsectionintoc {4}{7}{Glas}{21}{0}{4}
+\beamer@sectionintoc {5}{Ergebnisse}{22}{0}{5}
+\beamer@sectionintoc {6}{Demo}{23}{0}{6}
