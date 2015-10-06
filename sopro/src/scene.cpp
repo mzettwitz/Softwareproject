@@ -529,7 +529,7 @@ void Scene::updateLights()
 
     for(unsigned int i = 0;i < mLights->size();++i)
     {
-        //check if LighClass has been changed
+        //check if LightClass has been changed
         if(mClassLights->at(i)->isLightChanged())
         {
             mLights->at(i).position = mClassLights->at(i)->position();

@@ -81,7 +81,7 @@ static __device__ void shade()
         float radiance = lights[i].intensity / (maxLambda * maxLambda);
 
         // offset
-        hitPoint += n * sceneEpsilon;
+        hitPoint += (n * sceneEpsilon);
 
         Ray shadowRay = make_Ray(hitPoint,L,shadowRayType,sceneEpsilon,maxLambda);
         rtTrace(topShadower,shadowRay,shadowPrd);

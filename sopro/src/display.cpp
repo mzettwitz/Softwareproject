@@ -351,12 +351,12 @@ void Display::keyPressed(unsigned char key, int x, int y)
 
             }
         }
-        // y : set increase sceneEpsilon
+        // y : increase sceneEpsilon
         if(key == 'y')
         {
             mScene->setSceneEpsilon(-0.1e-3f);
         }
-        // x : set decrease sceneEpsilon
+        // x : decrease sceneEpsilon
         if(key == 'x')
         {
             mScene->setSceneEpsilon(0.1e-3f);
@@ -415,7 +415,7 @@ void Display::keyPressed(unsigned char key, int x, int y)
             mScene->addLight(l);
             antTBarInit_light(mScene->getClassLight(mScene->getLightCount()-1),lightBar,mScene->getClassLight(mScene->getLightCount()-1)->name());
         }
-        // a pointlight
+        // delete a pointlight
         if(key == 'o')
         {
             antTBarRemoveVariable_light(lightBar,mScene->getClassLight(mScene->getLightCount()-1)->name());
@@ -471,54 +471,7 @@ void Display::keyPressed(unsigned char key, int x, int y)
                 antTBarInit_light(mScene->getClassLight(i),lightBar,mScene->getClassLight(i)->name());
             }
         }
-        //load cg testscene
-        if(key == 'c')
-        {
-            PointLight light1, light2, light3;
-            light1.position = make_float3(5.0,2.0,6.0);
-            light1.color = make_float3(200,170,150);
-            light2.position = make_float3(5.0,-7.0,3.0);
-            light2.color = make_float3(200,170,150);
-            light3.position = make_float3(-10.0,4.0,5.0);
-            light3.color = make_float3(130,160,200);
-            light1.intensity = 1;
-            light2.intensity = 1;
-            light3.intensity = 1;
-            light1.padding = 0;
-            light2.padding = 0;
-            light2.padding = 0;
-            mScene->addLight(light1);
-            mScene->addLight(light2);
-            mScene->addLight(light3);
-
-            std::shared_ptr<PhongMaterial> l = std::make_shared<PhongMaterial>(make_float3(1.0f,0.4f,0.1f),0.0f,1.0f,1.0f,1000.0,0.8);
-            std::shared_ptr<Sphere> s = std::make_shared<Sphere>(make_float3(1.1f,1.1f,1.1f));
-            std::string name = "Sphere_" + std::to_string(mScene->getSceneObjectCount());
-            std::shared_ptr<SceneObject> obj = std::make_shared<SceneObject>(name,s,l);
-            mScene->addSceneObject(obj);
-
-            std::shared_ptr<PhongMaterial> l2 = std::make_shared<PhongMaterial>(make_float3(0.0f,0.0f,0.0f),0.0f,1.0f,1.0f,1000.0,0.2);
-            std::shared_ptr<Sphere> s2 = std::make_shared<Sphere>(make_float3(-1.1f,1.1f,1.1f));
-            std::string name2 = "Sphere_" + std::to_string(mScene->getSceneObjectCount());
-            std::shared_ptr<SceneObject> obj2 = std::make_shared<SceneObject>(name2,s2,l2);
-            mScene->addSceneObject(obj2);
-
-            std::shared_ptr<PhongMaterial> l3 = std::make_shared<PhongMaterial>(make_float3(0.2f,0.3f,0.8f),0.0f,1.0f,1.0f,10.0,0.1);
-            std::shared_ptr<Sphere> s3 = std::make_shared<Sphere>(make_float3(-1.1f,1.1f,1.1f));
-            std::string name3 = "Sphere_" + std::to_string(mScene->getSceneObjectCount());
-            std::shared_ptr<SceneObject> obj3 = std::make_shared<SceneObject>(name3,s3,l3);
-            mScene->addSceneObject(obj3);
-
-            // add ATB variable
-            // init new variables
-            antTBarInit_material(obj.get(), matBar, name);
-            antTBarInit_geometry(obj.get(), geomBar, name);
-            antTBarInit_material(obj2.get(), matBar, name2);
-            antTBarInit_geometry(obj2.get(), geomBar, name2);
-            antTBarInit_material(obj3.get(), matBar, name3);
-            antTBarInit_geometry(obj3.get(), geomBar, name3);
-
-        }
+        // lock/unlock
         if(key == 'y')
         {
             locked = !locked;

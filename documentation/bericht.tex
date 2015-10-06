@@ -74,12 +74,12 @@ $\vec{\omega_i}$ & incoming light direction\\ \hline
 $\vec{\omega_o}$ & vector towards camera\\ \hline
 $f_r$ & BRDF\\ \hline
 $\Omega$ & Hemisphere over point x\\ \hline
-$\cos\theta$ & angle between normal and $\omega_i$\\ \hline
+$\cos\theta$ & angle between normal and $\vec{\omega_i}$\\ \hline
 $x$ & point on surface\\ \hline
 \end{tabular}
 \end{table}
 
-In short, to evaluate the radiance of one point in space, one has to sum up the incident light over the hemisphere at this point and his self emission. This includes indirect lighting, which is not implemented,yet.
+In short, to evaluate the radiance of one point in space, one has to sum up the incident light over the hemisphere at this point and his self emission. This includes indirect lighting, which is not implemented, yet.
 
 		
 In our approach only direct lighting, reflections and no self emissions are calculated, so we altered the original equation, like the CG raytracer, to the following:
@@ -166,32 +166,28 @@ K_s = \rho_s \cdot \frac{s+2}{2\pi} \cdot cos^s\psi
 \hline
 $\rho_d$ & Parameter : diffuse coefficient\\ \hline
 $\rho_s$ & Parameter : specular coefficient\\ \hline
-$s$ & Paramter : shiny exponent, controls roughness\\ \hline
+$s$ & Parameter : shiny exponent, controls roughness\\ \hline
 $cos\psi$ & angle between outgoing and reflected ray\\ \hline
 \end{tabular}
 \end{table}
 
 
 \begin{figure}[H]
-
 \includegraphics[width=\textwidth]{phongdiffcomplete.png}
 \caption{Parameter $\rho_d$ from $0.0$ to $1.0$}
 \end{figure}
 
 \begin{figure}[H]
-
 \includegraphics[width=\textwidth]{phongspeccomplete.png}
 \caption{Parameter $\rho_s$ from $0.0$ to $1.0$}
 \end{figure}
 
 \begin{figure}[H]
-
 \includegraphics[width=\textwidth]{phongshinecomplete.png}
 \caption{Parameter $s$ from $1$ to $1000$}
 \end{figure}
 
 \begin{figure}[H]
-
 \includegraphics[width=\textwidth]{phongreflcomplete.png}
 \caption{Parameter $\delta$(see equation \ref{eq:simplerenderingequation}) from $0.0$ to $1.0$}
 \end{figure}
@@ -220,7 +216,6 @@ $\cos\psi$ & angle between outgoing ray and half vector $\vec{H}$\\ \hline
 \end{equation}
 
 \begin{figure}[H]
-
 \includegraphics[width=\textwidth]{blinnphongshinecomplete.png}
 \caption{Parameter $s$ from $1$ to $1000$}
 \end{figure}
