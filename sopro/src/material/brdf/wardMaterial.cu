@@ -88,37 +88,20 @@ static __device__ void shade()
         // fr
         if(fmaxf(shadowPrd.attenuation) > 0.0f)
         {
-            //----------- approximation
             float3 h = (L + V);
-            //h = normalize(h);
             float3 x = orthoVector(n);
             x = normalize(x);
             float3 y = cross(n,x);
             y = normalize(y);
 
 
-
             // diffuse term kd
             float kd = diffuseCoeff / M_PIf;
 
             // specular term ks
-            // refered to Dür
+            // refered to Moroder-Dür
             float ks = 0;
-#if 0
-            float HdotN = dot(h,n);
 
-            float factor1 = dot(h,h) / (M_PIf * alphaX * alphaY * powf(HdotN,4));
-
-            h = normalize(h);
-            HdotN = dot(h,n);
-            float HdotX = dot(h,x);
-            float HdotY = dot(h,y);
-
-            float factor2 = (HdotX/alphaX) * (HdotX/alphaX);
-            float factor3 = (HdotY/alphaY) * (HdotY/alphaY);
-            float exponent = -(factor2 + factor3)/(HdotN*HdotN);
-            float specRef = factor1 * expf(exponent);
-#else
             float HdotX = dot(h,x);
             float HdotY = dot(h,y);
 
@@ -133,7 +116,6 @@ static __device__ void shade()
 
             float specRef = factor1 * expf(factor2 * (factor3+factor4))*factor5;
 
-#endif
             if (specRef > 1e-10f)
                 ks = ps * specRef;
 
