@@ -259,7 +259,8 @@ $\cos\psi$ & angle between outgoing ray and half vector $\vec{H}$\\ \hline
 \begin{center}
 \includemedia[
     activate=onclick,
-    width=\textwidth
+    width=\textwidth,
+   	flashvars={&scaleMode=letterbox}
 ]{\includegraphics{./movie_splash.png}}{lambert_phong_blinn.swf}
 \end{center}
 
@@ -374,7 +375,7 @@ K_s = \frac{\rho_s}{4 \pi \alpha_x \alpha_y }
 \frac{1}{4 (\vec{H} \cdot \vec{L})^2 (\vec{H} \cdot \vec{N})^4}
 \end{equation}
 
-%\framebreak
+\framebreak
 
 \begin{table}[H]
 \begin{tabular}{| c | l |}
@@ -387,6 +388,15 @@ $\vec{x}$ & Tangent Vector to $\vec{N}$ \\ \hline
 $\vec{y}$ & Tangent Vector to $\vec{N}$, perpendicular to $\vec{x}$ \\ \hline
 \end{tabular}
 \end{table}
+
+\framebreak
+
+\begin{figure}[H]
+\centering
+
+\includegraphics[height=\textheight]{../warduvcomplete.png}
+\caption{Parameter $\alpha_x$, $\alpha_y$ from $0.01$ to $1.00$}
+\end{figure}
 
 \framebreak
 \begin{center}
@@ -413,12 +423,11 @@ $\vec{y}$ & Tangent Vector to $\vec{N}$, perpendicular to $\vec{x}$ \\ \hline
 \begin{equation}
 K_d = \frac{28 \rho_d}{23 \rho_s} (1 - \rho_s)\left(1-\left(1- \frac{\vec{N} \cdot \vec{L}}{2}\right)^5\right)\left(1-\left(1-\frac{\vec{N} \cdot \vec{L}}{2}\right)^5\right)
 \end{equation}
-
 \begin{equation}
 K_s = \frac{\sqrt{(n_u+1)(n_v+1)}}{8\pi} \frac{((\vec{N} \cdot \vec{H})^{ \frac{n_u(\vec{H} \cdot \vec{U})^2 + n_v(\vec{H} \cdot \vec{V})^2}{1-(\vec{H} \cdot \vec{N})^2})}}{(\vec{H} \cdot \vec{L}) max((\vec{N} \cdot \vec{L}),(\vec{N} \cdot \vec{V}))} F(\vec{L} \cdot \vec{H})
 \end{equation}
 
-where:
+\framebreak
 \begin{equation}
 F(\vec{L} \cdot \vec{H}) = \rho_s + (1-\rho_s)(1-(\vec{L} \cdot \vec{H}))^5
 \end{equation}
@@ -432,6 +441,29 @@ $\vec{U}$ & Tangent Vector to $\vec{N}$\\ \hline
 $\vec{V}$ & Tangent Vector to $\vec{N}$, perpendicular to $\vec{U}$\\ \hline
 \end{tabular}
 \end{table}
+
+\framebreak
+
+\begin{figure}[H]
+\centering
+
+\includegraphics[height=\textheight]{../ashuvcomplete.png}
+\caption{Parameter $n_u$, $n_v$ from $1$ to $10000$}
+\end{figure}
+
+\framebreak
+
+\begin{figure}[H]
+
+\includegraphics[width=\textwidth]{../ashdiffcomplete.png}
+\caption{Parameter $\rho_d$ from $0.0$ to $1.0$}
+\end{figure}
+
+\begin{figure}[H]
+
+\includegraphics[width=\textwidth]{../ashspeccomplete.png}
+\caption{Parameter $\rho_s$ from $0.0$ to $1.0$}
+\end{figure}
 
 \framebreak
 \begin{center}
@@ -457,16 +489,28 @@ $\vec{V}$ & Tangent Vector to $\vec{N}$, perpendicular to $\vec{U}$\\ \hline
 \begin{equation}
 L_o(x,\vec{\omega_o})= \delta \cdot L_i(x,\vec{\omega_r}) + (1-\delta) L_i(x,\vec{\omega_t})
 \end{equation}
-
+\begin{equation}
+\delta(\theta) = \delta_0 + (1-\delta_0)(1-cos\theta)^5
+\end{equation}
+\begin{equation}
+\delta_0 = \left(\frac{n_t-1}{n_t+1}\right)^2
+\end{equation}
 \begin{table}[H]
 \begin{tabular}{| c | l |}
 \hline
 $\delta$ & reflectivity of a dieletric\\ \hline
 $\vec{\omega_r}$ & reflected view direction\\ \hline
 $\vec{\omega_t}$ & transmitted view direction\\ \hline
+$n_t$ & Parameter : refractive index of the surface\\ \hline
 \end{tabular}
 \end{table}
 
+\framebreak
+
+\begin{figure}[H]
+\caption{Parameter $n_t$ from $1.0$ to $2.0$}
+\includegraphics[width=\textwidth]{../glasscomplete.png}
+\end{figure}
 \framebreak
 \begin{center}
 \includemedia[
