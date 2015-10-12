@@ -353,6 +353,41 @@ Gleichung \ref{eq:beckmann} wurde durch folgenden Substitution vereinfacht:
 \frametitle{Ward}
 %TODO
 
+\begin{itemize}
+\item basierend auf [GMD10]
+\item experimentelles, einfach zu berechnendes Modell
+\item simuliert anisotrope metallische Oberflächen
+\end{itemize}
+
+\begin{equation}
+K_d = \frac{\rho_d}{\pi}
+\end{equation}
+
+\begin{equation}
+K_s = \frac{\rho_s}{4 \pi \alpha_x \alpha_y } 
+\cdot e^
+{
+- \frac{(\frac{\vec{h} \cdot \vec{x}}{\alpha_x})+(\frac{\vec{h} \cdot \vec{y}}{\alpha_y})}
+{(\vec{h} \cdot \vec{N})^2}
+}
+\cdot 
+\frac{1}{4 (\vec{H} \cdot \vec{L})^2 (\vec{H} \cdot \vec{N})^4}
+\end{equation}
+
+%\framebreak
+
+\begin{table}[H]
+\begin{tabular}{| c | l |}
+\hline
+$\alpha_x$ & Parameter : horizontal control of brush\\ \hline
+$\alpha_y$ & Parameter : vertical control of brush \\ \hline
+$\vec{h}$ & Half vector between $\vec{L}$ and $\vec{V}$ \\ \hline
+$\vec{H}$ & Normalized half vector between $\vec{L}$ and $\vec{V}$ \\ \hline
+$\vec{x}$ & Tangent Vector to $\vec{N}$ \\ \hline
+$\vec{y}$ & Tangent Vector to $\vec{N}$, perpendicular to $\vec{x}$ \\ \hline
+\end{tabular}
+\end{table}
+
 \framebreak
 \begin{center}
 \includemedia[
@@ -369,6 +404,34 @@ Gleichung \ref{eq:beckmann} wurde durch folgenden Substitution vereinfacht:
 \begin{frame}[allowframebreaks]
 \frametitle{Ashikhmin Shirley}
 %TODO
+\begin{itemize}
+\item basierend auf [ASH00]
+\item theoretisches, auf Mikrofacetten basierendes Modell
+\item simuliert anisotrope metallische Oberflächen
+\end{itemize}
+
+\begin{equation}
+K_d = \frac{28 \rho_d}{23 \rho_s} (1 - \rho_s)\left(1-\left(1- \frac{\vec{N} \cdot \vec{L}}{2}\right)^5\right)\left(1-\left(1-\frac{\vec{N} \cdot \vec{L}}{2}\right)^5\right)
+\end{equation}
+
+\begin{equation}
+K_s = \frac{\sqrt{(n_u+1)(n_v+1)}}{8\pi} \frac{((\vec{N} \cdot \vec{H})^{ \frac{n_u(\vec{H} \cdot \vec{U})^2 + n_v(\vec{H} \cdot \vec{V})^2}{1-(\vec{H} \cdot \vec{N})^2})}}{(\vec{H} \cdot \vec{L}) max((\vec{N} \cdot \vec{L}),(\vec{N} \cdot \vec{V}))} F(\vec{L} \cdot \vec{H})
+\end{equation}
+
+where:
+\begin{equation}
+F(\vec{L} \cdot \vec{H}) = \rho_s + (1-\rho_s)(1-(\vec{L} \cdot \vec{H}))^5
+\end{equation}
+
+\begin{table}[H]
+\begin{tabular}{| c | l |}
+\hline
+$n_u$ & Parameter : controls anisotropic behavior in $\vec{U}$ direction\\ \hline
+$n_v$ & Parameter : controls anisotropic behavior in $\vec{V}$ direction\\ \hline
+$\vec{U}$ & Tangent Vector to $\vec{N}$\\ \hline
+$\vec{V}$ & Tangent Vector to $\vec{N}$, perpendicular to $\vec{U}$\\ \hline
+\end{tabular}
+\end{table}
 
 \framebreak
 \begin{center}
@@ -386,6 +449,23 @@ Gleichung \ref{eq:beckmann} wurde durch folgenden Substitution vereinfacht:
 \begin{frame}[allowframebreaks]
 \frametitle{Glas}
 %TODO
+\begin{itemize}
+\item beschrieben als Dirac Delta in einer BSDF
+\item simuliert durchsichtige Objekte
+\end{itemize}
+
+\begin{equation}
+L_o(x,\vec{\omega_o})= \delta \cdot L_i(x,\vec{\omega_r}) + (1-\delta) L_i(x,\vec{\omega_t})
+\end{equation}
+
+\begin{table}[H]
+\begin{tabular}{| c | l |}
+\hline
+$\delta$ & reflectivity of a dieletric\\ \hline
+$\vec{\omega_r}$ & reflected view direction\\ \hline
+$\vec{\omega_t}$ & transmitted view direction\\ \hline
+\end{tabular}
+\end{table}
 
 \framebreak
 \begin{center}
