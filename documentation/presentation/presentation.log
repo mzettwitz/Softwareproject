@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2015.3.23)  11 OCT 2015 17:39
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2015.3.23)  12 OCT 2015 09:39
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1575,11 +1575,11 @@ Package pdftex.def Info: ../blinnphongshinecomplete.png used on input line 266.
 
 (pdftex.def)             Requested size: 307.28987pt x 34.14113pt.
 
-<../greenbunny.png, id=420, 1027.84pt x 1027.84pt>
-File: ../greenbunny.png Graphic file (type png)
- <use ../greenbunny.png>
-Package pdftex.def Info: ../greenbunny.png used on input line 266.
-(pdftex.def)             Requested size: 1027.8375pt x 1027.8375pt.
+<./movie_splash.png, id=420, 1184.425pt x 869.2475pt>
+File: ./movie_splash.png Graphic file (type png)
+ <use ./movie_splash.png>
+Package pdftex.def Info: ./movie_splash.png used on input line 266.
+(pdftex.def)             Requested size: 1184.42212pt x 869.24538pt.
 \g__file_internal_ior=\read2
 <<../movies//lambert_phong_blinn.swf>>
 File: ./logo_inf_fak.png Graphic file (type png)
@@ -1603,27 +1603,31 @@ File: ./logo_inf_fak.png Graphic file (type png)
 <use ./logo_inf_fak.png>
 Package pdftex.def Info: ./logo_inf_fak.png used on input line 266.
 (pdftex.def)             Requested size: 142.26378pt x 23.50421pt.
- [15
+
+Overfull \vbox (18.0737pt too high) detected at line 266
+ []
+
+[15
 
 
- <../greenbunny.png>]
-<../ctroughcomplete.png, id=507, 2312.64pt x 192.72pt>
+ <./movie_splash.png>]
+<../ctroughcomplete.png, id=508, 2312.64pt x 192.72pt>
 File: ../ctroughcomplete.png Graphic file (type png)
 
 <use ../ctroughcomplete.png>
 Package pdftex.def Info: ../ctroughcomplete.png used on input line 347.
 (pdftex.def)             Requested size: 307.28987pt x 25.60732pt.
 
-<../ctfresnelcomplete.png, id=508, 1927.2pt x 192.72pt>
+<../ctfresnelcomplete.png, id=509, 1927.2pt x 192.72pt>
 File: ../ctfresnelcomplete.png Graphic file (type png)
 
 <use ../ctfresnelcomplete.png>
 Package pdftex.def Info: ../ctfresnelcomplete.png used on input line 347.
 (pdftex.def)             Requested size: 307.28987pt x 30.72702pt.
-File: ../greenbunny.png Graphic file (type png)
- <use ../greenbunny.png>
-Package pdftex.def Info: ../greenbunny.png used on input line 347.
-(pdftex.def)             Requested size: 1027.8375pt x 1027.8375pt.
+File: ./movie_splash.png Graphic file (type png)
+ <use ./movie_splash.png>
+Package pdftex.def Info: ./movie_splash.png used on input line 347.
+(pdftex.def)             Requested size: 1184.42212pt x 869.24538pt.
 <<../movies//cooktorrance.swf>>
 File: ./logo_inf_fak.png Graphic file (type png)
  <use ./logo_inf_fak.png>
@@ -1665,11 +1669,11 @@ Package pdftex.def Info: ./logo_inf_fak.png used on input line 347.
 
 
 ]
-File: ../greenbunny.png Graphic file (type png)
+File: ./movie_splash.png Graphic file (type png)
 
-<use ../greenbunny.png>
-Package pdftex.def Info: ../greenbunny.png used on input line 364.
-(pdftex.def)             Requested size: 1027.8375pt x 1027.8375pt.
+<use ./movie_splash.png>
+Package pdftex.def Info: ./movie_splash.png used on input line 364.
+(pdftex.def)             Requested size: 1184.42212pt x 869.24538pt.
 <<../movies//ward.swf>>
 File: ./logo_inf_fak.png Graphic file (type png)
  <use ./logo_inf_fak.png>
@@ -1687,10 +1691,10 @@ Package pdftex.def Info: ./logo_inf_fak.png used on input line 364.
 
 
 ]
-File: ../greenbunny.png Graphic file (type png)
- <use ../greenbunny.png>
-Package pdftex.def Info: ../greenbunny.png used on input line 381.
-(pdftex.def)             Requested size: 1027.8375pt x 1027.8375pt.
+File: ./movie_splash.png Graphic file (type png)
+ <use ./movie_splash.png>
+Package pdftex.def Info: ./movie_splash.png used on input line 381.
+(pdftex.def)             Requested size: 1184.42212pt x 869.24538pt.
 <<../movies//ashikhmin.swf>>
 File: ./logo_inf_fak.png Graphic file (type png)
  <use ./logo_inf_fak.png>
@@ -1707,11 +1711,11 @@ Package pdftex.def Info: ./logo_inf_fak.png used on input line 381.
 
 
 ]
-File: ../greenbunny.png Graphic file (type png)
+File: ./movie_splash.png Graphic file (type png)
 
-<use ../greenbunny.png>
-Package pdftex.def Info: ../greenbunny.png used on input line 398.
-(pdftex.def)             Requested size: 1027.8375pt x 1027.8375pt.
+<use ./movie_splash.png>
+Package pdftex.def Info: ./movie_splash.png used on input line 398.
+(pdftex.def)             Requested size: 1184.42212pt x 869.24538pt.
 <<../movies//glass.swf>>
 File: ./logo_inf_fak.png Graphic file (type png)
  <use ./logo_inf_fak.png>
@@ -1729,24 +1733,25 @@ Package pdftex.def Info: ./logo_inf_fak.png used on input line 398.
 
 
 ]
-<../blueplastic.png, id=825, 1027.84pt x 1027.84pt>
+<../blueplastic.png, id=826, 1027.84pt x 1027.84pt>
 File: ../blueplastic.png Graphic file (type png)
  <use ../blueplastic.png>
 Package pdftex.def Info: ../blueplastic.png used on input line 424.
 (pdftex.def)             Requested size: 184.3758pt x 184.37587pt.
 
-<../copperdragon.png, id=826, 1027.84pt x 1027.84pt>
+<../copperdragon.png, id=827, 1027.84pt x 1027.84pt>
 File: ../copperdragon.png Graphic file (type png)
  <use ../copperdragon.png>
 Package pdftex.def Info: ../copperdragon.png used on input line 424.
 (pdftex.def)             Requested size: 184.3758pt x 184.37587pt.
-File: ../greenbunny.png Graphic file (type png)
 
-<use ../greenbunny.png>
+<../greenbunny.png, id=828, 1027.84pt x 1027.84pt>
+File: ../greenbunny.png Graphic file (type png)
+ <use ../greenbunny.png>
 Package pdftex.def Info: ../greenbunny.png used on input line 424.
 (pdftex.def)             Requested size: 184.3758pt x 184.37587pt.
 
-<../madlabcomplete_light.png, id=827, 1027.84pt x 1027.84pt>
+<../madlabcomplete_light.png, id=829, 1027.84pt x 1027.84pt>
 File: ../madlabcomplete_light.png Graphic file (type png)
 
 <use ../madlabcomplete_light.png>
@@ -1775,23 +1780,23 @@ Package pdftex.def Info: ./logo_inf_fak.png used on input line 424.
  [29
 
 
-]
+ <../greenbunny.png>]
 File: ./logo_inf_fak.png Graphic file (type png)
  <use ./logo_inf_fak.png>
 Package pdftex.def Info: ./logo_inf_fak.png used on input line 424.
 (pdftex.def)             Requested size: 142.26378pt x 23.50421pt.
- [30
+
+[30
 
 
  <../madlabcomplete_light.png (PNG copy)>]
-File: ../greenbunny.png Graphic file (type png)
- <use ../greenbunny.png>
-Package pdftex.def Info: ../greenbunny.png used on input line 439.
-(pdftex.def)             Requested size: 1027.8375pt x 1027.8375pt.
+File: ./movie_splash.png Graphic file (type png)
+ <use ./movie_splash.png>
+Package pdftex.def Info: ./movie_splash.png used on input line 439.
+(pdftex.def)             Requested size: 1184.42212pt x 869.24538pt.
 <<../movies//mesh.swf>>
 File: ./logo_inf_fak.png Graphic file (type png)
-
-<use ./logo_inf_fak.png>
+ <use ./logo_inf_fak.png>
 Package pdftex.def Info: ./logo_inf_fak.png used on input line 439.
 (pdftex.def)             Requested size: 142.26378pt x 23.50421pt.
  [31
@@ -1821,10 +1826,10 @@ LaTeX Font Warning: Size substitutions with differences
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 442.
  ) 
 Here is how much of TeX's memory you used:
- 26201 strings out of 493304
- 511103 string characters out of 6139871
+ 26206 strings out of 493304
+ 511210 string characters out of 6139871
  572954 words of memory out of 5000000
- 28978 multiletter control sequences out of 15000+600000
+ 28982 multiletter control sequences out of 15000+600000
  22595 words of font info for 59 fonts, out of 8000000 for 9000
  957 hyphenation exceptions out of 8191
  50i,15n,53p,10403b,558s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -1843,10 +1848,10 @@ r/sfsi1000.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfsi1095.pfb></usr
 ype1/public/cm-super/sfss0800.pfb></usr/share/texmf/fonts/type1/public/cm-super
 /sfss1000.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfss1095.pfb></usr/
 share/texmf/fonts/type1/public/cm-super/sfss1440.pfb>
-Output written on presentation.pdf (31 pages, 151322120 bytes).
+Output written on presentation.pdf (31 pages, 151588493 bytes).
 PDF statistics:
- 1037 PDF objects out of 1200 (max. 8388607)
+ 1039 PDF objects out of 1200 (max. 8388607)
  939 compressed objects within 10 object streams
  77 named destinations out of 1000 (max. 500000)
- 398 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 403 words of extra memory for PDF output out of 10000 (max. 10000000)
 
