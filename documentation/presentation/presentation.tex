@@ -9,6 +9,9 @@
 \usepackage{amssymb}
 \usepackage{textpos}
 
+\usepackage{media9}
+\addmediapath{../movies/}
+
 % add logo to the sections
 \addtobeamertemplate{frametitle}{}{%
 \begin{textblock*}{100mm}(.6\textwidth,-1.2cm)
@@ -32,6 +35,7 @@
 \end{frame}
 
 \begin{frame}
+\frametitle{Inhalt} 
 \tableofcontents
 \end{frame}
 
@@ -251,6 +255,14 @@ $\cos\psi$ & angle between outgoing ray and half vector $\vec{H}$\\ \hline
 \caption{Parameter $s$ from $1$ to $1000$}
 \end{figure}
 
+\framebreak
+\begin{center}
+\includemedia[
+    activate=onclick,
+    width=0.6\textwidth
+]{\includegraphics{../greenbunny}}{lambert_phong_blinn.swf}
+\end{center}
+
 \end{frame}
 
 
@@ -324,6 +336,14 @@ Gleichung \ref{eq:beckmann} wurde durch folgenden Substitution vereinfacht:
 \caption{Parameter $\eta$ from $1.0$ to $10.0$}
 \end{figure}
 
+\framebreak
+\begin{center}
+\includemedia[
+    activate=onclick,
+    width=0.6\textwidth
+]{\includegraphics{../greenbunny}}{cooktorrance.swf}
+\end{center}
+
 \end{frame}
 
 
@@ -331,6 +351,15 @@ Gleichung \ref{eq:beckmann} wurde durch folgenden Substitution vereinfacht:
 \subsection{Ward}
 \begin{frame}[allowframebreaks]
 \frametitle{Ward}
+%TODO
+
+\framebreak
+\begin{center}
+\includemedia[
+    activate=onclick,
+    width=0.6\textwidth
+]{\includegraphics{../greenbunny}}{ward.swf}
+\end{center}
 
 \end{frame}
 
@@ -339,6 +368,15 @@ Gleichung \ref{eq:beckmann} wurde durch folgenden Substitution vereinfacht:
 \subsection{Ashikhmin Shirley}
 \begin{frame}[allowframebreaks]
 \frametitle{Ashikhmin Shirley}
+%TODO
+
+\framebreak
+\begin{center}
+\includemedia[
+    activate=onclick,
+    width=0.6\textwidth
+]{\includegraphics{../greenbunny}}{ashikhmin.swf}
+\end{center}
 
 \end{frame}
 
@@ -347,6 +385,15 @@ Gleichung \ref{eq:beckmann} wurde durch folgenden Substitution vereinfacht:
 \subsection{Glas}
 \begin{frame}[allowframebreaks]
 \frametitle{Glas}
+%TODO
+
+\framebreak
+\begin{center}
+\includemedia[
+    activate=onclick,
+    width=0.6\textwidth
+]{\includegraphics{../greenbunny}}{glass.swf}
+\end{center}
 
 \end{frame}
 
@@ -355,6 +402,24 @@ Gleichung \ref{eq:beckmann} wurde durch folgenden Substitution vereinfacht:
 \section{Ergebnisse}
 \begin{frame}[allowframebreaks]
 \frametitle{Ergebnisse}
+\begin{center}
+\includegraphics[width=0.6\linewidth]{../blueplastic}
+\end{center}
+
+\framebreak
+\begin{center}
+\includegraphics[width=0.6\linewidth]{../copperdragon}
+\end{center}
+
+\framebreak
+\begin{center}
+\includegraphics[width=0.6\linewidth]{../greenbunny}
+\end{center}
+
+\framebreak
+\begin{center}
+\includegraphics[width=0.6\linewidth]{../madlabcomplete_light}
+\end{center}
 
 \end{frame}
 
@@ -363,6 +428,13 @@ Gleichung \ref{eq:beckmann} wurde durch folgenden Substitution vereinfacht:
 \section{Demo}
 \begin{frame}[allowframebreaks]
 \frametitle{Demo}
+
+\begin{center}
+\includemedia[
+    activate=onclick,
+    width=0.6\textwidth
+]{\includegraphics{../greenbunny}}{mesh.swf}
+\end{center}
 
 \end{frame}
 
