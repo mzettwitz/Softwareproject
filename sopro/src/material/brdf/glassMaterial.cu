@@ -213,10 +213,7 @@ static __device__ void shade()
     {
         rtTrace(topObject,refractedRay,prd_refracted);
     }
-    result += ( r1 * prd_reflected.result + (1-r1) * prd_refracted.result) * make_float4(beer_attenuation,1.f);
-
-
-
+    result = ( r1 * prd_reflected.result + (1-r1) * prd_refracted.result) * make_float4(beer_attenuation,1.f);
 
     result.w = 1.0f;
 
