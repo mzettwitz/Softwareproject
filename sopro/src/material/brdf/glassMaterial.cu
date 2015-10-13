@@ -194,14 +194,16 @@ static __device__ void shade()
 
     PerRayData_radiance prd_reflected;
     prd_reflected.depth = prd_radiance.depth+1;
+    prd_reflected.result = make_float4(0,0,0,0);
     PerRayData_radiance prd_refracted;
+    prd_refracted.result = make_float4(0,0,0,0);
     prd_refracted.depth = prd_radiance.depth+1;
 
-    if(prd_reflected.depth < 10)
+    if(prd_reflected.depth < maxDepth)
     {
         rtTrace(topObject,reflectedRay,prd_reflected);
     }
-    if(prd_refracted.depth < 11)
+    if(prd_refracted.depth < maxDepth)
     {
         rtTrace(topObject,refractedRay,prd_refracted);
     }

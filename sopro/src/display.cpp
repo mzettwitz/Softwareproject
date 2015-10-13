@@ -291,32 +291,32 @@ void Display::keyPressed(unsigned char key, int x, int y)
     else
     {
         // w : upward
-        if(key == 'w')
+        if(key == 'w' && !locked)
         {
             cameraPosition += moveSpeed * normalize(cross(cameraRight,cameraDirection)) * deltaTime * 0.25f;
         }
         // s : downward
-        if(key == 's')
+        if(key == 's' && !locked)
         {
             cameraPosition -= moveSpeed * normalize(cross(cameraRight,cameraDirection)) * deltaTime * 0.25f;
         }
         // a : left
-        if(key == 'a')
+        if(key == 'a' && !locked)
         {
             cameraPosition -= moveSpeed * cameraRight * deltaTime * 0.25f;
         }
         // d : right
-        if(key == 'd')
+        if(key == 'd' && !locked)
         {
             cameraPosition += moveSpeed * cameraRight * deltaTime * 0.25f;
         }
         // e : zoom in
-        if(key == 'e')
+        if(key == 'e' && !locked)
         {
             cameraPosition += moveSpeed * cameraDirection * deltaTime * 0.25f;
         }
         // q : zoom out
-        if(key == 'q')
+        if(key == 'q' && !locked)
         {
             cameraPosition -= moveSpeed * cameraDirection * deltaTime * 0.25f;
         }
@@ -354,12 +354,12 @@ void Display::keyPressed(unsigned char key, int x, int y)
         // y : increase sceneEpsilon
         if(key == 'y')
         {
-            mScene->setSceneEpsilon(-0.1e-3f);
+            mScene->setSceneEpsilon(2.0f);
         }
         // x : decrease sceneEpsilon
         if(key == 'x')
         {
-            mScene->setSceneEpsilon(0.1e-3f);
+            mScene->setSceneEpsilon(0.5f);
         }
         // 5 - load mesh group from assets directory and programm file
         if(key == '5')
@@ -409,9 +409,9 @@ void Display::keyPressed(unsigned char key, int x, int y)
         {
             PointLight l;
             l.color = make_float3(1,1,1);
-            l.intensity = 1000.0f;
+            l.intensity = 255.0f;
             l.padding = 0;
-            l.position = cameraPosition + 10 * cameraDirection;
+            l.position = cameraPosition + make_float3(0,1,0);
             mScene->addLight(l);
             antTBarInit_light(mScene->getClassLight(mScene->getLightCount()-1),lightBar,mScene->getClassLight(mScene->getLightCount()-1)->name());
         }
@@ -436,17 +436,17 @@ void Display::keyPressed(unsigned char key, int x, int y)
             settings.push_back(cameraRight.z);
             settings.push_back(horizontalAngle);
             settings.push_back(verticalAngle);
-            settings.push_back(45.0f);
+            settings.push_back(initialFOV);
             settings.push_back(static_cast<float>(mWidth));
             settings.push_back(static_cast<float>(mHeight));
-            SceneLoader::saveScene("madScience",mScene,settings);
+            SceneLoader::saveScene("mad1",mScene,settings);
         }
         // load scene
         if(key == '1')
         {
 
             std::vector<float> settings;
-            SceneLoader::loadScene(mSource,mScene,settings);
+            SceneLoader::loadScene("madScience.ssf",mScene,settings);
             cameraPosition.x = settings.at(0);
             cameraPosition.y = settings.at(1);
             cameraPosition.z = settings.at(2);
@@ -458,9 +458,11 @@ void Display::keyPressed(unsigned char key, int x, int y)
             cameraRight.z = settings.at(8);
             horizontalAngle = settings.at(9);
             verticalAngle = settings.at(10);
+            initialFOV = settings.at(11);
             mWidth = settings.at(12);
             mHeight = settings.at(13);
-
+            resize(mWidth,mHeight);
+            mScene->setFOV(initialFOV);
             for(unsigned int i = 0;i < mScene->getSceneObjectCount();++i)
             {
                 antTBarInit_material(mScene->getSceneObject(i).get(),matBar,std::dynamic_pointer_cast<Mesh>(mScene->getSceneObject(i)->getGeometry())->objectname());
@@ -471,8 +473,8 @@ void Display::keyPressed(unsigned char key, int x, int y)
                 antTBarInit_light(mScene->getClassLight(i),lightBar,mScene->getClassLight(i)->name());
             }
         }
-        // lock/unlock
-        if(key == 'y')
+        // lock/unlock camera
+        if(key == 'c')
         {
             locked = !locked;
         }
@@ -511,6 +513,10 @@ void Display::mouseButton(int button, int state, int x, int y)
         {
             Display::mState = mouseState::MOVE;
         }
+        else if(state == GLUT_UP)
+        {
+            Display::mState = mouseState::IDLE;
+        }
     }
     else if(button == GLUT_RIGHT_BUTTON)
     {
@@ -518,6 +524,11 @@ void Display::mouseButton(int button, int state, int x, int y)
         {
             Display::mState = mouseState::ROTATE;
         }
+        else if(state == GLUT_UP)
+        {
+            Display::mState = mouseState::IDLE;
+        }
+
     }
     else if(button == GLUT_MIDDLE_BUTTON)
     {
@@ -525,6 +536,11 @@ void Display::mouseButton(int button, int state, int x, int y)
         {
             mState = mouseState::ZOOM;
         }
+        else if(state == GLUT_UP)
+        {
+            Display::mState = mouseState::IDLE;
+        }
+
     }
 }
 
@@ -553,12 +569,12 @@ void Display::mouseMotion(int x, int y)
     else if (mState == mouseState::MOVE && !locked)
     {
 
-        cameraPosition -= cameraRight * deltaTime * mouseSpeed * 2.0f * float(mWidth/2 -x);
-        cameraPosition += cross(cameraRight,cameraPosition) * deltaTime * mouseSpeed * 2.0f * float(mHeight/2 - y);
+        cameraPosition -= normalize(cameraRight) * deltaTime * mouseSpeed * 2.f * float(mWidth/2 -x);
+        cameraPosition -= normalize(cross(cameraRight,cameraPosition)) * deltaTime * mouseSpeed * 2.f * float(mHeight/2 - y);
     }
     else if(mState == mouseState::ZOOM)
     {
-        cameraPosition += cameraDirection * deltaTime * mouseSpeed * 10.0f * float(mHeight/2 - y);
+        cameraPosition += normalize(cameraDirection) * deltaTime * mouseSpeed * 5.0f * float(mHeight/2 - y);
     }
 
     oldx = x;
@@ -578,6 +594,7 @@ void Display::setInitialCamera(const Scene::Camera &camera)
 void Display::setFOV(float fov)
 {
     initialFOV = fov;
+    mScene->setFOV(initialFOV);
 }
 
 void Display::setSceneSource(const std::string &src)

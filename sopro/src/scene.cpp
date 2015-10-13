@@ -31,7 +31,7 @@ Scene::Scene()
     mContext["shadowRayType"]->setUint(1u);
     mContext["maxDepth"]->setUint(6u);
     mContext["sceneEpsilon"]->setFloat(1.5e-3f);
-    mContext->setStackSize(4096);
+    mContext->setStackSize(8192);
 
     //one group to rule them all
     mGroup = mContext->createGroup();
@@ -41,6 +41,8 @@ Scene::Scene()
     mSceneObjects = std::make_shared<std::vector<std::shared_ptr<SceneObject>>>();
     mLights = std::make_shared<std::vector<PointLight>>();
     mClassLights = std::make_shared<std::vector<std::shared_ptr<PointLightClass>>>();
+
+    mFOV = 45.0f;
 }
 
 Scene::~Scene()
@@ -55,7 +57,7 @@ void Scene::trace(const Scene::Camera &camera)
     float3 eye = mCamera.position;
     float3 lookat = mCamera.direction+mCamera.position;
     float3 up = make_float3(0,1,0);
-    float fov = 45.0f;
+    float fov = mFOV;
     float aspectRatio = float(mWidth)/float(mHeight);
     float3 u,v,w;
 
@@ -69,15 +71,6 @@ void Scene::trace(const Scene::Camera &camera)
     optix::Buffer buffer = mContext["outputBuffer"]->getBuffer();
     RTsize bufferWidth, bufferHeight;
     buffer->getSize(bufferWidth,bufferHeight);
-
-    if(mFrameNumber == 0u)
-    {
-        mContext["maxDepth"]->setUint(1u);
-    }
-    else
-    {
-        mContext["maxDepth"]->setUint(6u);
-    }
     std::cout << "Framenumber" << mFrameNumber << std::endl;
 
     mContext->launch(0,bufferWidth,bufferHeight);
@@ -154,7 +147,7 @@ void Scene::initScene(const Scene::Camera &camera,int width, int height)
     float3 eye = mCamera.position;
     float3 lookat = make_float3(0,0,0);
     float3 up = make_float3(0,1,0);
-    float fov = 60.0f;
+    float fov = mFOV;
     float aspectRatio = float(mWidth)/float(mHeight);
     float3 u,v,w;
 
@@ -393,14 +386,13 @@ void Scene::updateSceneObjects()
                 mGroup->getChild<Transform>(i)->getChild<GeometryGroup>()->getChild(0)->setMaterial(0,mSceneObjects->at(i)->getMaterial()->createMaterial(mContext));
 
             }
-
+            resetFrameNumber();
         }
         mSceneObjects->at(i)->updateGeometry();
 
         if(mSceneObjects->at(i)->isGeometryChanged())
         {
 
-            //TODO split into translation rotation scaling
                Transform t = mGroup->getChild<Transform>(i);
                float3 pos = mSceneObjects->at(i)->getGeometry()->position();
                float4 rot = mSceneObjects->at(i)->getGeometry()->rotation();
@@ -414,9 +406,9 @@ void Scene::updateSceneObjects()
                Matrix4x4 transM(tr);
 
                //rotate, using quaternions
-               float a = rot.z;
+               float a = rot.x;
                float b = rot.y;
-               float c = rot.x;
+               float c = -rot.z;
                float d = rot.w;
 
                const float r[16] =  { 1 - 2 * (c * c+ d* d),2*(b * c - a * d),      2*(b * d + a * c),      0,
@@ -512,7 +504,8 @@ void Scene::resizeBuffer(int width,int height)
 
 void Scene::setSceneEpsilon(float amount)
 {
-    mContext["sceneEpsilon"]->setFloat(amount + mContext["sceneEpsilon"]->getFloat());
+    mContext["sceneEpsilon"]->setFloat(amount * mContext["sceneEpsilon"]->getFloat());
+    std::cout << "SceneEpsilon: " << std::to_string(mContext["sceneEpsilon"]->getFloat()) << std::endl;
     resetFrameNumber();
 }
 
@@ -634,4 +627,9 @@ void Scene::resetFrameNumber()
 void Scene::addClassLight(std::shared_ptr<PointLightClass> l)
 {
     mClassLights->push_back(l);
+}
+
+void Scene::setFOV(float fov)
+{
+    mFOV = fov;
 }
