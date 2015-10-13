@@ -29,7 +29,7 @@ Scene::Scene()
     mContext->setEntryPointCount(1);
     mContext["radianceRayType"]->setUint(0u);
     mContext["shadowRayType"]->setUint(1u);
-    mContext["maxDepth"]->setUint(6u);
+    mContext["maxDepth"]->setUint(8u);
     mContext["sceneEpsilon"]->setFloat(1.5e-3f);
     mContext->setStackSize(8192);
 

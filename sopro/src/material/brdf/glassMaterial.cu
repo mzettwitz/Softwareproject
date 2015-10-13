@@ -126,13 +126,14 @@ static __device__ void shade()
     if(dot(D,N) <= 0)
     {
         R = reflect(D,N);
-        offset1 = hitPoint + sceneEpsilon * N;
+        offset1 = hitPoint + sceneEpsilon * normalize(N);
         refract(D,N,1,refractiveIdx,T);
-        offset2 = hitPoint - sceneEpsilon * N;
+        offset2 = hitPoint - sceneEpsilon * normalize(N);
         dotD = dot(-D,N);
 
         //add specular reflections
-
+        if(specularCoeff > 0.0f)
+        {
         for(unsigned int i = 0;i < lights.size();++i)
         {
             shadowPrd.attenuation = make_float3(1.0f);
@@ -155,7 +156,7 @@ static __device__ void shade()
             }
                     result += specularColor;
         }
-
+        }
 
     }
     //inside of object
@@ -165,22 +166,27 @@ static __device__ void shade()
         if(totalReflection)
         {
             dotD = dot(T,N);
-            offset2 = hitPoint + sceneEpsilon * N;
+            offset2 = hitPoint + sceneEpsilon * normalize(N);
+            offset1 = hitPoint - sceneEpsilon * normalize(N);
         }
         else
         {
-            R = reflect(D,-N);
-            offset1 = hitPoint - sceneEpsilon * N;
+            R = normalize(reflect(D,-N));
+            offset1 = hitPoint - sceneEpsilon * normalize(N);
 
             PerRayData_radiance prd_reflected;
             prd_reflected.depth = prd_radiance.depth+1;
-            Ray reflectedRay = make_Ray(hitPoint,R,radianceRayType,sceneEpsilon,10000.0f);
-            if(prd_reflected.depth < 10)
+            prd_reflected.result = make_float4(0,0,0,0);
+            Ray reflectedRay = make_Ray(offset1,R,radianceRayType,sceneEpsilon,10000.0f);
+            if(prd_reflected.depth < maxDepth)
             {
                 rtTrace(topObject,reflectedRay,prd_reflected);
                 result = prd_reflected.result;
             }
+            result *= make_float4(beer_attenuation,1.f);
+            result.w = 1.f;
             prd_radiance.result = result;
+
             return;
         }
     }
