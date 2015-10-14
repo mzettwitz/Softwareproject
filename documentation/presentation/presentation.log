@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2015.3.23)  13 OCT 2015 11:54
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2015.3.23)  14 OCT 2015 11:15
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1641,7 +1641,7 @@ File: ../warduvcomplete.png Graphic file (type png)
 
 <use ../warduvcomplete.png>
 Package pdftex.def Info: ../warduvcomplete.png used on input line 384.
-(pdftex.def)             Requested size: 216.15663pt x 216.16783pt.
+(pdftex.def)             Requested size: 172.92883pt x 172.93492pt.
 File: ./logo_inf_fak.png Graphic file (type png)
  <use ./logo_inf_fak.png>
 Package pdftex.def Info: ./logo_inf_fak.png used on input line 384.
@@ -1662,11 +1662,7 @@ File: ./logo_inf_fak.png Graphic file (type png)
  <use ./logo_inf_fak.png>
 Package pdftex.def Info: ./logo_inf_fak.png used on input line 384.
 (pdftex.def)             Requested size: 142.26378pt x 23.50421pt.
-
-Overfull \vbox (39.18077pt too high) detected at line 384
- []
-
-[21
+ [21
 
 
  <../warduvcomplete.png>] <../ashuvcomplete.png, id=654, 963.6pt x 963.6pt>
@@ -1855,7 +1851,7 @@ texmf/fonts/type1/public/cm-super/sfss0600.pfb></usr/share/texmf/fonts/type1/pu
 blic/cm-super/sfss0800.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfss10
 00.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfss1095.pfb></usr/share/t
 exmf/fonts/type1/public/cm-super/sfss1440.pfb>
-Output written on presentation.pdf (32 pages, 12570798 bytes).
+Output written on presentation.pdf (32 pages, 12570964 bytes).
 PDF statistics:
  1021 PDF objects out of 1200 (max. 8388607)
  924 compressed objects within 10 object streams

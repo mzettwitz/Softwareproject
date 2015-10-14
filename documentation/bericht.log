@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2015.3.23)  6 OCT 2015 15:00
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2015.3.23)  14 OCT 2015 11:22
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -564,58 +564,58 @@ Package pdftex.def Info: blinnphongshinecomplete.png used on input line 219.
 <ctroughcomplete.png, id=52, 2312.64pt x 192.72pt>
 File: ctroughcomplete.png Graphic file (type png)
  <use ctroughcomplete.png>
-Package pdftex.def Info: ctroughcomplete.png used on input line 276.
+Package pdftex.def Info: ctroughcomplete.png used on input line 275.
 (pdftex.def)             Requested size: 380.69788pt x 31.7239pt.
 
 <ctfresnelcomplete.png, id=53, 1927.2pt x 192.72pt>
 File: ctfresnelcomplete.png Graphic file (type png)
 
 <use ctfresnelcomplete.png>
-Package pdftex.def Info: ctfresnelcomplete.png used on input line 282.
+Package pdftex.def Info: ctfresnelcomplete.png used on input line 280.
 (pdftex.def)             Requested size: 380.69788pt x 38.06985pt.
  [9 <./ctroughcomplete.png> <./ctfresnelcomplete.png>] <warduvcomplete.png, id=
 61, 1156.32pt x 1156.32pt>
 File: warduvcomplete.png Graphic file (type png)
  <use warduvcomplete.png>
-Package pdftex.def Info: warduvcomplete.png used on input line 321.
+Package pdftex.def Info: warduvcomplete.png used on input line 319.
 (pdftex.def)             Requested size: 289.07928pt x 289.07928pt.
 
 [10 <./warduvcomplete.png>] <ashdiffcomplete.png, id=66, 2119.92pt x 192.72pt>
 File: ashdiffcomplete.png Graphic file (type png)
 
 <use ashdiffcomplete.png>
-Package pdftex.def Info: ashdiffcomplete.png used on input line 356.
+Package pdftex.def Info: ashdiffcomplete.png used on input line 354.
 (pdftex.def)             Requested size: 380.69788pt x 34.60869pt.
  <ashspeccomplete.png, id=67, 2119.92pt x 192.72pt>
 File: ashspeccomplete.png Graphic file (type png)
 
 <use ashspeccomplete.png>
-Package pdftex.def Info: ashspeccomplete.png used on input line 362.
+Package pdftex.def Info: ashspeccomplete.png used on input line 360.
 (pdftex.def)             Requested size: 380.69788pt x 34.60869pt.
  <ashuvcomplete.png, id=68, 963.6pt x 963.6pt>
 File: ashuvcomplete.png Graphic file (type png)
 
 <use ashuvcomplete.png>
-Package pdftex.def Info: ashuvcomplete.png used on input line 368.
+Package pdftex.def Info: ashuvcomplete.png used on input line 366.
 (pdftex.def)             Requested size: 380.69788pt x 380.6987pt.
  [11 <./ashdiffcomplete.png> <./ashspeccomplete.png>]
 [12 <./ashuvcomplete.png>] <glasscomplete.png, id=79, 2119.92pt x 192.72pt>
 File: glasscomplete.png Graphic file (type png)
 
 <use glasscomplete.png>
-Package pdftex.def Info: glasscomplete.png used on input line 411.
+Package pdftex.def Info: glasscomplete.png used on input line 409.
 (pdftex.def)             Requested size: 380.69788pt x 34.60869pt.
  [13 <./glasscomplete.png>]
 <cgcomparison.png, id=84, 770.88pt x 385.44pt>
 File: cgcomparison.png Graphic file (type png)
  <use cgcomparison.png>
-Package pdftex.def Info: cgcomparison.png used on input line 420.
+Package pdftex.def Info: cgcomparison.png used on input line 418.
 (pdftex.def)             Requested size: 380.69788pt x 190.34935pt.
 
 <results.png, id=85, 1541.76pt x 1541.76pt>
 File: results.png Graphic file (type png)
  <use results.png>
-Package pdftex.def Info: results.png used on input line 429.
+Package pdftex.def Info: results.png used on input line 427.
 (pdftex.def)             Requested size: 380.69788pt x 380.68694pt.
  [14 <./cgcomparison.png>] [15 <./results.png>] [16] (./bericht.bbl
 Underfull \hbox (badness 6252) in paragraph at lines 29--31
@@ -646,7 +646,7 @@ public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/a
 msfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfont
 s/cm/cmsy6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cm
 sy8.pfb>
-Output written on bericht.pdf (18 pages, 12551172 bytes).
+Output written on bericht.pdf (18 pages, 12551362 bytes).
 PDF statistics:
  144 PDF objects out of 1000 (max. 8388607)
  84 compressed objects within 1 object stream
