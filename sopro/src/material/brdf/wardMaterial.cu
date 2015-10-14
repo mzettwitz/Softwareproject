@@ -54,6 +54,7 @@ static __device__ void shade()
     float3 geometricWorldNormal = normalize(rtTransformNormal(RT_OBJECT_TO_WORLD,geometricNormal));
     float3 shadingWorldNormal = normalize(rtTransformNormal(RT_OBJECT_TO_WORLD,shadingNormal));
     float3 n = faceforward(shadingWorldNormal,-ray.direction,geometricWorldNormal);
+    n = normalize(n);
 
     float3 V = normalize(-ray.direction);
 
