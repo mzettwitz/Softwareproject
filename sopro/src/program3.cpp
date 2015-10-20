@@ -7,7 +7,7 @@ using namespace optix;
 
 int program3(int argc, char* argv[])
 {
-   /* SceneHandle shp3("Program 3");
+   /*SceneHandle shp3("Program 3");
 
     shp3.setSceneFile("testscene.ssf");
 
@@ -19,8 +19,8 @@ int program3(int argc, char* argv[])
     shp3.setInitialCamera(Scene::Camera(position,direction,right));
     shp3.run(argc,argv);*/
 
-   Display::init(argc,argv,"testscene.ssf");
-   Display::run("madScience",nullptr);
+   Display::init(argc,argv,"cornellBox.ssf");
+   Display::run("cornellBox",nullptr);
 
     return 0;
 }

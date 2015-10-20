@@ -167,10 +167,10 @@ void Scene::initScene(const Scene::Camera &camera,int width, int height)
 
 void Scene::updateScene(const Scene::Camera &camera)
 {
-    mContext["frameNumber"]->setUint(mFrameNumber);
     updateCamera(camera);
     updateSceneObjects();
     updateLights();
+    mContext["frameNumber"]->setUint(mFrameNumber);
     mFrameNumber++;
 
 }
@@ -262,6 +262,7 @@ void Scene::updateSceneObjects()
     {
         if(mSceneObjects->at(i)->isMaterialChanged())
         {
+                        resetFrameNumber();
             bool t = mSceneObjects->at(i)->getMaterial()->isTypeChanged();
             if(!t)
             {
@@ -386,7 +387,7 @@ void Scene::updateSceneObjects()
                 mGroup->getChild<Transform>(i)->getChild<GeometryGroup>()->getChild(0)->setMaterial(0,mSceneObjects->at(i)->getMaterial()->createMaterial(mContext));
 
             }
-            resetFrameNumber();
+
         }
         mSceneObjects->at(i)->updateGeometry();
 

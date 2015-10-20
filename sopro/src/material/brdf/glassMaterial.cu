@@ -29,6 +29,7 @@ rtDeclareVariable(float3, shadingNormal, attribute shadingNormal,);
 static __device__ void shadowed();
 static __device__ void shade();
 static __device__ bool refract(const float3 &ray_in, const float3 &normal, float n1, float n2,float3 &T);
+static __device__ __inline__ float3 exp( const float3& x );
 
 /*!
  * \brief Determines whether a shadow ray hits any object in the scene or not using \fn shadowed.
@@ -51,8 +52,13 @@ RT_PROGRAM void closesthit_radiance()
  */
 static __device__ void shadowed()
 {
-    prd_shadow.attenuation = make_float3(0.0f);
-    rtTerminateRay();
+    float3 worldNormal = normalize(rtTransformNormal(RT_OBJECT_TO_WORLD,shadingNormal));
+    float nDi = fabs(dot(worldNormal,ray.direction));
+
+    prd_shadow.attenuation *= 1-fresnel_schlick(nDi,5,0.1,1);
+    float3 logColor = make_float3(log(color.x),log(color.y),log(color.z));
+    prd_shadow.attenuation *= exp(logColor * 0.2f);
+    rtIgnoreIntersection();
 }
 
 /*!
@@ -213,7 +219,7 @@ static __device__ void shade()
     {
         rtTrace(topObject,refractedRay,prd_refracted);
     }
-    result = ( r1 * prd_reflected.result + (1-r1) * prd_refracted.result) * make_float4(beer_attenuation,1.f);
+    result += ( r1 * prd_reflected.result + (1-r1) * prd_refracted.result) * make_float4(beer_attenuation,1.f);
 
     result.w = 1.0f;
 

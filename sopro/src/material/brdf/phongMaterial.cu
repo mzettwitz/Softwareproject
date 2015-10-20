@@ -138,7 +138,7 @@ static __device__ void shade()
             fr = Kd + Ks * 0.04;
         }
 
-        irradiance += fr * fmaxf(dot(N,L),0) * radiance * lights[i].color;
+        irradiance += (fr * fmaxf(dot(N,L),0) * radiance * lights[i].color) * shadowPrd.attenuation;
     }
 
     float4 result = make_float4(irradiance,1);

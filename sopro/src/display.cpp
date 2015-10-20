@@ -324,8 +324,9 @@ void Display::keyPressed(unsigned char key, int x, int y)
         if(key == '+')
         {
 
+                        float3 pos = cameraPosition + 10.0f * normalize(cameraDirection);
             std::shared_ptr<LambertMaterial> l = std::make_shared<LambertMaterial>(make_float3(0.3f,0.5f,0.9f));
-            std::shared_ptr<Sphere> s = std::make_shared<Sphere>(make_float3(0.0f,0.0f,0.0f));
+            std::shared_ptr<Sphere> s = std::make_shared<Sphere>(pos);
             std::string name = "Sphere_" + std::to_string(mScene->getSceneObjectCount());
             std::shared_ptr<SceneObject> obj = std::make_shared<SceneObject>(name,s,l);
             mScene->addSceneObject(obj);
@@ -364,9 +365,11 @@ void Display::keyPressed(unsigned char key, int x, int y)
         // 5 - load mesh group from assets directory and programm file
         if(key == '5')
         {
-            std::shared_ptr<Mesh> m = std::make_shared<Mesh>("dragonBlender.obj",make_float3(0,0,0));
+            float3 pos = cameraPosition + 10.0f * normalize(cameraDirection);
+            std::shared_ptr<Mesh> m = std::make_shared<Mesh>("dragonBlender.obj",pos);
+            m->setScale(make_float3(0.25f,0.25f,0.25f));
             m->load();
-            std::shared_ptr<PhongMaterial> p = std::make_shared<PhongMaterial>(make_float3(1.0f,1.0f,1.0f),0.2f,0.6f,0.2f,5.2f,0.2f);
+            std::shared_ptr<PhongMaterial> p = std::make_shared<PhongMaterial>(make_float3(1.0f,1.0f,1.0f),0.2f,0.6f,0.2f,5.2f,0.0f);
             std::string name = "Mesh_" + std::to_string(mScene->getSceneObjectCount());
             std::shared_ptr<SceneObject> sc = std::make_shared<SceneObject>(name,m,p);
 
@@ -378,7 +381,7 @@ void Display::keyPressed(unsigned char key, int x, int y)
         if(key == '6')
         {
 
-            std::shared_ptr<MeshGroup> g = std::make_shared<MeshGroup>(mSource);
+            std::shared_ptr<MeshGroup> g = std::make_shared<MeshGroup>("cornellBox.obj");
             g->load();
             std::shared_ptr<LambertMaterial> m = std::make_shared<LambertMaterial>(make_float3(1,1,1));
             for(unsigned int i = 0;i < g->data()->size();++i)
@@ -394,15 +397,18 @@ void Display::keyPressed(unsigned char key, int x, int y)
         //new groudPlane, just a box, but modified to a 'plane'
         if(key == '9')
         {
-            std::shared_ptr<Mesh> groundPlane = std::make_shared<Mesh>("cube.obj",make_float3(0.0f,-2.0f,0.0f));
-            groundPlane->load();
-            groundPlane->setScale(make_float3(100.0f,1.0f,100.0f));
+             float3 pos = cameraPosition + 10.0f *normalize(cameraDirection);
+            std::shared_ptr<Mesh> c = std::make_shared<Mesh>("cube.obj",pos);
+            c->load();
+            c->setScale(make_float3(1.0f,1.0f,1.0f));
+                        std::string s = "cube_" + std::to_string(mScene->getSceneObjectCount());
             std::shared_ptr<LambertMaterial> p = std::make_shared<LambertMaterial>(make_float3(1.0f,1.0f,1.0f));
-            std::shared_ptr<SceneObject> sc = std::make_shared<SceneObject>("groundPlane",groundPlane,p);
+            std::shared_ptr<SceneObject> sc = std::make_shared<SceneObject>(s,c,p);
 
             mScene->addSceneObject(sc);
-            antTBarInit_material(sc.get(),matBar,"groundPlane");
-            antTBarInit_geometry(sc.get(),geomBar,"groundPlane");
+
+            antTBarInit_material(sc.get(),matBar,s);
+            antTBarInit_geometry(sc.get(),geomBar,s);
         }
         // add a pointlight
         if(key == 'l')
@@ -439,7 +445,7 @@ void Display::keyPressed(unsigned char key, int x, int y)
             settings.push_back(initialFOV);
             settings.push_back(static_cast<float>(mWidth));
             settings.push_back(static_cast<float>(mHeight));
-            SceneLoader::saveScene("mad1",mScene,settings);
+            SceneLoader::saveScene(mTitle,mScene,settings);
         }
         // load scene
         if(key == '1')
@@ -572,7 +578,7 @@ void Display::mouseMotion(int x, int y)
         cameraPosition -= normalize(cameraRight) * deltaTime * mouseSpeed * 2.f * float(mWidth/2 -x);
         cameraPosition -= normalize(cross(cameraRight,cameraPosition)) * deltaTime * mouseSpeed * 2.f * float(mHeight/2 - y);
     }
-    else if(mState == mouseState::ZOOM)
+    else if(mState == mouseState::ZOOM && !locked)
     {
         cameraPosition += normalize(cameraDirection) * deltaTime * mouseSpeed * 5.0f * float(mHeight/2 - y);
     }

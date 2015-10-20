@@ -67,7 +67,7 @@ public:
 protected:
     BaseGeometry(float3 pos, std::string intersect, std::string boundingbox,std::string path) :
         mPos(pos),mRot(make_float4(1,0,0,0)),mScale(make_float3(1,1,1)),
-        mIntersectionProgram(intersect),mBoundingBoxProgram(boundingbox),changed(false)
+        mIntersectionProgram(intersect),mBoundingBoxProgram(boundingbox),changed(true)
     {
         setPTXpath(path);
     }
