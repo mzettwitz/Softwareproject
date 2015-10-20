@@ -29,6 +29,7 @@ rtDeclareVariable(float3, shadingNormal, attribute shadingNormal,);
 static __device__ void shadowed();
 static __device__ void shade();
 static __device__ bool refract(const float3 &ray_in, const float3 &normal, float n1, float n2,float3 &T);
+static __device__ __inline__ float3 exp( const float3& x );
 
 /*!
  * \brief Determines whether a shadow ray hits any object in the scene or not using \fn shadowed.
@@ -51,8 +52,13 @@ RT_PROGRAM void closesthit_radiance()
  */
 static __device__ void shadowed()
 {
-    prd_shadow.attenuation = make_float3(0.0f);
-    rtTerminateRay();
+    float3 worldNormal = normalize(rtTransformNormal(RT_OBJECT_TO_WORLD,shadingNormal));
+    float nDi = fabs(dot(worldNormal,ray.direction));
+
+    prd_shadow.attenuation *= 1-fresnel_schlick(nDi,5,0.1,1);
+    float3 logColor = make_float3(log(color.x),log(color.y),log(color.z));
+    prd_shadow.attenuation *= exp(logColor * 0.2f);
+    rtIgnoreIntersection();
 }
 
 /*!
@@ -82,16 +88,6 @@ static __device__ void shadowed()
  *
  */
 
-static __device__ float powGPU(float x,float p)
-{
-    float r = 1;
-    while(p >= 1)
-    {
-        r *=x;
-        --p;
-    }
-    return r;
-}
 
 static __device__ __inline__ float3 exp( const float3& x )
 {
@@ -123,25 +119,27 @@ static __device__ void shade()
     bool totalReflection = false;
 
     float3 beer_attenuation;
-    float3 extinction = make_float3(log(color.x),log(color.y),log(color.z));
-    if(dot(N, ray.direction) > 0) {
+
+    if(dot(N, D) > 0) {
       // Beer's law attenuation
+            float3 extinction = make_float3(log(color.x),log(color.y),log(color.z));
       beer_attenuation = exp(extinction * intersectionDistance);
     } else {
       beer_attenuation = make_float3(1);
     }
     //Glass part
     //outside of object
-    if(dot(D,N) < 0)
+    if(dot(D,N) <= 0)
     {
         R = reflect(D,N);
-        offset1 = hitPoint + sceneEpsilon * N;
+        offset1 = hitPoint + sceneEpsilon * normalize(N);
         refract(D,N,1,refractiveIdx,T);
-        offset2 = hitPoint - sceneEpsilon * N;
+        offset2 = hitPoint - sceneEpsilon * normalize(N);
         dotD = dot(-D,N);
 
         //add specular reflections
-
+        if(specularCoeff > 0.0f)
+        {
         for(unsigned int i = 0;i < lights.size();++i)
         {
             shadowPrd.attenuation = make_float3(1.0f);
@@ -164,7 +162,7 @@ static __device__ void shade()
             }
                     result += specularColor;
         }
-
+        }
 
     }
     //inside of object
@@ -174,49 +172,54 @@ static __device__ void shade()
         if(totalReflection)
         {
             dotD = dot(T,N);
-            offset2 = hitPoint + sceneEpsilon * N;
+            offset2 = hitPoint + sceneEpsilon * normalize(N);
+            offset1 = hitPoint - sceneEpsilon * normalize(N);
         }
         else
         {
-            R = reflect(D,-N);
-            offset1 = hitPoint - sceneEpsilon * N;
+            R = normalize(reflect(D,-N));
+            offset1 = hitPoint - sceneEpsilon * normalize(N);
 
             PerRayData_radiance prd_reflected;
             prd_reflected.depth = prd_radiance.depth+1;
-            Ray reflectedRay = make_Ray(hitPoint,R,radianceRayType,sceneEpsilon,10000.0f);
-            if(prd_reflected.depth < 10)
+            prd_reflected.result = make_float4(0,0,0,0);
+            Ray reflectedRay = make_Ray(offset1,R,radianceRayType,sceneEpsilon,10000.0f);
+            if(prd_reflected.depth < maxDepth)
             {
                 rtTrace(topObject,reflectedRay,prd_reflected);
                 result = prd_reflected.result;
             }
+            result *= make_float4(beer_attenuation,1.f);
+            result.w = 1.f;
             prd_radiance.result = result;
+
             return;
         }
     }
 
-    float r0 = ((1.f-refractiveIdx)*(1.f-refractiveIdx))/((1.f+refractiveIdx)*(1.f+refractiveIdx));
-    float r1 = r0 + (1.f-r0) * powGPU(1.f-dotD,5.f);
+    float r0 = (1.f-refractiveIdx)/(1.f+refractiveIdx);
+    r0 *= r0;
+    float r1 = r0 + (1.f-r0) * (1.f-dotD)* (1.f-dotD)* (1.f-dotD)* (1.f-dotD)* (1.f-dotD);
 
     Ray reflectedRay = make_Ray(offset1,R,radianceRayType,sceneEpsilon,10000.0f);
     Ray refractedRay = make_Ray(offset2,T,radianceRayType,sceneEpsilon,10000.0f);
 
     PerRayData_radiance prd_reflected;
     prd_reflected.depth = prd_radiance.depth+1;
+    prd_reflected.result = make_float4(0,0,0,0);
     PerRayData_radiance prd_refracted;
+    prd_refracted.result = make_float4(0,0,0,0);
     prd_refracted.depth = prd_radiance.depth+1;
 
-    if(prd_reflected.depth < 10)
+    if(prd_reflected.depth < maxDepth)
     {
         rtTrace(topObject,reflectedRay,prd_reflected);
     }
-    if(prd_refracted.depth < 11)
+    if(prd_refracted.depth < maxDepth)
     {
         rtTrace(topObject,refractedRay,prd_refracted);
     }
     result += ( r1 * prd_reflected.result + (1-r1) * prd_refracted.result) * make_float4(beer_attenuation,1.f);
-
-
-
 
     result.w = 1.0f;
 
@@ -238,7 +241,7 @@ static __device__ void shade()
  */
 static __device__ bool refract(const float3 &D, const float3 &N, float n1, float n2,float3 &T)
 {
-    float d = (1 - ((powGPU(n1,2) * (1- powGPU(dot(D,N),2))) / powGPU(n2,2)));
+    float d = (1 - ((n1*n1 * (1- dot(D,N)*dot(D,N))) / (n2*n2)));
     if(d >= 0)
     {
         T = D - N * dot(D,N) * (n1/n2) - N * sqrt(d);

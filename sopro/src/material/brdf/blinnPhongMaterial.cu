@@ -131,13 +131,13 @@ static __device__ void shade()
             float3 H = (V + L) / length(V+L);
             H = normalize(H);
             // lightcolor * coeff * normalized shininess * (positive)angle between normak and halfvector ^ shininess * lightintensity at hitpoint
-            Ks = make_float3(specularCoefficient * ((shininess + 2.f)/(2.f*M_PIf)) *
+            Ks = make_float3(specularCoefficient * ((shininess + 2.f)*(shininess + 4.f))/(8.f*M_PIf*(pow(2.f,-(shininess/2.f))+2)) *
                     pow(fmaxf(dot(N,H),0.f), shininess));
 
             fr += Kd + Ks;
         }
 
-        irradiance += fr * fmaxf(dot(N,L),0) * radiance * lights[i].color;
+        irradiance += (fr * fmaxf(dot(N,L),0) * radiance * lights[i].color) * shadowPrd.attenuation;
     }
 
     float4 result = make_float4(irradiance,1);

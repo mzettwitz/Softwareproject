@@ -26,6 +26,7 @@ private:
     static float                deltaTime;
     static int                  mState;
     static bool                 loaded;
+    static bool                 locked;
 
     enum mouseState
     {
@@ -51,6 +52,9 @@ private:
     static void                 mouseButton(int button, int mState, int x, int y);
     static void                 mouseMotion(int x, int y);
     static void                 resize(int width, int height);
+    static void                 moveX(float speed);
+    static void                 moveY(float speed);
+    static void                 moveZ(float speed);
 
 
 };

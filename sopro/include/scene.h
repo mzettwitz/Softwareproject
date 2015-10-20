@@ -35,6 +35,7 @@ private:
     unsigned int                    mHeight;
     Camera                          mCamera;
     unsigned int                    mFrameNumber;
+    float                           mFOV;
 
 public:
     Scene();
@@ -64,6 +65,7 @@ public:
     void                            resizeBuffer(int width, int height);
     void                            setSceneEpsilon(float amount);
     void                            passFrameNumber(bool &changed);
+    void                            setFOV(float fov);
 
 private:
     void                            updateScene(const Scene::Camera &camera);
