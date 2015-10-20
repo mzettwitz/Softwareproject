@@ -279,7 +279,6 @@ bool SceneLoader::saveScene(const std::string &filename, std::shared_ptr<Scene> 
     float3 scale = make_float3(0,0,0);
     fprintf(file,"#objects\n");
 
-    //sort objects
 
     for(unsigned int i = 0;i < scene->getSceneObjectCount();++i)
     {

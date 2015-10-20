@@ -33,6 +33,7 @@ float               Display::deltaTime = 0.0f;
 int                 Display::mState = Display::mouseState::IDLE;
 bool                Display::cameraChanged = false;
 bool                Display::loaded = false;
+bool                Display::locked = false;
 // Declare ATB
 TwBar *matBar;
 TwBar *geomBar;
@@ -290,32 +291,32 @@ void Display::keyPressed(unsigned char key, int x, int y)
     else
     {
         // w : upward
-        if(key == 'w')
+        if(key == 'w' && !locked)
         {
             cameraPosition += moveSpeed * normalize(cross(cameraRight,cameraDirection)) * deltaTime * 0.25f;
         }
         // s : downward
-        if(key == 's')
+        if(key == 's' && !locked)
         {
             cameraPosition -= moveSpeed * normalize(cross(cameraRight,cameraDirection)) * deltaTime * 0.25f;
         }
         // a : left
-        if(key == 'a')
+        if(key == 'a' && !locked)
         {
             cameraPosition -= moveSpeed * cameraRight * deltaTime * 0.25f;
         }
         // d : right
-        if(key == 'd')
+        if(key == 'd' && !locked)
         {
             cameraPosition += moveSpeed * cameraRight * deltaTime * 0.25f;
         }
         // e : zoom in
-        if(key == 'e')
+        if(key == 'e' && !locked)
         {
             cameraPosition += moveSpeed * cameraDirection * deltaTime * 0.25f;
         }
         // q : zoom out
-        if(key == 'q')
+        if(key == 'q' && !locked)
         {
             cameraPosition -= moveSpeed * cameraDirection * deltaTime * 0.25f;
         }
@@ -323,8 +324,9 @@ void Display::keyPressed(unsigned char key, int x, int y)
         if(key == '+')
         {
 
+                        float3 pos = cameraPosition + 10.0f * normalize(cameraDirection);
             std::shared_ptr<LambertMaterial> l = std::make_shared<LambertMaterial>(make_float3(0.3f,0.5f,0.9f));
-            std::shared_ptr<Sphere> s = std::make_shared<Sphere>(make_float3(0.0f,0.0f,0.0f));
+            std::shared_ptr<Sphere> s = std::make_shared<Sphere>(pos);
             std::string name = "Sphere_" + std::to_string(mScene->getSceneObjectCount());
             std::shared_ptr<SceneObject> obj = std::make_shared<SceneObject>(name,s,l);
             mScene->addSceneObject(obj);
@@ -350,22 +352,24 @@ void Display::keyPressed(unsigned char key, int x, int y)
 
             }
         }
-        // y : set increase sceneEpsilon
+        // y : increase sceneEpsilon
         if(key == 'y')
         {
-            mScene->setSceneEpsilon(-0.1e-3f);
+            mScene->setSceneEpsilon(2.0f);
         }
-        // x : set decrease sceneEpsilon
+        // x : decrease sceneEpsilon
         if(key == 'x')
         {
-            mScene->setSceneEpsilon(0.1e-3f);
+            mScene->setSceneEpsilon(0.5f);
         }
         // 5 - load mesh group from assets directory and programm file
         if(key == '5')
         {
-            std::shared_ptr<Mesh> m = std::make_shared<Mesh>("dragonBlender.obj",make_float3(0,0,0));
+            float3 pos = cameraPosition + 10.0f * normalize(cameraDirection);
+            std::shared_ptr<Mesh> m = std::make_shared<Mesh>("dragonBlender.obj",pos);
+            m->setScale(make_float3(0.25f,0.25f,0.25f));
             m->load();
-            std::shared_ptr<PhongMaterial> p = std::make_shared<PhongMaterial>(make_float3(1.0f,1.0f,1.0f),0.2f,0.6f,0.2f,5.2f,0.2f);
+            std::shared_ptr<PhongMaterial> p = std::make_shared<PhongMaterial>(make_float3(1.0f,1.0f,1.0f),0.2f,0.6f,0.2f,5.2f,0.0f);
             std::string name = "Mesh_" + std::to_string(mScene->getSceneObjectCount());
             std::shared_ptr<SceneObject> sc = std::make_shared<SceneObject>(name,m,p);
 
@@ -377,7 +381,7 @@ void Display::keyPressed(unsigned char key, int x, int y)
         if(key == '6')
         {
 
-            std::shared_ptr<MeshGroup> g = std::make_shared<MeshGroup>(mSource);
+            std::shared_ptr<MeshGroup> g = std::make_shared<MeshGroup>("cornellBox.obj");
             g->load();
             std::shared_ptr<LambertMaterial> m = std::make_shared<LambertMaterial>(make_float3(1,1,1));
             for(unsigned int i = 0;i < g->data()->size();++i)
@@ -393,28 +397,31 @@ void Display::keyPressed(unsigned char key, int x, int y)
         //new groudPlane, just a box, but modified to a 'plane'
         if(key == '9')
         {
-            std::shared_ptr<Mesh> groundPlane = std::make_shared<Mesh>("cube.obj",make_float3(0.0f,-2.0f,0.0f));
-            groundPlane->load();
-            groundPlane->setScale(make_float3(100.0f,0.2f,100.0f));
+             float3 pos = cameraPosition + 10.0f *normalize(cameraDirection);
+            std::shared_ptr<Mesh> c = std::make_shared<Mesh>("cube.obj",pos);
+            c->load();
+            c->setScale(make_float3(1.0f,1.0f,1.0f));
+                        std::string s = "cube_" + std::to_string(mScene->getSceneObjectCount());
             std::shared_ptr<LambertMaterial> p = std::make_shared<LambertMaterial>(make_float3(1.0f,1.0f,1.0f));
-            std::shared_ptr<SceneObject> sc = std::make_shared<SceneObject>("groundPlane",groundPlane,p);
+            std::shared_ptr<SceneObject> sc = std::make_shared<SceneObject>(s,c,p);
 
             mScene->addSceneObject(sc);
-            antTBarInit_material(sc.get(),matBar,"groundPlane");
-            antTBarInit_geometry(sc.get(),geomBar,"groundPlane");
+
+            antTBarInit_material(sc.get(),matBar,s);
+            antTBarInit_geometry(sc.get(),geomBar,s);
         }
         // add a pointlight
         if(key == 'l')
         {
             PointLight l;
             l.color = make_float3(1,1,1);
-            l.intensity = 1000.0f;
+            l.intensity = 255.0f;
             l.padding = 0;
-            l.position = cameraPosition + 10 * cameraDirection;
+            l.position = cameraPosition + make_float3(0,1,0);
             mScene->addLight(l);
             antTBarInit_light(mScene->getClassLight(mScene->getLightCount()-1),lightBar,mScene->getClassLight(mScene->getLightCount()-1)->name());
         }
-        // a pointlight
+        // delete a pointlight
         if(key == 'o')
         {
             antTBarRemoveVariable_light(lightBar,mScene->getClassLight(mScene->getLightCount()-1)->name());
@@ -435,17 +442,17 @@ void Display::keyPressed(unsigned char key, int x, int y)
             settings.push_back(cameraRight.z);
             settings.push_back(horizontalAngle);
             settings.push_back(verticalAngle);
-            settings.push_back(45.0f);
+            settings.push_back(initialFOV);
             settings.push_back(static_cast<float>(mWidth));
             settings.push_back(static_cast<float>(mHeight));
-            SceneLoader::saveScene("madScience",mScene,settings);
+            SceneLoader::saveScene(mTitle,mScene,settings);
         }
         // load scene
         if(key == '1')
         {
 
             std::vector<float> settings;
-            SceneLoader::loadScene(mSource,mScene,settings);
+            SceneLoader::loadScene("madScience.ssf",mScene,settings);
             cameraPosition.x = settings.at(0);
             cameraPosition.y = settings.at(1);
             cameraPosition.z = settings.at(2);
@@ -457,9 +464,11 @@ void Display::keyPressed(unsigned char key, int x, int y)
             cameraRight.z = settings.at(8);
             horizontalAngle = settings.at(9);
             verticalAngle = settings.at(10);
+            initialFOV = settings.at(11);
             mWidth = settings.at(12);
             mHeight = settings.at(13);
-
+            resize(mWidth,mHeight);
+            mScene->setFOV(initialFOV);
             for(unsigned int i = 0;i < mScene->getSceneObjectCount();++i)
             {
                 antTBarInit_material(mScene->getSceneObject(i).get(),matBar,std::dynamic_pointer_cast<Mesh>(mScene->getSceneObject(i)->getGeometry())->objectname());
@@ -469,6 +478,11 @@ void Display::keyPressed(unsigned char key, int x, int y)
             {
                 antTBarInit_light(mScene->getClassLight(i),lightBar,mScene->getClassLight(i)->name());
             }
+        }
+        // lock/unlock camera
+        if(key == 'c')
+        {
+            locked = !locked;
         }
     }
     cameraChanged = true;
@@ -505,6 +519,10 @@ void Display::mouseButton(int button, int state, int x, int y)
         {
             Display::mState = mouseState::MOVE;
         }
+        else if(state == GLUT_UP)
+        {
+            Display::mState = mouseState::IDLE;
+        }
     }
     else if(button == GLUT_RIGHT_BUTTON)
     {
@@ -512,6 +530,11 @@ void Display::mouseButton(int button, int state, int x, int y)
         {
             Display::mState = mouseState::ROTATE;
         }
+        else if(state == GLUT_UP)
+        {
+            Display::mState = mouseState::IDLE;
+        }
+
     }
     else if(button == GLUT_MIDDLE_BUTTON)
     {
@@ -519,6 +542,11 @@ void Display::mouseButton(int button, int state, int x, int y)
         {
             mState = mouseState::ZOOM;
         }
+        else if(state == GLUT_UP)
+        {
+            Display::mState = mouseState::IDLE;
+        }
+
     }
 }
 
@@ -535,7 +563,7 @@ void Display::mouseMotion(int x, int y)
 
     }
     // else set camera
-    else if(mState ==  mouseState::ROTATE)
+    else if(mState ==  mouseState::ROTATE && !locked)
     {
 
         horizontalAngle += mouseSpeed *  deltaTime * float(mWidth/2 - x) * 0.2f;
@@ -544,14 +572,15 @@ void Display::mouseMotion(int x, int y)
         cameraDirection = make_float3(cos(verticalAngle) * sin(horizontalAngle),sin(verticalAngle),cos(verticalAngle) * cos(horizontalAngle));
         cameraRight = make_float3(sin(horizontalAngle - 3.14f/2.0f),0,cos(horizontalAngle - 3.14f/2.0f));
     }
-    else if (mState == mouseState::MOVE)
+    else if (mState == mouseState::MOVE && !locked)
     {
-        cameraPosition -= cameraRight * deltaTime * mouseSpeed * 5.0f * float(mWidth/2 - x);
-        cameraPosition += cross(cameraRight,cameraDirection) * deltaTime * mouseSpeed * 5.0f * float(mHeight/2 - y);
+
+        cameraPosition -= normalize(cameraRight) * deltaTime * mouseSpeed * 2.f * float(mWidth/2 -x);
+        cameraPosition -= normalize(cross(cameraRight,cameraPosition)) * deltaTime * mouseSpeed * 2.f * float(mHeight/2 - y);
     }
-    else if(mState == mouseState::ZOOM)
+    else if(mState == mouseState::ZOOM && !locked)
     {
-        cameraPosition += cameraDirection * deltaTime * mouseSpeed * 10.0f * float(mHeight/2 -y);
+        cameraPosition += normalize(cameraDirection) * deltaTime * mouseSpeed * 5.0f * float(mHeight/2 - y);
     }
 
     oldx = x;
@@ -571,6 +600,7 @@ void Display::setInitialCamera(const Scene::Camera &camera)
 void Display::setFOV(float fov)
 {
     initialFOV = fov;
+    mScene->setFOV(initialFOV);
 }
 
 void Display::setSceneSource(const std::string &src)

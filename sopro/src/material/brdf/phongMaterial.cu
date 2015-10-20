@@ -135,10 +135,10 @@ static __device__ void shade()
             Ks = make_float3(specularCoefficient * ((shininess + 2.f)/(2.f*M_PIf)) *
                     pow(fmaxf(dot(ray.direction, R),0.f), shininess));
 
-            fr = Kd + Ks;
+            fr = Kd + Ks * 0.04;
         }
 
-        irradiance += fr * fmaxf(dot(N,L),0) * radiance * lights[i].color;
+        irradiance += (fr * fmaxf(dot(N,L),0) * radiance * lights[i].color) * shadowPrd.attenuation;
     }
 
     float4 result = make_float4(irradiance,1);

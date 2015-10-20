@@ -86,43 +86,44 @@ static __device__ void shade()
         Ray shadowRay = make_Ray(hitPoint,L,shadowRayType,sceneEpsilon,maxLambda);
         rtTrace(topShadower,shadowRay,shadowPrd);
 
-        //F fresnel term
         if(fmaxf(shadowPrd.attenuation) > 0.0f)
         {
-        F = pow((1 + dot(V,N)),fresnelFactor);
+            //F fresnel term
+            float n = fresnelFactor;
+            float F0 = (1-n)/(1+n);
+            F0 *= F0;
 
-        //G geometric attenuation
+            F= F0 + (1-F0) * (1-dot(L,H))* (1-dot(L,H))* (1-dot(L,H))* (1-dot(L,H))* (1-dot(L,H));
 
-        // TODO:  add specific geometric term
+            //G geometric attenuation, Torrance Sparrow geometric term
+            float HdotN = dot(H,N);
+            float VdotN = dot(V,N);
+            float VdotH = dot(V,H);
+            float LdotN = dot(L,N);
 
-        float HdotN = dot(H,N);
-        float VdotN = dot(V,N);
-        float VdotH = dot(V,H);
-        float LdotN = dot(L,N);
+            float g1 = (2 * HdotN * VdotN)/VdotH;
+            float g2 = (2 * HdotN * LdotN)/VdotH;
 
-        float g1 = (2 * HdotN * VdotN)/VdotH;
-        float g2 = (2 * HdotN * LdotN)/VdotH;
+            G = fminf(1,fminf(g1,g2));
 
-        G = fminf(1,fminf(g1,g2));
+            //D Beckmann distribution
 
-        //D Beckmann distribution
+            float alpha = acos(HdotN);
+            float cosSqalpha = cos(alpha) * cos(alpha);
 
-        float alpha = acos(HdotN);
-        float cosSqalpha = cos(alpha) * cos(alpha);
-
-        float d1 = (1-cosSqalpha)/(cosSqalpha* roughness * roughness);
+            float d1 = (1-cosSqalpha)/(cosSqalpha* roughness * roughness);
 
 
-        D = exp(-d1)/(M_PIf * roughness * roughness * cosSqalpha*cosSqalpha);
+            D = exp(-d1)/(M_PIf * roughness * roughness * cosSqalpha*cosSqalpha);
 
-        Ks = (D * F * G)/(4 * VdotN * LdotN) * color * specularCoefficient;
+            Ks = make_float3((D * F * G)/(4 * VdotN * LdotN) * specularCoefficient);
 
-        Kd = color * diffuseCoefficient / M_PI;
+            Kd = color * diffuseCoefficient / M_PI;
 
-        fr += Kd + Ks;
+            fr += Kd + Ks;
         }
 
-        irradiance += fr * fmaxf(dot(N,L),0) * radiance * lights[i].color;
+        irradiance += (fr * fmaxf(dot(N,L),0) * radiance * lights[i].color) * shadowPrd.attenuation;
 
     }
 

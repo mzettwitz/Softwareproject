@@ -1,0 +1,15 @@
+\beamer@endinputifotherversion {3.24pt}
+\select@language {german}
+\beamer@sectionintoc {1}{Wer sind wir?}{3}{0}{1}
+\beamer@sectionintoc {2}{Ziel des Projekts}{4}{0}{2}
+\beamer@sectionintoc {3}{Rendering Equation}{5}{0}{3}
+\beamer@sectionintoc {4}{BRDFs}{8}{0}{4}
+\beamer@subsectionintoc {4}{1}{Lambert}{9}{0}{4}
+\beamer@subsectionintoc {4}{2}{Phong}{10}{0}{4}
+\beamer@subsectionintoc {4}{3}{Blinn Phong}{13}{0}{4}
+\beamer@subsectionintoc {4}{4}{Cook Torrance}{15}{0}{4}
+\beamer@subsectionintoc {4}{5}{Ward}{19}{0}{4}
+\beamer@subsectionintoc {4}{6}{Ashikhmin Shirley}{22}{0}{4}
+\beamer@subsectionintoc {4}{7}{Glas}{26}{0}{4}
+\beamer@sectionintoc {5}{Ergebnisse}{28}{0}{5}
+\beamer@sectionintoc {6}{Demo}{32}{0}{6}
