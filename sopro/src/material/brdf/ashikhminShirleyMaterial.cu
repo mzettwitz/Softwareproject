@@ -54,6 +54,7 @@ static __device__ void shade()
     float3 geometricWorldNormal = normalize(rtTransformNormal(RT_OBJECT_TO_WORLD,geometricNormal));
     float3 shadingWorldNormal = normalize(rtTransformNormal(RT_OBJECT_TO_WORLD,shadingNormal));
     float3 n = faceforward(shadingWorldNormal,-ray.direction,geometricWorldNormal);
+    n = normalize(n);
 
     float3 V = normalize(-ray.direction);
 
@@ -81,7 +82,7 @@ static __device__ void shade()
         float radiance = lights[i].intensity / (maxLambda * maxLambda);
 
         // offset
-        hitPoint += n * sceneEpsilon;
+        hitPoint += (n * sceneEpsilon);
 
         Ray shadowRay = make_Ray(hitPoint,L,shadowRayType,sceneEpsilon,maxLambda);
         rtTrace(topShadower,shadowRay,shadowPrd);
@@ -97,10 +98,10 @@ static __device__ void shade()
             float LdotH = dot(L,h);
 
             // diffuse term pd
-            float pd = ((28*rd)/(23*M_PIf))*(1.f-rs) * (1.f-powf(1.f-LdotN/2,5))*(1.f-powf(1.f-VdotN/2,5));
+            float pd = ((28.f*rd)/(23.f*M_PIf))*(1.f-rs) * (1.f-powf(1.f-LdotN/2.f,5.f)) * (1.f-powf(1.f-VdotN/2.f,5.f));
 
             // Fresnel term F by Schlick's approximation
-            float F = rs + (1.f - rs)*(powf((1.f-LdotH),5));
+            float F = rs + (1.f - rs)*(powf(1.f-LdotH,5.f));
 
             // base vectors
             float3 u = orthoVector(n);
@@ -113,7 +114,7 @@ static __device__ void shade()
             float HdotN = dot(h,n);
 
             // specular term ps
-            float ps1 = sqrtf((nU+1.f)*(nV+1.f))/(8*M_PIf);
+            float ps1 = sqrtf((nU + 1.f) * (nV + 1.f)) / (8.f * M_PIf);
             float ps2 = powf(HdotN, (nU * HdotU * HdotU + nV * HdotV * HdotV)/(1.f - HdotN * HdotN));
             float ps3 = LdotH * fmaxf(LdotN, VdotN);
 
@@ -123,7 +124,7 @@ static __device__ void shade()
             fr = color * pd + ps;
         }
 
-        irradiance += fr * fmaxf(dot(n,L),0) * radiance * lights[i].color;
+        irradiance += (fr * fmaxf(dot(n,L),0) * radiance * lights[i].color) * shadowPrd.attenuation;
     }
 
     float4 result = make_float4(irradiance,1);

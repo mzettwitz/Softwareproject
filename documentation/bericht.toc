@@ -1,0 +1,15 @@
+\contentsline {section}{\numberline {1}Introduction}{2}
+\contentsline {section}{\numberline {2}System}{3}
+\contentsline {section}{\numberline {3}Managing the project}{4}
+\contentsline {section}{\numberline {4}The Rendering Equation}{5}
+\contentsline {section}{\numberline {5}BRDFs}{6}
+\contentsline {subsection}{\numberline {5.1}Lambert}{6}
+\contentsline {subsection}{\numberline {5.2}Phong}{7}
+\contentsline {subsection}{\numberline {5.3}Blinn Phong}{8}
+\contentsline {subsection}{\numberline {5.4}Cook Torrance}{9}
+\contentsline {subsection}{\numberline {5.5}Ward}{10}
+\contentsline {subsection}{\numberline {5.6}Ashikhmin Shirley}{11}
+\contentsline {subsection}{\numberline {5.7}Glass}{13}
+\contentsline {section}{\numberline {6}Results}{14}
+\contentsline {section}{\numberline {7}Future Work}{16}
+\contentsline {section}{References}{17}

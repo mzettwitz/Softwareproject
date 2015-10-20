@@ -123,7 +123,7 @@ static __device__ void shade()
             fr += Kd + Ks;
         }
 
-        irradiance += fr * fmaxf(dot(N,L),0) * radiance * lights[i].color;
+        irradiance += (fr * fmaxf(dot(N,L),0) * radiance * lights[i].color) * shadowPrd.attenuation;
 
     }
 

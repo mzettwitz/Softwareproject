@@ -22,7 +22,6 @@ rtDeclareVariable(float3, shadingNormal, attribute shadingNormal,);
 
 static __device__ void shadowed();
 static __device__ void shade();
-static __device__ void simpleShade();
 
 RT_PROGRAM void anyhit_shadow()
 {
@@ -105,7 +104,7 @@ static __device__ void shade()
             fr = color / M_PIf;
         }
 
-        irradiance += fmaxf(dot(N,L),0) * fr * lights[i].color * radiance;
+        irradiance += (fmaxf(dot(N,L),0) * fr * lights[i].color * radiance) *shadowPrd.attenuation;
 
     }
     result = make_float4(irradiance,1);
