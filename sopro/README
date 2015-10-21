@@ -1,0 +1,26 @@
+- system: Ubuntu 14.04.3 LTS
+- compiler: clang 3.4
+- NVidia CUDA 7.0
+- NVidia Optix 3.8.0
+- AntTweakBar lib
+
+- write a cmake-find-file(or use ours) to include the lib 
+and call it in the CmakeLists.txt from the OptixSDK (or use ours), 
+you will find cmake files in the folder "other cmake files"
+- assets: we used several obj files, if you want to use your own ones: just import them
+in blender and export them as a .obj file (alter the export settings, e.g. normals)
+
+- use the programm3.cpp to change the default scene that should be loaded
+- have a look at the display.cpp to see the keyboard settings that we've made
+- you can assign different .obj files in the display.cpp in the keyboard settings(F5)
+- we wrote our own scene-files to load whole scenes, it's .ssf (SoproSceneFile)
+
+known bugs:
+- AshikhminShirley material produces black artifacts on the borders
+- Windows Resoultion < 1080p: interface is shifted -> maximize and rescale the window
+- Application 'crashes' if you close the window (actually the programm is closed, so doesn't matter)
+- Glas material produces small artifacts (not at all)
+- framerate dumps if you change material attributes in the GUI
+- we know that the doxygen docu isn't complete ;)
+
+Ff you find other bugs, please report them: martin.zettwitz@st.ovgu.de or groessle@st.ovgu.de

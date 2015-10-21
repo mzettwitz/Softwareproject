@@ -19,7 +19,7 @@ int program3(int argc, char* argv[])
     shp3.setInitialCamera(Scene::Camera(position,direction,right));
     shp3.run(argc,argv);*/
 
-   Display::init(argc,argv,"cornellBox.ssf");
+   Display::init(argc,argv,"testscene.ssf");
    Display::run("cornellBox",nullptr);
 
     return 0;
